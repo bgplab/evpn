@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Ivan Pepelnjak, ipSpace.net AG">
+        <link rel="canonical" href="https://evpn.bgplabs.net/4-codespaces/">
+        <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Use GitHub Codespaces &#171; VXLAN and EVPN Labs</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../css/brands.min.css" rel="stylesheet">
+        <link href="../css/solid.min.css" rel="stylesheet">
+        <link href="../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">VXLAN and EVPN Labs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Home</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href=".." class="dropdown-item">Labs Overview</a>
+</li>
+                                    
+<li>
+    <a href="../3-upcoming/" class="dropdown-item">Upcoming Labs</a>
+</li>
+                                    
+<li>
+    <a href="../99-about/" class="dropdown-item">About the Project</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Installation</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../1-setup/" class="dropdown-item">Installation and Setup</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Use GitHub Codespaces</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">VXLAN</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../vxlan/1-single.md" class="dropdown-item">None</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../1-setup/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" class="nav-link disabled">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3">
+<div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+  <div class="navbar-header">
+      <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+          <span class="fa fa-angle-down"></span>
+      </button>
+  </div>
+
+  
+  
+  
+  
+  
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary"  style="margin-bottom: 1em;">
+      <ul class="nav flex-column">
+          
+      <li class="nav-item" data-level="1"><a href="#use-github-codespaces" class="nav-link">Use GitHub Codespaces</a>
+        <ul class="nav flex-column">
+      <li class="nav-item" data-level="2"><a href="#select-lab-devices" class="nav-link">Select Lab Devices</a>
+        <ul class="nav flex-column">
+        </ul>
+      </li>
+      <li class="nav-item" data-level="2"><a href="#start-a-lab" class="nav-link">Start a Lab</a>
+        <ul class="nav flex-column">
+        </ul>
+      </li>
+      <li class="nav-item" data-level="2"><a href="#cleanup-and-shutdown" class="nav-link">Cleanup and Shutdown</a>
+        <ul class="nav flex-column">
+        </ul>
+      </li>
+        </ul>
+      </li>
+      </ul>
+    </div>
+  
+  
+  
+  
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="use-github-codespaces">Use GitHub Codespaces</h1>
+<p>You can run VXLAN/EVPN labs in (free<sup id="fnref:UTAP"><a class="footnote-ref" href="#fn:UTAP">1</a></sup>) <a href="https://docs.github.com/en/codespaces/overview">GitHub codespaces</a>; all you need is a GitHub account:</p>
+<ul>
+<li><a href="https://github.com/codespaces/new/bgplab/evpn" target="_blank">Create a new codespace for your VXLAN/EVPN labs</a> or <a href="https://github.com/codespaces" target="_blank">connect to an existing codespace</a>.</li>
+<li>Unless you&rsquo;re using GitHub codespaces with VS Code (in which case you know what to do), your codespace opens in a new browser window with three tabs: Explorer (repository folders), Preview (starting with README), and Terminal.</li>
+</ul>
+<p><a href="../img/codespaces-start.png"><img alt="" src="../img/codespaces-start.png" /></a></p>
+<h2 id="select-lab-devices">Select Lab Devices</h2>
+<p>GitHub Codespaces can run only &ldquo;true&rdquo; containers (not virtual machines packaged as containers) and cannot load additional Linux kernel modules. You can thus choose only between Arista cEOS and Nokia SR Linux containers (FRRouting and VyOS containers require the VXLAN kernel module).</p>
+<p>The VXLAN/EVPN labs repository uses Arista cEOS containers as the default device. You can change that with the <code>netlab defaults --project device=_value_</code> command executed in the top directory (where the terminal window opens) or edit the <code>defaults.yml</code> file with a text editor like <code>vi</code> or <code>nano</code>.</p>
+<p>For example, the following command changes the user lab devices to SR Linux (the only other device you can use as a VXLAN/EVPN switch with GitHub Codespaces):</p>
+<pre><code class="language-shell">$ netlab defaults --project device=srlinux
+The default setting device is already set in project defaults
+Do you want to change that setting in project defaults [y/n]: y
+device set to srlinux in /home/user/evpn/defaults.yml
+</code></pre>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>You will have to <a href="https://www.arista.com/en/support/software-download">download the Arista cEOS container</a> (registration required) and <a href="https://blog.ipspace.net/2024/07/arista-eos-codespaces/">copy it into your GitHub codespace</a>.</li>
+<li>Nokia SR Linux container is published in a public repository and can be downloaded automatically.</li>
+</ul>
+<h2 id="start-a-lab">Start a Lab</h2>
+<p>Once you have the codespaces up and running:</p>
+<ul>
+<li>Click on the desired lab exercise in the README.md preview window to select the exercise folder.</li>
+<li>Right-click on the exercise folder and select &ldquo;<em>Open in Integrated Terminal</em>&rdquo; to launch a <strong>bash</strong> session in the desired directory.</li>
+<li>Execute <strong>netlab up</strong> to start the lab.</li>
+<li>Expand the exercise folder in the Explorer tab.</li>
+<li>Right-click on the <code>README.md</code> file and select &ldquo;<em>Open Preview</em>&rdquo; to open the rendered version of the file.</li>
+<li>Click the link in the README.md file to get the exercise description in the preview pane.</li>
+<li>Connect to your devices with the <strong>netlab connect</strong> command executed in the Terminal pane.</li>
+</ul>
+<p><a href="../img/codespaces-lab.png"><img alt="" src="../img/codespaces-lab.png" /></a></p>
+<h2 id="cleanup-and-shutdown">Cleanup and Shutdown</h2>
+<p>Finally, don&rsquo;t forget to shut down the lab with <strong>netlab down</strong> and stop your codespace after you&rsquo;re done:</p>
+<ul>
+<li>Click on the blue &ldquo;<em>Codespaces</em>&rdquo; button in the bottom-left corner of the browser window.</li>
+<li>Select &ldquo;<em>Stop Current Codespace</em>&rdquo;. You should also adjust <em>idle timeout</em> and <em>default retention period</em> in <a href="https://github.com/settings/codespaces">your codespaces settings</a>.</li>
+</ul>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:UTAP">
+<p>You get 120 free core hours per month or <a href="https://docs.github.com/en/billing/managing-billing-for-github-codespaces/about-billing-for-github-codespaces">pay for more</a>.&#160;<a class="footnote-backref" href="#fnref:UTAP" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+<hr>
+    <p>(C) 2025 Ivan Pepelnjak (ipSpace.net AG)</p>
+        </footer>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js"></script>
+        <script src="../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
