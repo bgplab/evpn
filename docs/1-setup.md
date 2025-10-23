@@ -8,22 +8,20 @@ It's easiest to use the VXLAN/EVPN labs with _[netlab](https://netlab.tools/)_. 
 !!! Warning
     EVPN labs work best with _netlab_ release 25.10 or later (some lab exercises require a more recent _netlab_ release). If you're using an earlier release, please upgrade with `pip3 install --upgrade networklab`.
 
-## Select the Network Devices You Will Work With {#dev}
+## Select the Network Devices You Will Work With {#devs}
 
-While I usually recommend FRRouting as the simplest-to-deploy network device, FRRouting does not include data-plane VLAN, VXLAN, or anycast gateway configuration. Configuring underlying Linux devices is a way too complex for an entry-level VXLAN/EVPN  exercise; you'll be better off using one of the other platforms for which we implemented [VXLAN](https://netlab.tools/module/vxlan/#platform-support) and [EVPN](https://netlab.tools/module/evpn/#platform-support) functionality.
+While I usually recommend FRRouting as the simplest-to-deploy network device, FRRouting does not include data-plane VLAN, VXLAN, or anycast gateway configuration. Configuring underlying Linux devices is too complex for an entry-level VXLAN/EVPN  exercise; you'll be better off using one of the other platforms for which we implemented [VXLAN](https://netlab.tools/module/vxlan/#platform-support) and [EVPN](https://netlab.tools/module/evpn/#platform-support) functionality.
 
-You can run Arista EOS in all [_netlab_-supported virtualization environments](https://netlab.tools/providers/) (libvirt virtual machines or Docker containers)[^CSF], and if you want to start practicing IS-IS with minimum hassle, consider using Arista EOS  for all lab devices. You can even run Arista cEOS or Nokia SR Linux containers on [MacBooks with Apple silicon](https://blog.ipspace.net/2024/03/netlab-bgp-apple-silicon.html).
+You can run Arista EOS in all [_netlab_-supported virtualization environments](https://netlab.tools/providers/) (libvirt virtual machines or Docker containers), and if you want to start practicing VXLAN and EVPN with minimum hassle, consider using Arista EOS for all lab devices. While most network devices require an x86 CPU, you can run Arista cEOS or Nokia SR Linux containers on [MacBooks with Apple silicon](https://blog.ipspace.net/2024/03/netlab-bgp-apple-silicon.html).
 
 !!! tip
-    If you plan to run the labs in [free GitHub Codespaces](4-codespaces.md), you MUST use container-based network devices like Arista cEOS or Nokia SR Linux. Furthermore, the device cannot rely on the Linux VXLAN kernel driver (FRRouting and VyOS do).
-
-[^x86]: Most network devices require an x86 CPU. You must run the labs on a device with an x86 CPU (Intel or AMD) to use them.
+    If you plan to run the labs in [free GitHub Codespaces](4-codespaces.md), you MUST use container-based network devices like Arista cEOS or Nokia SR Linux. Furthermore, the device cannot rely on the Linux VXLAN kernel module (FRRouting and VyOS do).
 
 ## Select the Additional Devices in Your Lab {#extradev}
 
-Some labs use additional routers -- preconfigured devices with which your routers exchange routing information. You won't configure those devices, but you might have to log into them and execute **show** commands.
+Some labs use additional switches -- preconfigured devices with which your switches exchange EVPN routes. You won't configure those devices, but you might have to log into them and execute **show** commands.
 
-The default setup uses Arista EOS for additional routers; we also generated all the **show** printouts with Arista EOS. Alternatively, you can use any other device for which we implemented basic [VXLAN](https://netlab.tools/module/vxlan/#platform-support) and [EVPN](https://netlab.tools/module/evpn/#platform-support) functionality. Additional limitations (should they exist) are listed under the *Device Requirements* section of individual lab exercises.
+The default setup uses Arista EOS for additional switches; we also generated all the **show** printouts with Arista EOS. Alternatively, you can use any other device for which we implemented basic [VXLAN](https://netlab.tools/module/vxlan/#platform-support) and [EVPN](https://netlab.tools/module/evpn/#platform-support) functionality. Additional limitations (should they exist) are listed under the *Device Requirements* section of individual lab exercises.
 
 ## Select the Virtualization Environment
 
@@ -88,7 +86,7 @@ Do you want to change that setting in project defaults [y/n]: y
 provider set to libvirt in /home/user/evpn/defaults.yml
 ```
 
-[^CSR]: Assuming you built the [Nexus OS Vagrant box](https://netlab.tools/labs/nxos/) first
+[^NXOS]: Assuming you built the [Nexus OS Vagrant box](https://netlab.tools/labs/nxos/) first
 
 * In a terminal window, change the current directory to one of the lab directories (for example, `basic/1-single`), and execute **netlab up**.
 * Wait for the lab to start and use **netlab connect** to connect to individual lab devices

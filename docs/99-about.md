@@ -1,6 +1,6 @@
 # About the Project
 
-In 2023, I started the [Open-Source BGP Labs project](https://bgplabs.net/) to recreate the labs I created in the early 1990s. As I [posted a status update a year later](https://blog.ipspace.net/2024/07/bgp-labs-year-later/), Henk Smit suggested I do the same for IS-IS.
+In 2023, I started the [Open-Source BGP Labs project](https://bgplabs.net/) to recreate the labs I created in the early 1990s. As I [posted a status update a year later](https://blog.ipspace.net/2024/07/bgp-labs-year-later/), Henk Smit suggested I do the same for [IS-IS](https://isis.bgplabs.net/).
 
 Those two projects were largely complete in late 2025, and it was time for another one. VXLAN/EVPN seemed like a no-brainer; welcome to the [Open-Source VXLAN/EVPN Configuration Labs](https://evpn.bgplabs.net/) project.
 
