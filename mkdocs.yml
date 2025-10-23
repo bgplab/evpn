@@ -1,0 +1,40 @@
+# MKDOCS navigation structure and configuration
+---
+site_name: VXLAN and EVPN Labs
+docs_dir: docs
+site_dir: _html
+repo_url: https://github.com/bgplab/evpn
+site_url: https://evpn.bgplabs.net/
+site_description: Hands-on VXLAN and EVPN labs using virtual devices
+site_author: Ivan Pepelnjak, ipSpace.net AG
+extra:
+  toc_sidebar: False
+copyright: (C) 2025 Ivan Pepelnjak (ipSpace.net AG)
+plugins:
+- search
+- include_dir_to_nav
+nav:
+- Home:
+  - index.md
+  - "Upcoming Labs": 3-upcoming.md
+  - 99-about.md
+- Installation:
+  - 1-setup.md
+  - 4-codespaces.md
+- "VXLAN":
+  - vxlan/1-single.md
+
+markdown_extensions:
+- footnotes
+- abbr
+- def_list
+- admonition
+- attr_list
+- sane_lists
+- smarty
+- nl2br
+
+theme:
+  name: mkdocs
+  custom_dir: _mkdocs_theme
+  navigation_depth: 3
