@@ -1,0 +1,31 @@
+# Extend a single VLAN segment with VXLAN
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+
+version: 25.10
+#_include: [ validate.yml ]
+
+groups:
+  _auto_create: True
+  switches:
+    members: [ s1, s2 ]
+  hosts:
+    members: [ h1, h2 ]
+    device: linux
+
+module: [ vlan, vxlan, ospf ]
+
+vlans:
+  tenant:
+    id: 100
+    mode: bridge
+    links: [ h1-s1, h2-s2 ]
+
+links:
+- interfaces: [ s1, s2 ]
+  mtu: 1550
+
+message: |
+  The solution for the "Extend a single VLAN segment with VXLAN" lab is ready.
+  Do not cheat (you learn more if you figure things out on your own). Use this
+  topology only when everything else fails.
