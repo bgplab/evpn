@@ -1,6 +1,6 @@
 # Upcoming Labs
 
-You can already get your hands dirty with the [first VXLAN labs](index.md) labs while we keep working on these ideas:
+You can already get your hands dirty with the [first VXLAN labs](index.md#vxlan) labs while we keep working on these ideas:
 
 ## VXLAN
 
