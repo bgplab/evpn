@@ -1,0 +1,59 @@
+# More Complex VXLAN Deployment Scenario
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+
+version: 25.10
+#_include: [ validate.yml ]
+
+groups:
+  _auto_create: True
+  switches:
+    members: [ s1, s2, s3 ]
+  hosts:
+    members: [ hr1, hr2, hr3, hb1, hb2 ]
+    device: linux
+    provider: clab
+
+module: [ vlan, ospf ]
+
+vlans:
+  blue:
+    id: 101
+    mode: bridge
+    links: [ s1-hb1, s2-hb2 ]
+
+nodes:
+  s1:
+    vlans:
+      red:
+        mode: bridge
+        id: 201
+  s2:
+    vlans:
+      red:
+        mode: bridge
+        id: 202
+  s3:
+    vlans:
+      red:
+        mode: bridge
+        id: 203
+
+links:
+- s1-s2
+- s2-s3
+- s3-s1
+- s1:
+    vlan.access: red
+  hr1:
+- s2:
+    vlan.access: red
+  hr2:
+- s3:
+    vlan.access: red
+  hr3:
+
+message: |
+  The "More Complex VXLAN Deployment Scenario" lab is ready.
+
+  Use "netlab connect" to connect to lab devices.

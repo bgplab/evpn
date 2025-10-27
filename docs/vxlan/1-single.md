@@ -79,6 +79,8 @@ round-trip min/avg/max = 2.563/3.509/5.362 ms
 
 You forgot to change the MTU size on the underlay links if the simple ping succeeds, but the large-packet ping fails.
 
+Done? Continue to [More Complex VXLAN Deployment Scenario](2-complex.md).
+
 ## Troubleshooting {#tshoot}
 
 Use these troubleshooting steps if the Linux host can't communicate over the stretched VLAN segment:
@@ -127,7 +129,7 @@ rtt min/avg/max/mdev = 0.004/0.024/0.096/0.035 ms, ipg/ewma 0.038/0.059 ms
 
 If you have gotten this far, your *underlay* network works correctly. Next, let's check the VXLAN configuration:
 
-* The **show vxlan vni** command displays VLAN-to-VXLAN mapping. Check that you correctly mapped VLAN 100 to a VXLAN VNI and that you used the same VNI on S1 and S2.
+* The **show vxlan vni** command displays VLAN-to-VXLAN mapping. Check that you correctly mapped VLAN 100 to a VXLAN VNI and used the same VNI on S1 and S2.
 
 ```
 s1#show vxlan vni
@@ -212,11 +214,15 @@ Total Mac Addresses for this criterion: 2
 
 If everything else fails, read the [Arista EOS VXLAN Troubleshooting Guidebook](https://arista.my.site.com/AristaCommunity/s/article/Vxlan-Troubleshooting-Guidebook) or the corresponding documentation for your platform.
 
+Figured out what you did wrong? Continue to [More Complex VXLAN Deployment Scenario](2-complex.md).
+
 ## Cheating
 
 * Shut down your lab with the **netlab down** command
 * Start the lab from the `solution.yml` topology with the **netlab up solution.yml** command
 * Explore the S1/S2 device configuration
+
+Remembered the commands to configure VXLAN? Practice them in the [More Complex VXLAN Deployment Scenario](2-complex.md) exercise.
 
 ## Reference Information
 
