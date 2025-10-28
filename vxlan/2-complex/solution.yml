@@ -1,0 +1,71 @@
+# More Complex VXLAN Deployment Scenario
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+
+version: 25.10
+#_include: [ validate.yml ]
+
+groups:
+  _auto_create: True
+  switches:
+    members: [ s1, s2, s3 ]
+  hosts:
+    members: [ hr1, hr2, hr3, hb1, hb2 ]
+    device: linux
+    provider: clab
+
+module: [ vlan, ospf, vxlan ]
+
+prefix:
+  red.ipv4: 172.16.0.0/24
+  blue.ipv4: 172.16.1.0/24
+
+vlans:
+  blue:
+    id: 101
+    vni: 1001
+    mode: bridge
+    links: [ s1-hb1, s2-hb2 ]
+    prefix: blue
+
+nodes:
+  s1:
+    vlans:
+      red:
+        mode: bridge
+        id: 201
+        vni: 1000
+        prefix: red
+  s2:
+    vlans:
+      red:
+        mode: bridge
+        id: 202
+        vni: 1000
+        prefix: red
+  s3:
+    vlans:
+      red:
+        mode: bridge
+        id: 203
+        vni: 1000
+        prefix: red
+
+links:
+- s1-s2
+- s2-s3
+- s3-s1
+- s1:
+    vlan.access: red
+  hr1:
+- s2:
+    vlan.access: red
+  hr2:
+- s3:
+    vlan.access: red
+  hr3:
+
+message: |
+  The solution for the "More Complex VXLAN Deployment Scenario" lab is ready.
+  Do not cheat (you learn more if you figure things out on your own). Use this
+  topology only when everything else fails.

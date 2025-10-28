@@ -9,6 +9,7 @@ The labs cover:
 **VXLAN Configuration**
 
 * [Extend a Single VLAN Segment with VXLAN](vxlan/1-single)
+* [More Complex VXLAN Deployment Scenario](vxlan/2-complex)
 
 See [lab documentation](https://evpn.bgplabs.net/) for more details and the complete list of planned labs.
 

@@ -22,6 +22,7 @@ A few labs are already waiting for you (with more [coming soon](3-upcoming.md)),
 In these labs, you'll learn how to configure VXLAN with static ingress replication and use it to build VLANs, layer-3 segments, or VRF-Lite deployments:
 
 * [Extend a single VLAN segment with VXLAN](vxlan/1-single.md)
+* [More Complex VXLAN Deployment Scenario](vxlan/2-complex.md)
 * Routing between VXLAN segments (coming soon)
 * Anycast gateways (coming soon)
 * Implementing VRF-Lite with VXLAN (coming soon)
