@@ -114,15 +114,15 @@ Use the [troubleshooting hints](1-single.md#tshoot) from the previous lab exerci
 | Ethernet3 |  |  | [Access VLAN red] s3 -> hr3 |
 | Vlan203 |  |  | VLAN red (203) -> [hr3] |
 | **hr1** |
-| eth1 | 172.16.1.4/24 |  | hr1 -> [s1] |
+| eth1 | 172.16.0.4/24 |  | hr1 -> [s1] |
 | **hr2** |
-| eth1 | 172.16.2.5/24 |  | hr2 -> [s2] |
+| eth1 | 172.16.0.5/24 |  | hr2 -> [s2] |
 | **hr3** |
-| eth1 | 172.16.3.6/24 |  | hr3 -> [s3] |
+| eth1 | 172.16.0.6/24 |  | hr3 -> [s3] |
 | **hb1** |
-| eth1 | 172.16.0.7/24 |  | hb1 -> [s1,hb2,s2] |
+| eth1 | 172.16.1.7/24 |  | hb1 -> [s1,hb2,s2] |
 | **hb2** |
-| eth1 | 172.16.0.8/24 |  | hb2 -> [hb1,s1,s2] |
+| eth1 | 172.16.1.8/24 |  | hb2 -> [hb1,s1,s2] |
 
 ### OSPF Routing (Area 0) {#ospf}
 

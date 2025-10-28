@@ -16,12 +16,17 @@ groups:
 
 module: [ vlan, ospf, vxlan ]
 
+prefix:
+  red.ipv4: 172.16.0.0/24
+  blue.ipv4: 172.16.1.0/24
+
 vlans:
   blue:
     id: 101
     vni: 1001
     mode: bridge
     links: [ s1-hb1, s2-hb2 ]
+    prefix: blue
 
 nodes:
   s1:
@@ -30,18 +35,21 @@ nodes:
         mode: bridge
         id: 201
         vni: 1000
+        prefix: red
   s2:
     vlans:
       red:
         mode: bridge
         id: 202
         vni: 1000
+        prefix: red
   s3:
     vlans:
       red:
         mode: bridge
         id: 203
         vni: 1000
+        prefix: red
 
 links:
 - s1-s2
