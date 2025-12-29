@@ -1,7 +1,4 @@
-import os
-
 from netsim import __version__
-from netsim.utils import log
 from box import Box
 
 def init(topology: Box) -> None:

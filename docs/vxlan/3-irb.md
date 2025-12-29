@@ -34,9 +34,9 @@ Assuming you already [set up your lab infrastructure](../1-setup.md):
 | Host | IPv4 prefix   | Next hop    |
 |------|--------------:|------------:|
 | HR1  | 172.16.0.0/16 | 172.16.10.1 |
-| HR1  | 172.16.0.0/16 | 172.16.10.2 |
-| HR1  | 172.16.0.0/16 | 172.16.11.1 |
-| HR1  | 172.16.0.0/16 | 172.16.11.2 |
+| HR2  | 172.16.0.0/16 | 172.16.10.2 |
+| HB1  | 172.16.0.0/16 | 172.16.11.1 |
+| HB2  | 172.16.0.0/16 | 172.16.11.2 |
 
 * The switches run OSPF in area 0 across the interswitch link ([details](#ospf)).
 
