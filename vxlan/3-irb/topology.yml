@@ -1,0 +1,55 @@
+# Routing between VXLAN segments
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+
+version: 25.10
+_include: [ validate.yml ]
+plugin: [ check_validate ]
+
+module: [ vlan, ospf ]
+
+groups:
+  switches:
+    members: [ s1, s2 ]
+  hosts:
+    module: [ routing ]
+    members: [ hr1, hr2, hb1, hb2 ]
+    device: linux
+
+vlans:
+  red:
+    prefix.ipv4: 172.16.10.0/24
+    id: 100
+    mode: bridge
+    links: [ hr1-s1, hr2-s2 ]
+  blue:
+    prefix.ipv4: 172.16.11.0/24
+    id: 101
+    mode: bridge
+    links: [ hb1-s1, hb2-s2 ]
+
+nodes:
+  s1:
+  s2:
+  hr1:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.10.1
+  hr2:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.10.2
+  hb1:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.11.1
+  hb2:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.11.2
+
+links: [ s1-s2 ]
+
+message: |
+  The "Routing between VXLAN segments" lab is ready.
+  Use "netlab connect" to connect to lab devices.

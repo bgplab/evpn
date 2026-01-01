@@ -4,3 +4,6 @@ provider: clab          # Change to virtualbox or libvirt if needed
 groups:
   external:
     device: eos         # Change to your preferred external switch
+
+# Leave the rest of this file intact
+paths.plugin: [ "topology:.", "topology:../../plugin", "package:extra" ]
