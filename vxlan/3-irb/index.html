@@ -6,9 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="author" content="Ivan Pepelnjak, ipSpace.net AG">
-        <link rel="canonical" href="https://evpn.bgplabs.net/vxlan/1-single/">
+        <link rel="canonical" href="https://evpn.bgplabs.net/vxlan/3-irb/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>Extend a Single VLAN Segment with VXLAN &#171; VXLAN and EVPN Labs</title>
+  <title>Routing between VXLAN Segments &#171; VXLAN and EVPN Labs</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/fontawesome.min.css" rel="stylesheet">
         <link href="../../css/brands.min.css" rel="stylesheet">
@@ -69,7 +69,7 @@
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="./" class="dropdown-item active" aria-current="page">Extend a Single VLAN Segment with VXLAN</a>
+    <a href="../1-single/" class="dropdown-item">Extend a Single VLAN Segment with VXLAN</a>
 </li>
                                     
 <li>
@@ -77,7 +77,7 @@
 </li>
                                     
 <li>
-    <a href="../3-irb/" class="dropdown-item">Routing between VXLAN Segments</a>
+    <a href="./" class="dropdown-item active" aria-current="page">Routing between VXLAN Segments</a>
 </li>
                                 </ul>
                             </li>
@@ -90,12 +90,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../../4-codespaces/" class="nav-link">
+                                <a rel="prev" href="../2-complex/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../2-complex/" class="nav-link">
+                                <a rel="next" class="nav-link disabled">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -123,7 +123,7 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary"  style="margin-bottom: 1em;">
       <ul class="nav flex-column">
           
-      <li class="nav-item" data-level="1"><a href="#extend-a-single-vlan-segment-with-vxlan" class="nav-link">Extend a Single VLAN Segment with VXLAN</a>
+      <li class="nav-item" data-level="1"><a href="#routing-between-vxlan-segments" class="nav-link">Routing between VXLAN Segments</a>
         <ul class="nav flex-column">
       <li class="nav-item" data-level="3"><a href="#req" class="nav-link">Device Requirements</a>
         <ul class="nav flex-column">
@@ -137,7 +137,11 @@
         <ul class="nav flex-column">
         </ul>
       </li>
-      <li class="nav-item" data-level="2"><a href="#configuration-tasks" class="nav-link">Configuration Tasks</a>
+      <li class="nav-item" data-level="2"><a href="#configure-integrated-routing" class="nav-link">Configure Integrated Routing</a>
+        <ul class="nav flex-column">
+        </ul>
+      </li>
+      <li class="nav-item" data-level="2"><a href="#configure-vxlan-segments" class="nav-link">Configure VXLAN Segments</a>
         <ul class="nav flex-column">
         </ul>
       </li>
@@ -145,7 +149,7 @@
         <ul class="nav flex-column">
         </ul>
       </li>
-      <li class="nav-item" data-level="2"><a href="#tshoot" class="nav-link">Troubleshooting</a>
+      <li class="nav-item" data-level="2"><a href="#behind-the-scenes" class="nav-link">Behind the Scenes</a>
         <ul class="nav flex-column">
         </ul>
       </li>
@@ -180,199 +184,201 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="extend-a-single-vlan-segment-with-vxlan">Extend a Single VLAN Segment with VXLAN</h1>
-<p>VXLAN is a data-plane-only technology that encapsulates Ethernet frames in UDP packets (using the VXLAN header defined in the <a href="https://datatracker.ietf.org/doc/html/rfc7348">RFC  7348</a> as the shim between the two). In this lab exercise, you&rsquo;ll use VXLAN (<em>overlay</em> network) to extend a single VLAN across an IP-only backbone (<em>underlay</em> network):</p>
-<p><img alt="Lab topology" src="../topology-single.png" /></p>
+<h1 id="routing-between-vxlan-segments">Routing between VXLAN Segments</h1>
+<p>In the previous lab exercises, we extended isolated VLANs with VXLAN segments. Now, we&rsquo;ll add routing to the mix: the switches using VXLAN to extend VLANs will also route between them.</p>
+<p>The lab topology is as simple as it was in the previous exercises: a pair of hosts per VLAN attached to two directly-connected switches:</p>
+<p><img alt="Lab topology" src="../topology-irb.png" /></p>
 <h3 id="req">Device Requirements</h3>
-<p>You can use any device supported by the <em>netlab</em> <a href="https://netlab.tools/module/ospf/#platform-support">OSPF</a> and <a href="https://netlab.tools/module/vlan/#platform-support">VLAN</a> configuration modules. The device should support VXLAN with static ingress replication.</p>
+<p>You can use any device supported by the <em>netlab</em> <a href="https://netlab.tools/module/ospf/#platform-support">OSPF</a> and <a href="https://netlab.tools/module/vlan/#platform-support">VLAN</a> configuration modules. The device should support VXLAN with static ingress replication and routing between VLAN segments.</p>
 <h2 id="start-the-lab">Start the Lab</h2>
 <p>Assuming you already <a href="../../1-setup/">set up your lab infrastructure</a>:</p>
 <ul>
-<li>Change directory to <code>vxlan/1-single</code></li>
+<li>Change directory to <code>vxlan/3-irb</code></li>
 <li>Execute <strong>netlab up</strong></li>
 <li>Log into lab devices with <strong>netlab connect</strong> and verify that the IP addresses and the OSPF are properly configured.</li>
 </ul>
 <h2 id="existing-device-configuration">Existing Device Configuration</h2>
 <ul>
-<li>The switches in your lab (S1 and S2) are preconfigured with a <em>tenant</em> VLAN with VLAN tag 100.</li>
+<li>The switches in your lab (S1 and S2) are preconfigured with <em>red</em> and <em>blue</em> VLANs.</li>
+<li>The <em>red</em> and <em>blue</em> VLANs have these VLAN tags and IPv4 prefixes:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>VLAN</th>
+<th style="text-align: right;">VLAN tag</th>
+<th style="text-align: right;">IPv4 prefix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>red</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">172.16.10.0/24</td>
+</tr>
+<tr>
+<td>blue</td>
+<td style="text-align: right;">101</td>
+<td style="text-align: right;">172.16.11.0/24</td>
+</tr>
+</tbody>
+</table>
+<ul>
 <li>IPv4 addresses are configured on Linux hosts, switch loopback interfaces, and the interswitch link (<a href="#addr">details</a>).</li>
+<li>Static routes pointing to the to-be-configured switch VLAN IP addresses are configured on the Linux hosts. Each static route points to the IP address of the adjacent switch:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Host</th>
+<th style="text-align: right;"> IPv4 prefix</th>
+<th style="text-align: right;">Next hop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HR1</td>
+<td style="text-align: right;">172.16.0.0/16</td>
+<td style="text-align: right;">172.16.10.1</td>
+</tr>
+<tr>
+<td>HR2</td>
+<td style="text-align: right;">172.16.0.0/16</td>
+<td style="text-align: right;">172.16.10.2</td>
+</tr>
+<tr>
+<td>HB1</td>
+<td style="text-align: right;">172.16.0.0/16</td>
+<td style="text-align: right;">172.16.11.1</td>
+</tr>
+<tr>
+<td>HB2</td>
+<td style="text-align: right;">172.16.0.0/16</td>
+<td style="text-align: right;">172.16.11.2</td>
+</tr>
+</tbody>
+</table>
+<ul>
 <li>The switches run OSPF in area 0 across the interswitch link (<a href="#ospf">details</a>).</li>
 </ul>
-<h2 id="configuration-tasks">Configuration Tasks</h2>
-<p>Configuring VXLAN on a switch is usually a multi-step process:</p>
+<h2 id="configure-integrated-routing">Configure Integrated Routing</h2>
+<p>You&rsquo;ll configure IP addresses on switch VLAN interfaces before configuring VXLAN segments:</p>
 <ul>
-<li>Configure a VXLAN interface (<code>Vxlan1</code> on Arista EOS) and assign a local VTEP address (or source interface) to it. You&rsquo;ll use the loopback IPv4 address as the VTEP address.</li>
-<li>Optionally, set the VXLAN destination UDP port (the standard IANA-allocated VXLAN UDP port is 4789)</li>
+<li>Configure the following IP addresses on S1 and S2:</li>
 </ul>
-<p>To extend a VLAN across an underlay network with VXLAN, you have to:</p>
+<table>
+<thead>
+<tr>
+<th>VLAN</th>
+<th>Switch</th>
+<th style="text-align: right;">IP address</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>red</td>
+<td>S1</td>
+<td style="text-align: right;">172.16.10.1/24</td>
+</tr>
+<tr>
+<td></td>
+<td>S2</td>
+<td style="text-align: right;">172.16.10.2/24</td>
+</tr>
+<tr>
+<td>blue</td>
+<td>S1</td>
+<td style="text-align: right;">172.16.11.1/24</td>
+</tr>
+<tr>
+<td></td>
+<td>S2</td>
+<td style="text-align: right;">172.16.11.2/24</td>
+</tr>
+</tbody>
+</table>
 <ul>
-<li>Map a local VLAN to a VXLAN Virtual Network Identifier (VNI)<sup id="fnref:VTM"><a class="footnote-ref" href="#fn:VTM">1</a></sup>. Arista EOS does the mapping within the VXLAN interface configuration.</li>
-<li>Configure a flood list (a list of remote VTEPs) for a VXLAN-enabled VLAN or VNI. The flood list is used to propagate copies of Ethernet BUM (Broadcast, Unknown unicast, Multicast)  packets to all other VTEPs participating in the same VXLAN segment. The flood list is also configured within the VXLAN interface configuration on Arista EOS.</li>
+<li>Check that the local inter-VLAN routing works: HR1 should be able to reach HB1, and HR2 should be able to reach HB2</li>
+<li>Verify that cross-switch VLAN connectivity does not work: HR1 cannot reach HR2, HB1 cannot reach HB2, and HR1 cannot reach HB2.</li>
 </ul>
-<p>The underlay network should be able to transport 1500-byte overlay IP packets. You should therefore increase the IP MTU size on the underlay links to at least 1550 bytes<sup id="fnref:M1560"><a class="footnote-ref" href="#fn:M1560">2</a></sup> due to VXLAN encapsulation overhead:</p>
-<ul>
-<li>14 bytes for the Ethernet header</li>
-<li>8 bytes for the VXLAN header</li>
-<li>8 bytes for the UDP header</li>
-<li>20 bytes for the outer IPv4 header</li>
-</ul>
-<h2 id="verification">Verification</h2>
-<p>Try to ping h2 from h1:</p>
-<pre><code>$ netlab connect h1 ping h2
-Connecting to container clab-single-h1, executing ping h2
-PING h2 (172.16.0.4): 56 data bytes
-64 bytes from 172.16.0.4: seq=0 ttl=64 time=5.273 ms
-64 bytes from 172.16.0.4: seq=1 ttl=64 time=2.048 ms
-^C
---- h2 ping statistics ---
-2 packets transmitted, 2 packets received, 0% packet loss
-round-trip min/avg/max = 2.048/3.660/5.273 ms
-</code></pre>
-<p>If that ping succeeds, try pinging with the 1500-byte IPv4 packets. The <code>-s</code> parameter of the Linux <strong>ping</strong> command specifies the payload size. The maximum payload that can fit into a 1500-byte packet is 1472 bytes due to the ICMP header (8 bytes) and the IP header (20 bytes).</p>
-<pre><code>$ netlab connect h1
-Connecting to container clab-single-h1, starting bash
-h1:/# ping h2 -s 1472
-PING h2 (172.16.0.4): 1472 data bytes
-1480 bytes from 172.16.0.4: seq=0 ttl=64 time=5.362 ms
-1480 bytes from 172.16.0.4: seq=1 ttl=64 time=2.604 ms
-1480 bytes from 172.16.0.4: seq=2 ttl=64 time=2.563 ms
-^C
---- h2 ping statistics ---
-3 packets transmitted, 3 packets received, 0% packet loss
-round-trip min/avg/max = 2.563/3.509/5.362 ms
-</code></pre>
-<p>You forgot to change the MTU size on the underlay links if the simple ping succeeds, but the large-packet ping fails.</p>
-<p>Done? Continue to <a href="../2-complex/">More Complex VXLAN Deployment Scenario</a>.</p>
-<h2 id="tshoot">Troubleshooting</h2>
-<p>Use these troubleshooting steps if the Linux host can&rsquo;t communicate over the stretched VLAN segment:</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The troubleshooting instructions use Arista EOS <strong>show</strong> commands and corresponding printouts. You&rsquo;ll have to find matching commands if you use some other platform.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Do not configure OSPF on VLAN interfaces; you&rsquo;d get recursive routing (and interesting periodic black holes). Even better, create a <em>tenant</em> VRF and assign VLAN interfaces to that VRF.</p>
 </div>
-<ul>
-<li>Verify OSPF connectivity between S1 and S2:</li>
-</ul>
-<pre><code>s1#show ip ospf neighbor
-Neighbor ID     Instance VRF      Pri State                  Dead Time   Address         Interface
-10.0.0.2        1        default  0   FULL                   00:00:38    10.1.0.2        Ethernet1
+<h2 id="configure-vxlan-segments">Configure VXLAN Segments</h2>
+<p>Using the procedure you mastered in the <a href="../1-single/">Extend a Single VLAN Segment with VXLAN</a> lab exercise, extend both VLANs across the IP network using these VXLAN network identifiers:</p>
+<table>
+<thead>
+<tr>
+<th>VLAN</th>
+<th style="text-align: right;">VNI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>red</td>
+<td style="text-align: right;">10010</td>
+</tr>
+<tr>
+<td>blue</td>
+<td style="text-align: right;">10011</td>
+</tr>
+</tbody>
+</table>
+<h2 id="verification">Verification</h2>
+<p>Use <strong>ping</strong> on hosts to verify that they can all reach each other:</p>
+<pre><code>$ netlab connect hr1
+Connecting to container clab-irb-hr1, starting bash
+hr1:/# ping -c 3 hr2
+PING hr2 (172.16.10.4): 56 data bytes
+64 bytes from 172.16.10.4: seq=0 ttl=64 time=4.142 ms
+64 bytes from 172.16.10.4: seq=1 ttl=64 time=2.205 ms
+64 bytes from 172.16.10.4: seq=2 ttl=64 time=2.318 ms
+
+--- hr2 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 2.205/2.888/4.142 ms
+hr1:/# ping -c 3 hb1
+PING hb1 (172.16.11.5): 56 data bytes
+64 bytes from 172.16.11.5: seq=0 ttl=63 time=1.758 ms
+64 bytes from 172.16.11.5: seq=1 ttl=63 time=0.871 ms
+64 bytes from 172.16.11.5: seq=2 ttl=63 time=0.741 ms
+
+--- hb1 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 0.741/1.123/1.758 ms
+hr1:/# ping -c 3 hb2
+PING hb2 (172.16.11.6): 56 data bytes
+64 bytes from 172.16.11.6: seq=0 ttl=63 time=5.410 ms
+64 bytes from 172.16.11.6: seq=1 ttl=63 time=2.072 ms
+64 bytes from 172.16.11.6: seq=2 ttl=63 time=2.098 ms
+
+--- hb2 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 2.072/3.193/5.410 ms
 </code></pre>
-<ul>
-<li>Verify that S1 and S2 have routes to both loopback interfaces in their routing tables</li>
-</ul>
-<pre><code>s1#show ip route
-...
-Gateway of last resort is not set
-
- C        10.0.0.1/32
-           directly connected, Loopback0
- O        10.0.0.2/32 [110/20]
-           via 10.1.0.2, Ethernet1
- C        10.1.0.0/30
-           directly connected, Ethernet1
+<p>Use the <a href="../1-single/#tshoot">troubleshooting hints</a> from the <a href="../1-single/">Extend a Single VLAN Segment with VXLAN</a> lab exercise if needed (we expect you&rsquo;re familiar with the traditional routing between VLAN segments)</p>
+<h2 id="behind-the-scenes">Behind the Scenes</h2>
+<p>Each host uses the adjacent switch as the first-hop router. Stretching VLANs over the VXLAN segment thus results in <em>asymmetric</em> Integrated Routing and Bridging (IRB) &ndash; the router in the HB1-HR2 path differs from the router in the HR2-HB1 path.</p>
+<p><img alt="Lab topology" src="../packet-flow-irb.png" /></p>
+<p>The <em>traceroute</em> printout taken on HB1 and HR2 illustrates the traffic flow:</p>
+<pre><code>$ netlab connect hb1 traceroute hr2
+Connecting to container clab-irb-hb1, executing traceroute hr2
+traceroute to hr2 (172.16.10.4), 30 hops max, 46 byte packets
+ 1  Vlan101.s1 (172.16.11.1)  0.694 ms  0.244 ms  0.203 ms
+ 2  hr2 (172.16.10.4)  5.399 ms  1.373 ms  1.140 ms
+$ netlab connect hr2 traceroute hb1
+Connecting to container clab-irb-hr2, executing traceroute hb1
+traceroute to hb1 (172.16.11.5), 30 hops max, 46 byte packets
+ 1  Vlan100.s2 (172.16.10.2)  0.756 ms  0.428 ms  0.223 ms
+ 2  hb1 (172.16.11.5)  1.112 ms  0.754 ms  0.667 ms
 </code></pre>
-<ul>
-<li>Verify that S1 and S2 can ping each other&rsquo;s loopback interfaces <em>from the source IPv4 address of the local loopback interface</em>:</li>
-</ul>
-<pre><code>s1#ping 10.0.0.2 source 10.0.0.1
-PING 10.0.0.2 (10.0.0.2) from 10.0.0.1 : 72(100) bytes of data.
-80 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.096 ms
-80 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.007 ms
-80 bytes from 10.0.0.2: icmp_seq=3 ttl=64 time=0.004 ms
-80 bytes from 10.0.0.2: icmp_seq=4 ttl=64 time=0.005 ms
-80 bytes from 10.0.0.2: icmp_seq=5 ttl=64 time=0.009 ms
-
---- 10.0.0.2 ping statistics ---
-5 packets transmitted, 5 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.004/0.024/0.096/0.035 ms, ipg/ewma 0.038/0.059 ms
-</code></pre>
-<p>If you have gotten this far, your <em>underlay</em> network works correctly. Next, let&rsquo;s check the VXLAN configuration:</p>
-<ul>
-<li>The <strong>show vxlan vni</strong> command displays VLAN-to-VXLAN mapping. Check that you correctly mapped VLAN 100 to a VXLAN VNI and used the same VNI on S1 and S2.</li>
-</ul>
-<pre><code>s1#show vxlan vni
-VNI to VLAN Mapping for Vxlan1
-VNI          VLAN       Source       Interface       802.1Q Tag
------------- ---------- ------------ --------------- ----------
-100100       100        static       Ethernet2       untagged
-                                     Vxlan1          100
-</code></pre>
-<ul>
-<li>The <strong>show vxlan vtep</strong> command displays remote VTEPs (ingress replication flood list). Check that you configured the remote VTEP loopback IP address in the flood list for your VNI:</li>
-</ul>
-<pre><code>s1#show vxlan vtep
-Remote VTEPS for Vxlan1:
-
-VTEP           Tunnel Type(s)
--------------- --------------
-10.0.0.2       unicast, flood
-
-Total number of remote VTEPS:  1
-</code></pre>
-<ul>
-<li>You can also use the <strong>show vxlan flood vtep</strong> command to display the same information in a slightly different format.</li>
-</ul>
-<pre><code>s1#show vxlan flood vtep
-          VXLAN Flood VTEP Table
---------------------------------------------------------------------------------
-
-VLANS                            Ip Address
------------------------------   ------------------------------------------------
-100                             10.0.0.2
-</code></pre>
-<ul>
-<li>End-to-end VXLAN should work if all the above printouts seem correct. However, you might also want to check the VLAN ports with the <strong>show vlan</strong> command and the spanning tree status with the <strong>show spanning-tree</strong> command.</li>
-</ul>
-<pre><code>s1#show vlan
-VLAN  Name                             Status    Ports
------ -------------------------------- --------- -------------------------------
-1     default                          active
-100   tenant                           active    Cpu, Et2, Vx1
-
-s1#show spanning-tree
-MST0
-  Spanning tree enabled protocol mstp
-  Root ID    Priority    32768
-             Address     001c.73a5.db35
-             This bridge is the root
-
-  Bridge ID  Priority    32768  (priority 32768 sys-id-ext 0)
-             Address     001c.73a5.db35
-             Hello Time  2.000 sec  Max Age 20 sec  Forward Delay 15 sec
-
-Interface        Role       State      Cost      Prio.Nbr Type
----------------- ---------- ---------- --------- -------- --------------------
-Et2              designated forwarding 20000     128.2    P2p Edge
-</code></pre>
-<ul>
-<li>Finally, the <strong>show vxlan address-table</strong> command displays MAC addresses learned from the incoming VXLAN packets, while the <strong>show mac address-table</strong> command displays MAC addresses learned from local interfaces and incoming VXLAN packets:</li>
-</ul>
-<pre><code>s1#show vxlan address-table
-          Vxlan Mac Address Table
-----------------------------------------------------------------------
-
-VLAN  Mac Address     Type      Prt  VTEP             Moves   Last Move
-----  -----------     ----      ---  ----             -----   ---------
- 100  aac1.ab87.58b8  DYNAMIC   Vx1  10.0.0.2         1       0:00:05 ago
-Total Remote Mac Addresses for this criterion: 1
-s1#show mac address-table
-          Mac Address Table
-------------------------------------------------------------------
-
-Vlan    Mac Address       Type        Ports      Moves   Last Move
-----    -----------       ----        -----      -----   ---------
- 100    aac1.ab87.58b8    DYNAMIC     Vx1        1       0:00:43 ago
- 100    aac1.abc4.959e    DYNAMIC     Et2        1       0:00:43 ago
-Total Mac Addresses for this criterion: 2
-</code></pre>
-<p>If everything else fails, read the <a href="https://arista.my.site.com/AristaCommunity/s/article/Vxlan-Troubleshooting-Guidebook">Arista EOS VXLAN Troubleshooting Guidebook</a> or the corresponding documentation for your platform.</p>
-<p>Figured out what you did wrong? Continue to <a href="../2-complex/">More Complex VXLAN Deployment Scenario</a>.</p>
 <h2 id="cheating">Cheating</h2>
 <ul>
 <li>Shut down your lab with the <strong>netlab down</strong> command</li>
 <li>Start the lab from the <code>solution.yml</code> topology with the <strong>netlab up solution.yml</strong> command</li>
 <li>Explore the S1/S2 device configuration</li>
 </ul>
-<p>Remembered the commands to configure VXLAN? Practice them in the <a href="../2-complex/">More Complex VXLAN Deployment Scenario</a> exercise.</p>
 <h2 id="reference-information">Reference Information</h2>
 <h3 id="wiring">Lab Wiring</h3>
 <table>
@@ -392,16 +398,28 @@ Total Mac Addresses for this criterion: 2
 <td>Ethernet1</td>
 </tr>
 <tr>
-<td>h1</td>
+<td>hr1</td>
 <td>eth1</td>
 <td>s1</td>
 <td>Ethernet2</td>
 </tr>
 <tr>
-<td>h2</td>
+<td>hr2</td>
 <td>eth1</td>
 <td>s2</td>
 <td>Ethernet2</td>
+</tr>
+<tr>
+<td>hb1</td>
+<td>eth1</td>
+<td>s1</td>
+<td>Ethernet3</td>
+</tr>
+<tr>
+<td>hb2</td>
+<td>eth1</td>
+<td>s2</td>
+<td>Ethernet3</td>
 </tr>
 </tbody>
 </table>
@@ -432,13 +450,13 @@ Total Mac Addresses for this criterion: 2
 <td>Ethernet2</td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
-<td>[Access VLAN tenant] s1 -&gt; h1</td>
+<td>[Access VLAN red] s1 -&gt; hr1</td>
 </tr>
 <tr>
-<td>Vlan100</td>
+<td>Ethernet3</td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
-<td>VLAN tenant (100) -&gt; [h1,h2,s2]</td>
+<td>[Access VLAN blue] s1 -&gt; hb1</td>
 </tr>
 <tr>
 <td><strong>s2</strong></td>
@@ -456,37 +474,61 @@ Total Mac Addresses for this criterion: 2
 <td>Ethernet2</td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
-<td>[Access VLAN tenant] s2 -&gt; h2</td>
+<td>[Access VLAN red] s2 -&gt; hr2</td>
 </tr>
 <tr>
-<td>Vlan100</td>
+<td>Ethernet3</td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
-<td>VLAN tenant (100) -&gt; [h1,s1,h2]</td>
+<td>[Access VLAN blue] s2 -&gt; hb2</td>
 </tr>
 <tr>
-<td><strong>h1</strong></td>
+<td><strong>hr1</strong></td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 <td></td>
 </tr>
 <tr>
 <td>eth1</td>
-<td style="text-align: right;">172.16.0.3/24</td>
+<td style="text-align: right;">172.16.10.3/24</td>
 <td style="text-align: right;"></td>
-<td>h1 -&gt; [s1,h2,s2]</td>
+<td>hr1 -&gt; [s1,hr2,s2]</td>
 </tr>
 <tr>
-<td><strong>h2</strong></td>
+<td><strong>hr2</strong></td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 <td></td>
 </tr>
 <tr>
 <td>eth1</td>
-<td style="text-align: right;">172.16.0.4/24</td>
+<td style="text-align: right;">172.16.10.4/24</td>
 <td style="text-align: right;"></td>
-<td>h2 -&gt; [h1,s1,s2]</td>
+<td>hr2 -&gt; [hr1,s1,s2]</td>
+</tr>
+<tr>
+<td><strong>hb1</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td></td>
+</tr>
+<tr>
+<td>eth1</td>
+<td style="text-align: right;">172.16.11.5/24</td>
+<td style="text-align: right;"></td>
+<td>hb1 -&gt; [s1,hb2,s2]</td>
+</tr>
+<tr>
+<td><strong>hb2</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td></td>
+</tr>
+<tr>
+<td>eth1</td>
+<td style="text-align: right;">172.16.11.6/24</td>
+<td style="text-align: right;"></td>
+<td>hb2 -&gt; [hb1,s1,s2]</td>
 </tr>
 </tbody>
 </table>
@@ -526,18 +568,7 @@ Total Mac Addresses for this criterion: 2
 <td>s1</td>
 </tr>
 </tbody>
-</table>
-<div class="footnote">
-<hr />
-<ol>
-<li id="fn:VTM">
-<p>The VNI must match across VTEPs; the local VLAN tag does not have to.&#160;<a class="footnote-backref" href="#fnref:VTM" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-<li id="fn:M1560">
-<p>Setting the IPv4 MTU on the underlay links to 1560 bytes is safer as it allows for one or two levels of VLAN tags in the encapsulated Ethernet frames.&#160;<a class="footnote-backref" href="#fnref:M1560" title="Jump back to footnote 2 in the text">&#8617;</a></p>
-</li>
-</ol>
-</div></div>
+</table></div>
             </div>
         </div>
 
