@@ -4,7 +4,6 @@ You can already get your hands dirty with the [first VXLAN labs](index.md#vxlan)
 
 ## VXLAN
 
-* Anycast gateways
 * Implementing VRF-Lite with VXLAN
 
 ## Basic EVPN Setup
