@@ -79,6 +79,10 @@
 <li>
     <a href="./" class="dropdown-item active" aria-current="page">Routing between VXLAN Segments</a>
 </li>
+                                    
+<li>
+    <a href="../4-anycast/" class="dropdown-item">Anycast Gateways on VXLAN Segments</a>
+</li>
                                 </ul>
                             </li>
                         </ul>
@@ -95,7 +99,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" class="nav-link disabled">
+                                <a rel="next" href="../4-anycast/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -358,6 +362,7 @@ PING hb2 (172.16.11.6): 56 data bytes
 round-trip min/avg/max = 2.072/3.193/5.410 ms
 </code></pre>
 <p>Use the <a href="../1-single/#tshoot">troubleshooting hints</a> from the <a href="../1-single/">Extend a Single VLAN Segment with VXLAN</a> lab exercise if needed (we expect you&rsquo;re familiar with the traditional routing between VLAN segments)</p>
+<p>Done? Continue to <a href="../4-anycast/">Anycast Gateways on VXLAN Segments</a>.</p>
 <h2 id="behind-the-scenes">Behind the Scenes</h2>
 <p>Each host uses the adjacent switch as the first-hop router. Stretching VLANs over the VXLAN segment thus results in <em>asymmetric</em> Integrated Routing and Bridging (IRB) &ndash; the router in the HB1-HR2 path differs from the router in the HR2-HB1 path.</p>
 <p><img alt="Lab topology" src="../packet-flow-irb.png" /></p>
