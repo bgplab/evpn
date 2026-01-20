@@ -22,9 +22,11 @@ vlans:
   red:
     vrf: red
     id: 101
+    prefix.ipv4: 172.17.0.0/24
   blue:
     vrf: blue
     id: 102
+    prefix.ipv4: 172.17.1.0/24
 
 nodes:
   s1:

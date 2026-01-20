@@ -51,11 +51,11 @@ You'll implement the transport between VRF instances on S1, S2, and S3 with VXLA
 
 | Node | Interface | IPv4 Address | Description |
 |------|-----------|-------------:|-------------|
-| **s1** | Vlan101 | 172.16.0.1/24 | VLAN red (101) -> [s2,s3] (VRF: red) |
-| | Vlan102 | 172.16.1.1/24 | VLAN blue (102) -> [s2] (VRF: blue) |
-| **s2** | Vlan101 | 172.16.0.2/24 | VLAN red (101) -> [s1,s3] (VRF: red) |
-| | Vlan102 | 172.16.1.2/24 | VLAN blue (102) -> [s1] (VRF: blue) |
-| **s3** | Vlan101 | 172.16.0.3/24 | VLAN red (101) -> [s1,s2] (VRF: red) |
+| **s1** | Vlan101 | 172.17.0.1/24 | VLAN red (101) -> [s2,s3] (VRF: red) |
+| | Vlan102 | 172.17.1.1/24 | VLAN blue (102) -> [s2] (VRF: blue) |
+| **s2** | Vlan101 | 172.17.0.2/24 | VLAN red (101) -> [s1,s3] (VRF: red) |
+| | Vlan102 | 172.17.1.2/24 | VLAN blue (102) -> [s1] (VRF: blue) |
+| **s3** | Vlan101 | 172.17.0.3/24 | VLAN red (101) -> [s1,s2] (VRF: red) |
 
 * Using the procedure you mastered in the [Extend a Single VLAN Segment with VXLAN](1-single.md) lab exercise, create VXLAN segments to transport transit VLAN frames between S1, S2, and S3.
 * Configure routing protocols between S1, S2, and S3 in Red and Blue VRFs. Use OSPF if you can and BGP as a potential fallback.
@@ -67,17 +67,17 @@ You'll implement the transport between VRF instances on S1, S2, and S3 with VXLA
 Using VRF Red to ping the Red VLAN interface on S2 from S1
 {.code-caption}
 ```
-s1#ping vrf red 172.16.0.2
-PING 172.16.0.2 (172.16.0.2) 72(100) bytes of data.
-80 bytes from 172.16.0.2: icmp_seq=1 ttl=64 time=2.32 ms
-80 bytes from 172.16.0.2: icmp_seq=2 ttl=64 time=1.74 ms
-80 bytes from 172.16.0.2: icmp_seq=3 ttl=64 time=1.49 ms
-80 bytes from 172.16.0.2: icmp_seq=4 ttl=64 time=1.30 ms
-80 bytes from 172.16.0.2: icmp_seq=5 ttl=64 time=1.18 ms
+s1#ping vrf red 172.17.0.2
+PING 172.17.0.2 (172.17.0.2) 72(100) bytes of data.
+80 bytes from 172.17.0.2: icmp_seq=1 ttl=64 time=1.87 ms
+80 bytes from 172.17.0.2: icmp_seq=2 ttl=64 time=1.08 ms
+80 bytes from 172.17.0.2: icmp_seq=3 ttl=64 time=0.898 ms
+80 bytes from 172.17.0.2: icmp_seq=4 ttl=64 time=1.05 ms
+80 bytes from 172.17.0.2: icmp_seq=5 ttl=64 time=1.02 ms
 
---- 172.16.0.2 ping statistics ---
+--- 172.17.0.2 ping statistics ---
 5 packets transmitted, 5 received, 0% packet loss, time 8ms
-rtt min/avg/max/mdev = 1.180/1.605/2.316/0.401 ms, ipg/ewma 2.113/1.936 ms
+rtt min/avg/max/mdev = 0.898/1.186/1.874/0.349 ms, ipg/ewma 2.002/1.518 ms
 ```
 
 !!! tip
@@ -91,9 +91,9 @@ OSPF neighbors (global and VRF) on S1
 s1#show ip ospf neighbor vrf all
 Neighbor ID     Instance VRF      Pri State                  Dead Time   Address         Interface
 10.0.0.4        1        default  1   FULL                   00:00:32    10.1.0.1        Ethernet1
-10.0.0.2        100      red      1   FULL/BDR               00:00:32    172.16.0.2      Vlan101
-10.0.0.3        100      red      1   FULL/DR                00:00:31    172.16.0.3      Vlan101
-10.0.0.2        101      blue     0   FULL                   00:00:29    172.16.1.2      Vlan102
+10.0.0.2        100      red      1   FULL/BDR               00:00:31    172.17.0.2      Vlan101
+10.0.0.3        100      red      1   FULL/DR                00:00:30    172.17.0.3      Vlan101
+10.0.0.2        101      blue     0   FULL                   00:00:31    172.17.1.2      Vlan102
 ```
 
 * Check VRF routing tables on S1, S2, and S3. Remote IP prefixes should be reachable as OSPF routes with next hops attached to the VLAN interfaces.
@@ -105,13 +105,13 @@ s1#show ip route vrf red | begin Gateway
 Gateway of last resort is not set
 
  C        172.16.0.0/24
-           directly connected, Vlan101
- C        172.16.2.0/24
            directly connected, Ethernet2
- O        172.16.3.0/24 [110/20]
-           via 172.16.0.2, Vlan101
- O        172.16.4.0/24 [110/20]
-           via 172.16.0.3, Vlan101
+ O        172.16.1.0/24 [110/20]
+           via 172.17.0.2, Vlan101
+ O        172.16.2.0/24 [110/20]
+           via 172.17.0.3, Vlan101
+ C        172.17.0.0/24
+           directly connected, Vlan101
 ```
 
 * Ping between **hr1**, **hr2**, and **hr3**
