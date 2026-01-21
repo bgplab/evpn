@@ -1,10 +1,10 @@
-# Routing between VXLAN Segments
+# Anycast Gateways on VXLAN Segments
 
-In the previous lab exercises, we extended isolated VLANs with VXLAN segments. Now, we'll add routing to the mix: the switches using VXLAN to extend VLANs will also route between them.
+In the [previous lab exercise](3-irb.md), we configured routing between VXLAN segments using a dirty hack: the hosts used the IP address of the adjacent switch as the default gateway. In this exercise, we'll fix our implementation and use the same default gateway (shared among all switches) on all hosts in a subnet.
 
 The lab topology is as simple as it was in the previous exercises: a pair of hosts per VLAN attached to two directly-connected switches:
 
-![Lab topology](topology-irb.png)
+![Lab topology](topology-anycast.png)
 
 ### Device Requirements {#req}
 
@@ -14,7 +14,7 @@ You can use any device supported by the _netlab_ [OSPF](https://netlab.tools/mod
 
 Assuming you already [set up your lab infrastructure](../1-setup.md):
 
-* Change directory to `vxlan/3-irb`
+* Change directory to `vxlan/4-anycast`
 * Execute **netlab up**
 * Log into lab devices with **netlab connect** and verify that the IP addresses and the OSPF are properly configured.
 
@@ -28,36 +28,17 @@ Assuming you already [set up your lab infrastructure](../1-setup.md):
 | red  | 100      | 172.16.10.0/24 |
 | blue | 101      | 172.16.11.0/24 |
 
-* IPv4 addresses are configured on Linux hosts, switch loopback interfaces, and the interswitch link ([details](#addr)).
-* Static routes pointing to the to-be-configured switch VLAN IP addresses are configured on the Linux hosts. Each static route points to the IP address of the adjacent switch:
+* IPv4 addresses are configured on Linux hosts, switch VLAN and loopback interfaces, and the interswitch link ([details](#addr)).
+* Static routes pointing to the to-be-configured shared default gateways are configured on the Linux hosts:
 
 | Host | IPv4 prefix   | Next hop    |
 |------|--------------:|------------:|
-| HR1  | 172.16.0.0/16 | 172.16.10.1 |
-| HR2  | 172.16.0.0/16 | 172.16.10.2 |
-| HB1  | 172.16.0.0/16 | 172.16.11.1 |
-| HB2  | 172.16.0.0/16 | 172.16.11.2 |
+| HR1  | 172.16.0.0/16 | 172.16.10.42 |
+| HR2  | 172.16.0.0/16 | 172.16.10.42 |
+| HB1  | 172.16.0.0/16 | 172.16.11.42 |
+| HB2  | 172.16.0.0/16 | 172.16.11.42 |
 
 * The switches run OSPF in area 0 across the interswitch link ([details](#ospf)).
-
-## Configure Integrated Routing
-
-You'll configure IP addresses on switch VLAN interfaces before configuring VXLAN segments:
-
-* Configure the following IP addresses on S1 and S2:
-
-| VLAN | Switch | IP address     |
-|------|--------|---------------:|
-| red  | S1     | 172.16.10.1/24 |
-|      | S2     | 172.16.10.2/24 |
-| blue | S1     | 172.16.11.1/24 | 
-|      | S2     | 172.16.11.2/24 |
-
-* Check that the local inter-VLAN routing works: HR1 should be able to reach HB1, and HR2 should be able to reach HB2
-* Verify that cross-switch VLAN connectivity does not work: HR1 cannot reach HR2, HB1 cannot reach HB2, and HR1 cannot reach HB2.
-
-!!! warning
-    Do not configure OSPF on VLAN interfaces; you'd get recursive routing (and interesting periodic black holes). Even better, create a *tenant* VRF and assign VLAN interfaces to that VRF.
 
 ## Configure VXLAN Segments
 
@@ -67,6 +48,29 @@ Using the procedure you mastered in the [Extend a Single VLAN Segment with VXLAN
 |------|------:|
 | red  | 10010 |
 | blue | 10011 |
+
+## Configure Shared Gateways
+
+The technology you can use to implement the shared VLAN gateways depends on your equipment. Almost all equipment supports at least one first-hop redundancy protocol (for example, VRRP), but some devices cannot perform active-active forwarding, resulting in a single active per-VLAN gateway. That clearly limits performance and introduces unnecessary delays, as some inter-segment traffic has to traverse the IP core to be routed.
+
+An even simpler technology available on some modern switches is the *anycast gateway*: all switches share a statically-configured IP and MAC address (while usually retaining a unique per-switch IP address).
+
+Use either VRRP or anycast gateway to configure the shared per-VLAN default gateway on all VLANs using the following IP addresses:
+
+| VLAN | Default gateway |
+|------|----------------:|
+| red  | 172.16.10.42 |
+| blue | 172.16.11.42 |
+
+!!! tip
+    You might want to read these blog posts if you're curious how anycast gateways work behind the scenes:
+    
+    * [Optimal L3 Forwarding with VARP and Active/Active VRRP](https://blog.ipspace.net/2013/05/optimal-l3-forwarding-with-varp-and/)
+    * [VRRP, Anycasts, Fabrics and Optimal Forwarding](https://blog.ipspace.net/2013/06/vrrp-anycasts-fabrics-and-optimal/)
+    * [Arista EOS Virtual ARP (VARP) Behind the Scenes](https://blog.ipspace.net/2013/06/arista-eos-virtual-arp-varp-behind/)
+    * [Duplicate ARP Replies with Anycast Gateways](https://blog.ipspace.net/2022/03/duplicate-arp-reply-anycast-gateway/)
+    
+    You'll find even more information in the ipSpace.net [Anycast Resources](https://blog.ipspace.net/series/anycast/).
 
 ## Verification
 
@@ -106,28 +110,8 @@ round-trip min/avg/max = 2.072/3.193/5.410 ms
 
 Use the [troubleshooting hints](1-single.md#tshoot) from the [Extend a Single VLAN Segment with VXLAN](1-single.md) lab exercise if needed (we expect you're familiar with the traditional routing between VLAN segments)
 
-Done? Continue to [Anycast Gateways on VXLAN Segments](4-anycast.md).
-
-## Behind the Scenes
-
-Each host uses the adjacent switch as the first-hop router. Stretching VLANs over the VXLAN segment thus results in *asymmetric* Integrated Routing and Bridging (IRB) -- the router in the HB1-HR2 path differs from the router in the HR2-HB1 path.
-
-![Lab topology](packet-flow-irb.png)
-
-The *traceroute* printout taken on HB1 and HR2 illustrates the traffic flow:
-
-```
-$ netlab connect hb1 traceroute hr2
-Connecting to container clab-irb-hb1, executing traceroute hr2
-traceroute to hr2 (172.16.10.4), 30 hops max, 46 byte packets
- 1  Vlan101.s1 (172.16.11.1)  0.694 ms  0.244 ms  0.203 ms
- 2  hr2 (172.16.10.4)  5.399 ms  1.373 ms  1.140 ms
-$ netlab connect hr2 traceroute hb1
-Connecting to container clab-irb-hr2, executing traceroute hb1
-traceroute to hb1 (172.16.11.5), 30 hops max, 46 byte packets
- 1  Vlan100.s2 (172.16.10.2)  0.756 ms  0.428 ms  0.223 ms
- 2  hb1 (172.16.11.5)  1.112 ms  0.754 ms  0.667 ms
-```
+!!! warning
+    Traceroute might not work well with anycast gateways. For example, Arista EOS containers do not reply with an ICMP error message when the TTL of an IP packet sent to the anycast MAC address reaches zero.
 
 ## Cheating
 
@@ -155,10 +139,14 @@ traceroute to hb1 (172.16.11.5), 30 hops max, 46 byte packets
 | Ethernet1 | 10.1.0.1/30 |  | s1 -> s2 |
 | Ethernet2 |  |  | [Access VLAN red] s1 -> hr1 |
 | Ethernet3 |  |  | [Access VLAN blue] s1 -> hb1 |
+| Vlan100 | 172.16.10.1/24 |  | VLAN red (100) -> [hr1,hr2,s2] |
+| Vlan101 | 172.16.11.1/24 |  | VLAN blue (101) -> [hb1,hb2,s2] |
 | **s2** |  10.0.0.2/32 |  | Loopback |
 | Ethernet1 | 10.1.0.2/30 |  | s2 -> s1 |
 | Ethernet2 |  |  | [Access VLAN red] s2 -> hr2 |
 | Ethernet3 |  |  | [Access VLAN blue] s2 -> hb2 |
+| Vlan100 | 172.16.10.2/24 |  | VLAN red (100) -> [hr1,s1,hr2] |
+| Vlan101 | 172.16.11.2/24 |  | VLAN blue (101) -> [hb1,s1,hb2] |
 | **hr1** |
 | eth1 | 172.16.10.3/24 |  | hr1 -> [s1,hr2,s2] |
 | **hr2** |

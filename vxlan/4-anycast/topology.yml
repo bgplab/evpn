@@ -1,0 +1,57 @@
+# Anycast Gateways on VXLAN Segments
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+
+version: 25.10
+_include: [ validate.yml ]
+plugin: [ check_validate ]
+
+module: [ vlan, ospf ]
+
+groups:
+  switches:
+    members: [ s1, s2 ]
+  hosts:
+    module: [ routing ]
+    members: [ hr1, hr2, hb1, hb2 ]
+    device: linux
+
+vlans:
+  red:
+    prefix.ipv4: 172.16.10.0/24
+    id: 100
+    mode: irb
+    links: [ hr1-s1, hr2-s2 ]
+    ospf: False
+  blue:
+    prefix.ipv4: 172.16.11.0/24
+    id: 101
+    mode: irb
+    links: [ hb1-s1, hb2-s2 ]
+    ospf: False
+
+nodes:
+  s1:
+  s2:
+  hr1:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.10.42
+  hr2:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.10.42
+  hb1:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.11.42
+  hb2:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.11.42
+
+links: [ s1-s2 ]
+
+message: |
+  The "Anycast Gateways on VXLAN Segments" lab is ready.
+  Use "netlab connect" to connect to lab devices.

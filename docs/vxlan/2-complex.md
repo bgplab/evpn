@@ -69,6 +69,8 @@ Configure only the remote VTEPs participating in a VXLAN segment in the per-VNI 
 
 Use the [troubleshooting hints](1-single.md#tshoot) from the previous lab exercise if you can't establish end-to-end connectivity.
 
+Done? Continue to [Routing between VXLAN Segments](3-irb.md).
+
 ## Cheating
 
 * Shut down your lab with the **netlab down** command
