@@ -85,6 +85,15 @@
 </li>
                                 </ul>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">EVPN</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="evpn/1-bridging/" class="dropdown-item">Build an EVPN-based MAC-VRF instance</a>
+</li>
+                                </ul>
+                            </li>
                         </ul>
 
                     <ul class="nav navbar-nav ms-md-auto">
@@ -133,6 +142,10 @@
         <ul class="nav flex-column">
         </ul>
       </li>
+      <li class="nav-item" data-level="2"><a href="#evpn" class="nav-link">Configure EVPN</a>
+        <ul class="nav flex-column">
+        </ul>
+      </li>
         </ul>
       </li>
       </ul>
@@ -164,8 +177,20 @@
 <li><a href="vxlan/3-irb/">Routing between VXLAN segments</a></li>
 <li><a href="vxlan/4-anycast/">Anycast gateways on VXLAN segments</a></li>
 <li>Implementing VRF-Lite with VXLAN (coming soon)</li>
+<li>Running VXLAN over an IPv6-only underlay network</li>
 </ul>
-<p>The project has <a href="99-about/">just started</a>; expect to see <a href="3-upcoming/">more labs</a> in 2026.</p>
+<h2 id="evpn">Configure EVPN</h2>
+<p>After mastering the basics of using VXLAN to stretch Ethernet segments across an IP network, you&rsquo;ll add EVPN control plane to a VXLAN setup:</p>
+<ul>
+<li><a href="evpn/1-bridging/">Build an EVPN-based MAC-VRF instance</a></li>
+<li>Integrated Routing and Bridging with EVPN MAC-VRF instances (coming soon)</li>
+<li>Symmetric IRB with IP-VRF EVPN instances (coming soon)</li>
+<li>Anycast gateways in an EVPN environment</li>
+<li>Implementing L3VPN with EVPN and VXLAN</li>
+<li>Intra-subnet routing with proxy ARP</li>
+<li>Using EVPN in an IPv6-only underlay network</li>
+</ul>
+<p>The project has <a href="99-about/">started in late 2025</a>; expect to see <a href="3-upcoming/">more labs</a> in 2026.</p>
 <div class="footnote">
 <hr />
 <ol>
