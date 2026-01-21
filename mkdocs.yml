@@ -27,6 +27,8 @@ nav:
   - vxlan/3-irb.md
   - vxlan/4-anycast.md
   - vxlan/5-vrf-lite.md
+- "EVPN":
+  - evpn/1-bridging.md
 
 markdown_extensions:
 - footnotes

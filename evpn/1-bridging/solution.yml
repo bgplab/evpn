@@ -1,0 +1,30 @@
+# Build an EVPN-based MAC-VRF instance
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+
+version: 25.10
+#_include: [ validate.yml ]
+
+groups:
+  _auto_create: True
+  switches:
+    members: [ s1, s2 ]
+  hosts:
+    members: [ h1, h2 ]
+    device: linux
+
+module: [ vlan, ospf, bgp, vxlan, evpn ]
+bgp.as: 65000
+
+vlans:
+  tenant:
+    id: 100
+    mode: bridge
+    links: [ h1-s1, h2-s2 ]
+
+links: [ s1-s2 ]
+
+message: |
+  The "Build an EVPN-based MAC-VRF instance" lab is ready.
+
+  Use "netlab connect" to connect to lab devices.

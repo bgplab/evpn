@@ -4,7 +4,6 @@ You can already get your hands dirty with the [first VXLAN labs](index.md#vxlan)
 
 ## Basic EVPN Setup
 
-* Simple layer-2 VXLAN-based segment
 * Multiple VXLAN-based segments
 * Routing between EVPN-controlled VXLAN segments
 * Asymmetric routing and bridging
