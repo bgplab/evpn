@@ -26,5 +26,18 @@ In these labs, you'll learn how to configure VXLAN with static ingress replicati
 * [Routing between VXLAN segments](vxlan/3-irb.md)
 * [Anycast gateways on VXLAN segments](vxlan/4-anycast.md)
 * Implementing VRF-Lite with VXLAN (coming soon)
+* Running VXLAN over an IPv6-only underlay network
 
-The project has [just started](99-about.md); expect to see [more labs](3-upcoming.md) in 2026.
+## Configure EVPN {#evpn}
+
+After mastering the basics of using VXLAN to stretch Ethernet segments across an IP network, you'll add EVPN control plane to a VXLAN setup:
+
+* [Build an EVPN-based MAC-VRF instance](evpn/1-bridging.md)
+* Integrated Routing and Bridging with EVPN MAC-VRF instances (coming soon)
+* Symmetric IRB with IP-VRF EVPN instances (coming soon)
+* Anycast gateways in an EVPN environment
+* Implementing L3VPN with EVPN and VXLAN
+* Intra-subnet routing with proxy ARP
+* Using EVPN in an IPv6-only underlay network
+
+The project has [started in late 2025](99-about.md); expect to see [more labs](3-upcoming.md) in 2026.
