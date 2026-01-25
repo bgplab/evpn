@@ -83,6 +83,10 @@
 <li>
     <a href="../vxlan/4-anycast/" class="dropdown-item">Anycast Gateways on VXLAN Segments</a>
 </li>
+                                    
+<li>
+    <a href="../vxlan/5-vrf-lite/" class="dropdown-item">Implement VRF-Lite with VXLAN</a>
+</li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
@@ -180,11 +184,12 @@
 <p>You can run Arista EOS in all <a href="https://netlab.tools/providers/"><em>netlab</em>-supported virtualization environments</a> (libvirt virtual machines or Docker containers), and if you want to start practicing VXLAN and EVPN with minimum hassle, consider using Arista EOS for all lab devices. While most network devices require an x86 CPU, you can run Arista cEOS or Nokia SR Linux containers on <a href="https://blog.ipspace.net/2024/03/netlab-bgp-apple-silicon.html">MacBooks with Apple silicon</a>.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>If you plan to run the labs in <a href="../4-codespaces/">free GitHub Codespaces</a>, you MUST use container-based network devices like Arista cEOS or Nokia SR Linux. Furthermore, the device cannot rely on the Linux VXLAN kernel module (FRRouting and VyOS do).</p>
+<p>If you plan to run the labs in <a href="../4-codespaces/">free GitHub Codespaces</a>, you MUST use container-based network devices, such as Arista cEOS or Nokia SR Linux. Furthermore, the device cannot rely on the Linux VXLAN kernel module (FRRouting and VyOS do).</p>
 </div>
 <h2 id="extradev">Select the Additional Devices in Your Lab</h2>
-<p>Some labs use additional switches &ndash; preconfigured devices with which your switches exchange EVPN routes. You won&rsquo;t configure those devices, but you might have to log into them and execute <strong>show</strong> commands.</p>
-<p>The default setup uses Arista EOS for additional switches; we also generated all the <strong>show</strong> printouts with Arista EOS. Alternatively, you can use any other device for which we implemented basic <a href="https://netlab.tools/module/vxlan/#platform-support">VXLAN</a> and <a href="https://netlab.tools/module/evpn/#platform-support">EVPN</a> functionality. Additional limitations (should they exist) are listed under the <em>Device Requirements</em> section of individual lab exercises.</p>
+<p>Some labs use additional switches &ndash; preconfigured devices with which your switches exchange EVPN routes. You won&rsquo;t configure those devices, but you might need to log into them and execute <strong>show</strong> commands.</p>
+<p>The default setup uses Arista EOS on the lab switches and FRRouting on the external/core routers. All the <strong>show</strong> printouts were generated with Arista EOS.</p>
+<p>You can use any other device for which we implemented the basic <a href="https://netlab.tools/module/vxlan/#platform-support">VXLAN</a> and <a href="https://netlab.tools/module/evpn/#platform-support">EVPN</a> functionality as the lab switches. Additional limitations (if any) are listed under the <em>Device Requirements</em> section of each lab exercise.</p>
 <h2 id="select-the-virtualization-environment">Select the Virtualization Environment</h2>
 <p>Now that you know which network device to use, check <a href="https://netlab.tools/platforms/#supported-virtualization-providers">which virtualization environment</a> you can use. Running VXLAN/EVPN labs in a <a href="../4-codespaces/">free GitHub Codespace</a> is an excellent starting point, but if you decide to build your own infrastructure, <em>containerlab</em> is easier to set up than <em>libvirt</em>.</p>
 <p>If you want to run the labs on your laptop (including <a href="https://blog.ipspace.net/2024/03/netlab-bgp-apple-silicon/">Macs with Apple silicon</a>), create a <a href="https://netlab.tools/install/ubuntu-vm/">Ubuntu VM</a> to run <em>netlab</em>. You could also run them in a VM in a private or public cloud or invest in a tiny brick of densely packed silicon (<a href="https://www.minisforum.com/">example</a>).</p>
@@ -216,9 +221,10 @@
 <li>Change the directory to the top directory of the cloned repository<sup id="fnref:BLB"><a class="footnote-ref" href="#fn:BLB">2</a></sup>.</li>
 <li>Verify the current project defaults with the <code>netlab defaults --project</code> command:</li>
 </ul>
-<pre><code>$ netlab defaults --project
-device = eos (project)
-groups.external.device = eos (project)
+<pre><code>device = eos (project)
+groups.external.device = frr (project)
+groups.hosts.device = linux (project)
+paths.plugin = ['topology:.', 'topology:../../plugin', 'package:extra'] (project)
 provider = clab (project)
 </code></pre>
 <ul>
@@ -233,6 +239,17 @@ $ netlab defaults --project provider=libvirt
 The default setting provider is already set in netlab,project defaults
 Do you want to change that setting in project defaults [y/n]: y
 provider set to libvirt in /home/user/evpn/defaults.yml
+</code></pre>
+<ul>
+<li>A few labs have core- or external routers. The default lab setup uses FRRouting containers or virtual machines on these routers. If you want to use some other device, change that default:</li>
+</ul>
+<pre><code class="language-shell">$ netlab defaults --project groups.external.device=_your_device_
+</code></pre>
+<ul>
+<li>Even if you run your devices as virtual machines, you might still want to run the attached hosts or external/core routers as containers to minimize the memory utilization. After installing Docker and containerlab with <strong>netlab install containerlab</strong>, set the <strong>provider</strong> parameter for the <strong>hosts</strong> and <strong>external</strong> groups to <strong>clab</strong>:</li>
+</ul>
+<pre><code class="language-shell">$ netlab defaults --project groups.hosts.provider=clab
+$ netlab defaults --project groups.external.provider=clab
 </code></pre>
 <ul>
 <li>In a terminal window, change the current directory to one of the lab directories (for example, <code>basic/1-single</code>), and execute <strong>netlab up</strong>.</li>
