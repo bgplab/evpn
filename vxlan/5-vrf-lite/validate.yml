@@ -1,0 +1,28 @@
+session:
+  description: Check OSPF session between S1 and S2
+  fail: There is no OSPF session between S1 and S2
+  devices: [ frr, eos ]
+  nodes: [ s1 ]
+  plugin: ospf_neighbor(nodes.s2.ospf.router_id)
+  stop_on_error: True
+
+ping_red:
+  description: Check connectivity within red VLAN
+  pass: Red hosts can reach each other
+  fail: Red VLAN is broken
+  nodes: [ hr1 ]
+  plugin: ping('hr2')
+
+ping_blue:
+  description: Check connectivity within blue VLAN
+  pass: Blue hosts can reach each other
+  fail: Blue VLAN is broken
+  nodes: [ hb1 ]
+  plugin: ping('hb2')
+
+ping_irb:
+  description: Check inter-VLAN connectivity
+  pass: A red host can reach a blue host across VXLAN
+  fail: Inter-segment routing is broken
+  nodes: [ hr1 ]
+  plugin: ping('hb2')

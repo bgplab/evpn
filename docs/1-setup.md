@@ -15,13 +15,15 @@ While I usually recommend FRRouting as the simplest-to-deploy network device, FR
 You can run Arista EOS in all [_netlab_-supported virtualization environments](https://netlab.tools/providers/) (libvirt virtual machines or Docker containers), and if you want to start practicing VXLAN and EVPN with minimum hassle, consider using Arista EOS for all lab devices. While most network devices require an x86 CPU, you can run Arista cEOS or Nokia SR Linux containers on [MacBooks with Apple silicon](https://blog.ipspace.net/2024/03/netlab-bgp-apple-silicon.html).
 
 !!! tip
-    If you plan to run the labs in [free GitHub Codespaces](4-codespaces.md), you MUST use container-based network devices like Arista cEOS or Nokia SR Linux. Furthermore, the device cannot rely on the Linux VXLAN kernel module (FRRouting and VyOS do).
+    If you plan to run the labs in [free GitHub Codespaces](4-codespaces.md), you MUST use container-based network devices, such as Arista cEOS or Nokia SR Linux. Furthermore, the device cannot rely on the Linux VXLAN kernel module (FRRouting and VyOS do).
 
 ## Select the Additional Devices in Your Lab {#extradev}
 
-Some labs use additional switches -- preconfigured devices with which your switches exchange EVPN routes. You won't configure those devices, but you might have to log into them and execute **show** commands.
+Some labs use additional switches -- preconfigured devices with which your switches exchange EVPN routes. You won't configure those devices, but you might need to log into them and execute **show** commands.
 
-The default setup uses Arista EOS for additional switches; we also generated all the **show** printouts with Arista EOS. Alternatively, you can use any other device for which we implemented basic [VXLAN](https://netlab.tools/module/vxlan/#platform-support) and [EVPN](https://netlab.tools/module/evpn/#platform-support) functionality. Additional limitations (should they exist) are listed under the *Device Requirements* section of individual lab exercises.
+The default setup uses Arista EOS on the lab switches and FRRouting on the external/core routers. All the **show** printouts were generated with Arista EOS.
+
+You can use any other device for which we implemented the basic [VXLAN](https://netlab.tools/module/vxlan/#platform-support) and [EVPN](https://netlab.tools/module/evpn/#platform-support) functionality as the lab switches. Additional limitations (if any) are listed under the *Device Requirements* section of each lab exercise.
 
 ## Select the Virtualization Environment
 
@@ -64,9 +66,10 @@ After you get a local copy of the repository:
 * Verify the current project defaults with the `netlab defaults --project` command:
 
 ```
-$ netlab defaults --project
 device = eos (project)
-groups.external.device = eos (project)
+groups.external.device = frr (project)
+groups.hosts.device = linux (project)
+paths.plugin = ['topology:.', 'topology:../../plugin', 'package:extra'] (project)
 provider = clab (project)
 ```
 
@@ -87,6 +90,19 @@ provider set to libvirt in /home/user/evpn/defaults.yml
 ```
 
 [^NXOS]: Assuming you built the [Nexus OS Vagrant box](https://netlab.tools/labs/nxos/) first
+
+* A few labs have core- or external routers. The default lab setup uses FRRouting containers or virtual machines on these routers. If you want to use some other device, change that default:
+
+```shell
+$ netlab defaults --project groups.external.device=_your_device_
+```
+
+* Even if you run your devices as virtual machines, you might still want to run the attached hosts or external/core routers as containers to minimize the memory utilization. After installing Docker and containerlab with **netlab install containerlab**, set the **provider** parameter for the **hosts** and **external** groups to **clab**:
+
+```shell
+$ netlab defaults --project groups.hosts.provider=clab
+$ netlab defaults --project groups.external.provider=clab
+```
 
 * In a terminal window, change the current directory to one of the lab directories (for example, `basic/1-single`), and execute **netlab up**.
 * Wait for the lab to start and use **netlab connect** to connect to individual lab devices

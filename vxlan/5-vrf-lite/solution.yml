@@ -1,0 +1,53 @@
+# Implement VRF-Lite with VXLAN
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+
+version: 25.10
+#_include: [ validate.yml ]
+plugin: [ check_validate ]
+
+module: [ vlan, vrf, ospf, vxlan ]
+
+groups:
+  _auto_create: True
+  switches:
+    members: [ s1, s2, s3 ]
+  external:
+    members: [ core ]
+    module: [ ospf ]
+  hosts:
+    members: [ hr1, hr2, hr3, hb1, hb2 ]
+
+vlans:
+  red:
+    vrf: red
+    id: 101
+    prefix.ipv4: 172.17.0.0/24
+  blue:
+    vrf: blue
+    id: 102
+    prefix.ipv4: 172.17.1.0/24
+
+nodes:
+  s1:
+    vlans:
+      red:
+      blue:
+  s2:
+    vlans:
+      red:
+      blue:
+  s3:
+    vlans:
+      red:
+vrfs:
+  red:
+    links: [ hr1-s1, hr2-s2, hr3-s3 ]
+  blue:
+    links: [ hb1-s1, hb2-s2 ]
+
+links: [ s1-core, s2-core, s3-core ]
+
+message: |
+  The solution for the "Implement VRF-Lite with VXLAN" lab is ready.
+  Use "netlab connect" to connect to lab devices.

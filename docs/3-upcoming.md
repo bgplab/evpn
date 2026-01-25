@@ -2,10 +2,6 @@
 
 You can already get your hands dirty with the [first VXLAN labs](index.md#vxlan) labs while we keep working on these ideas:
 
-## VXLAN
-
-* Implementing VRF-Lite with VXLAN
-
 ## Basic EVPN Setup
 
 * Multiple VXLAN-based segments
