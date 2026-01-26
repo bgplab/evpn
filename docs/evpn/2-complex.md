@@ -72,7 +72,7 @@ If you feel adventurous, use a different VNI for the *red* MAC-VRF on every swit
 |------|-----:|
 | S1 | 1201 |
 | S2 | 1202 |
-| S2 | 1203 |
+| S3 | 1203 |
 
 !!! warning
     * Some platforms (for example, Arista cEOS) do not support multiple VNIs per MAC-VRF

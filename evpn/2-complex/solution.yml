@@ -36,31 +36,31 @@ nodes:
       red:
         mode: bridge
         id: 201
-        vni: 1200
-        evpn.evi: 200
+        vni: 1000
+        evpn.evi: 100
         prefix: red
-        evpn.export: [ 65000:200 ]
-        evpn.import: [ 65000:200 ]
+        evpn.export: [ 65000:100 ]
+        evpn.import: [ 65000:100 ]
   s2:
     vlans:
       red:
         mode: bridge
         id: 202
-        vni: 1200
+        vni: 1000
         prefix: red
-        evpn.evi: 200
-        evpn.export: [ 65000:200 ]
-        evpn.import: [ 65000:200 ]
+        evpn.evi: 100
+        evpn.export: [ 65000:100 ]
+        evpn.import: [ 65000:100 ]
   s3:
     vlans:
       red:
         mode: bridge
         id: 203
-        vni: 1200
-        evpn.evi: 200
+        vni: 1000
+        evpn.evi: 100
         prefix: red
-        evpn.export: [ 65000:200 ]
-        evpn.import: [ 65000:200 ]
+        evpn.export: [ 65000:100 ]
+        evpn.import: [ 65000:100 ]
 
 links:
 - s1-s2
