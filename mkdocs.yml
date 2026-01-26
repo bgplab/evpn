@@ -29,6 +29,8 @@ nav:
   - vxlan/5-vrf-lite.md
 - "EVPN":
   - evpn/1-bridging.md
+- "Designs":
+  - "EBGP-Only EVPN": design/2-ebgp.md
 
 markdown_extensions:
 - footnotes

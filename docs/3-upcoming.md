@@ -10,12 +10,6 @@ You can already get your hands dirty with the [first VXLAN labs](index.md#vxlan)
 * Symmetric routing and bridging with transit VNI
 * Anycast gateways
 
-## EVPN Designs
-
-* IBGP with OSPF
-* EBGP-only design
-* Multi-pod EVPN design
-
 ## Complex Scenarios
 
 * Using EVPN to implement L3VPN service
