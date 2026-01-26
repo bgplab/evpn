@@ -29,6 +29,7 @@ nav:
   - vxlan/5-vrf-lite.md
 - "EVPN":
   - evpn/1-bridging.md
+  - evpn/2-complex.md
 
 markdown_extensions:
 - footnotes
