@@ -23,7 +23,7 @@ Assuming you already [set up your lab infrastructure](../1-setup.md):
 
 ## Existing Device Configuration
 
-* The switches in your lab (S1, S2, and S3) are preconfigured with *red* VLAN using VLAN tag 100 and VXLAN VNI 1000.
+* The switches in your lab (l1, l2, spine) are preconfigured with *tenant* VLAN using VLAN tag 100 and VXLAN VNI 1000.
 * IPv4 addresses are configured on Linux hosts, switch loopback interfaces, and the interswitch link ([details](#addr)).
 * The switches have EBGP sessions on directly-connected interfaces ([details](#bgp)). These sessions are configured to exchange IPv4 prefixes.
 
@@ -31,8 +31,8 @@ Assuming you already [set up your lab infrastructure](../1-setup.md):
 
 Using the procedures you mastered in the [Extend a Single VLAN Segment with VXLAN](../vxlan/1-single.md) lab exercise:
 
-* Configure VXLAN VTEP on L1 and L2. The Core device is not running VXLAN.
-* Configure MAC-VRF for the *red* VLAN on L1 and L2. The Core device is an IPv4 router and is not involved in VLAN/VXLAN forwarding.
+* Configure VXLAN VTEP on L1 and L2. The Spine device is not running VXLAN.
+* Configure MAC-VRF for the *tenant* VLAN on L1 and L2. The Spine device is an IPv4 router and is not involved in VLAN/VXLAN forwarding.
 
 !!! warning
     You must use the same EVPN route targets on L1 and L2 even though they're in different autonomous systems.
@@ -64,7 +64,7 @@ However, you'll most likely encounter errors in the EVPN-over-EBGP configuration
 
 * Shut down your lab with the **netlab down** command
 * Start the lab from the `solution.yml` topology with the **netlab up solution.yml** command
-* Explore the S1/S2 device configuration
+* Explore the L1/L2/Spine device configuration
 
 ## Reference Information
 
