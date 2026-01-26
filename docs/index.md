@@ -38,8 +38,15 @@ After mastering the basics of using VXLAN to stretch Ethernet segments across an
 * Symmetric IRB with IP-VRF EVPN instances (coming soon)
 * Anycast gateways in an EVPN environment
 * Implementing L3VPN with EVPN and VXLAN
-* Intra-subnet routing with proxy ARP
+* Intra-subnet symmetric routing with proxy ARP
 * Using EVPN in an IPv6-only underlay network
+
+## Complex EVPN Services {#services}
+
+Got fluent with the EVPN control plane? Try out more complex EVPN-based services:
+
+* [Private VLANs](services/1-pvlan.md)
+* Layer-3 VPNs using EVPN control plane
 
 ## EVPN Designs {#design}
 
