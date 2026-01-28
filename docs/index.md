@@ -15,7 +15,7 @@ This series of VXLAN/EVPN hands-on labs will help you master numerous aspects of
 
 [^PC]: Some assembly required: while some virtual machines or containers are easy to download, you'll have to build a Vagrant box or install a vendor-supplied Vagrant box or Docker container image for most other platforms. See [installation and setup](1-setup.md) for details.
 
-A few labs are already waiting for you (with more [coming soon](3-upcoming.md)), but if this is your first visit to this site, you should start with the [Installation and Setup](1-setup.md) documentation or [run VXLAN/EVPN labs in GitHub codespaces](4-codespaces.md).
+Several labs are already waiting for you (with more [coming soon](3-upcoming.md)), but if this is your first visit to this site, you should start with the [Installation and Setup](1-setup.md) documentation or [run VXLAN/EVPN labs in GitHub codespaces](4-codespaces.md).
 
 ## Configure VXLAN {#vxlan}
 
@@ -41,4 +41,10 @@ After mastering the basics of using VXLAN to stretch Ethernet segments across an
 * Intra-subnet routing with proxy ARP
 * Using EVPN in an IPv6-only underlay network
 
-The project has [started in late 2025](99-about.md); expect to see [more labs](3-upcoming.md) in 2026.
+## EVPN Designs {#design}
+
+EVPN was designed for use with IBGP sessions, with BGP next hops resolved via an IGP (usually OSPF or IS-IS). Today, you can see a plethora of alternative designs, including:
+
+* Using Route Reflectors to Scale EVPN Fabrics (coming soon)
+* [EBGP-only EVPN](design/2-ebgp.md)
+* Multi-pod EVPN (coming soon)

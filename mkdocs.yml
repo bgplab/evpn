@@ -30,6 +30,8 @@ nav:
 - "EVPN":
   - evpn/1-bridging.md
   - evpn/2-complex.md
+- "Designs":
+  - "EBGP-Only EVPN": design/2-ebgp.md
 
 markdown_extensions:
 - footnotes

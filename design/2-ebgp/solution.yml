@@ -1,0 +1,46 @@
+# EBGP-only EVPN
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+
+version: 25.10
+#_include: [ validate.yml ]
+
+groups:
+  _auto_create: True
+  switches:
+    members: [ l1, l2, spine ]
+  hosts:
+    members: [ h1, h2 ]
+    device: linux
+
+module: [ vlan, bgp, vxlan, evpn ]
+
+bgp.community.ebgp: [ standard, extended ]
+
+evpn:
+  as: 65000
+  session: [ ebgp ]
+
+vlans:
+  tenant:
+    id: 100
+    vni: 1000
+    mode: bridge
+    links: [ h1-l1, h2-l2 ]
+
+nodes:
+  spine.bgp.as: 65000
+  l1.bgp.as: 65101
+  l2.bgp.as: 65102
+
+links:
+- group: core
+  mtu: 1550
+  members:
+  - l1-spine
+  - l2-spine
+
+message: |
+  The "EBGP-only EVPN" lab is ready.
+
+  Use "netlab connect" to connect to lab devices.
