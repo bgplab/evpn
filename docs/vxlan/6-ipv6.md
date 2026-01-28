@@ -14,7 +14,7 @@ Assuming you already [set up your lab infrastructure](../1-setup.md):
 
 * Change directory to `vxlan/6-ipv6`
 * Execute **netlab up**
-* Log into lab devices with **netlab connect** and verify that the IP addresses and the OSPFv3 are properly configured.
+* Log into lab devices with **netlab connect** and verify that the IP addresses and the OSPFv3 routing are properly configured.
 
 ## Existing Device Configuration
 

@@ -29,7 +29,7 @@ vlans:
     id: 100
     mode: bridge
     links: [ s1-h1, s2-h2, s3-h3 ]
-    prefix: blue
+    prefix: red
 
 links:
 - s1-s2
