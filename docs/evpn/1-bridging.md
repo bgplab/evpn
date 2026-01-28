@@ -76,6 +76,8 @@ PING h2 (172.16.0.4): 56 data bytes
 round-trip min/avg/max = 2.048/3.660/5.273 ms
 ```
 
+Done? Let's do a [slightly more complex scenario](2-complex.md).
+
 ## Troubleshooting {#tshoot}
 
 Use these troubleshooting steps if the Linux hosts can't communicate over the stretched VLAN segment:
@@ -196,6 +198,8 @@ BGP routing table entry for mac-ip aac1.ab47.43b2, Route Distinguisher: 10.0.0.2
 ```
 
 If everything else fails, read the [Arista EOS VXLAN-EVPN Troubleshooting Guidebook](https://arista.my.site.com/AristaCommunity/s/article/VxLAN-EVPN-Troubleshooting-Guidebook) or the corresponding documentation for your platform.
+
+Got it to work? Let's do a [slightly more complex scenario](2-complex.md).
 
 ## Cheating
 

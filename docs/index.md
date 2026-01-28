@@ -33,6 +33,7 @@ In these labs, you'll learn how to configure VXLAN with static ingress replicati
 After mastering the basics of using VXLAN to stretch Ethernet segments across an IP network, you'll add EVPN control plane to a VXLAN setup:
 
 * [Build an EVPN-based MAC-VRF instance](evpn/1-bridging.md)
+* [More Complex EVPN/VXLAN Bridging Scenario](evpn/2-complex.md)
 * Integrated Routing and Bridging with EVPN MAC-VRF instances (coming soon)
 * Symmetric IRB with IP-VRF EVPN instances (coming soon)
 * Anycast gateways in an EVPN environment
