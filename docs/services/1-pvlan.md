@@ -42,7 +42,7 @@ The default lab topology (`topology.yml`) configures a simple EVPN MAC-VRF. Star
 Change the route targets used in the *red* MAC-VRF as follows:
 
 * The MAC-VRFs with private ports should have export route target 65000:200 (private MACs) and import route target 65000:201 (uplink MACs).
-* The MAC-VRFs with uplink ports should have export route target 65000:201 (uplink MACs) and two import route targets: 65000:201 (uplink MACs) and 65000:20 (private MACs).
+* The MAC-VRFs with uplink ports should have export route target 65000:201 (uplink MACs) and two import route targets: 65000:201 (uplink MACs) and 65000:200 (private MACs).
 
 !!! warning
     Some devices (for example, Arista cEOS) do not support multiple import/export route targets per MAC-VRF. In that case, configure just the *private MACs* route target as the import route target in the uplink MAC-VRF; devices connected to the *uplink* ports will be able to reach the devices connected to the *private* ports, but not those connected to other *uplink* ports.
