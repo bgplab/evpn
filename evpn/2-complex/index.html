@@ -6,9 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="author" content="Ivan Pepelnjak, ipSpace.net AG">
-        <link rel="canonical" href="https://evpn.bgplabs.net/vxlan/3-irb/">
+        <link rel="canonical" href="https://evpn.bgplabs.net/evpn/2-complex/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>Routing between VXLAN Segments &#171; VXLAN and EVPN Labs</title>
+  <title>More Complex EVPN/VXLAN Bridging Scenario &#171; VXLAN and EVPN Labs</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/fontawesome.min.css" rel="stylesheet">
         <link href="../../css/brands.min.css" rel="stylesheet">
@@ -65,40 +65,40 @@
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">VXLAN</a>
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">VXLAN</a>
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="../1-single/" class="dropdown-item">Extend a Single VLAN Segment with VXLAN</a>
+    <a href="../../vxlan/1-single/" class="dropdown-item">Extend a Single VLAN Segment with VXLAN</a>
 </li>
                                     
 <li>
-    <a href="../2-complex/" class="dropdown-item">More Complex VXLAN Deployment Scenario</a>
+    <a href="../../vxlan/2-complex/" class="dropdown-item">More Complex VXLAN Deployment Scenario</a>
 </li>
                                     
 <li>
-    <a href="./" class="dropdown-item active" aria-current="page">Routing between VXLAN Segments</a>
+    <a href="../../vxlan/3-irb/" class="dropdown-item">Routing between VXLAN Segments</a>
 </li>
                                     
 <li>
-    <a href="../4-anycast/" class="dropdown-item">Anycast Gateways on VXLAN Segments</a>
+    <a href="../../vxlan/4-anycast/" class="dropdown-item">Anycast Gateways on VXLAN Segments</a>
 </li>
                                     
 <li>
-    <a href="../5-vrf-lite/" class="dropdown-item">Implement VRF-Lite with VXLAN</a>
+    <a href="../../vxlan/5-vrf-lite/" class="dropdown-item">Implement VRF-Lite with VXLAN</a>
 </li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">EVPN</a>
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">EVPN</a>
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="../../evpn/1-bridging/" class="dropdown-item">Build an EVPN-based MAC-VRF instance</a>
+    <a href="../1-bridging/" class="dropdown-item">Build an EVPN-based MAC-VRF instance</a>
 </li>
                                     
 <li>
-    <a href="../../evpn/2-complex/" class="dropdown-item">More Complex EVPN/VXLAN Bridging Scenario</a>
+    <a href="./" class="dropdown-item active" aria-current="page">More Complex EVPN/VXLAN Bridging Scenario</a>
 </li>
                                 </ul>
                             </li>
@@ -120,12 +120,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../2-complex/" class="nav-link">
+                                <a rel="prev" href="../1-bridging/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../4-anycast/" class="nav-link">
+                                <a rel="next" href="../../design/2-ebgp/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -153,7 +153,7 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary"  style="margin-bottom: 1em;">
       <ul class="nav flex-column">
           
-      <li class="nav-item" data-level="1"><a href="#routing-between-vxlan-segments" class="nav-link">Routing between VXLAN Segments</a>
+      <li class="nav-item" data-level="1"><a href="#more-complex-evpnvxlan-bridging-scenario" class="nav-link">More Complex EVPN/VXLAN Bridging Scenario</a>
         <ul class="nav flex-column">
       <li class="nav-item" data-level="3"><a href="#req" class="nav-link">Device Requirements</a>
         <ul class="nav flex-column">
@@ -167,19 +167,11 @@
         <ul class="nav flex-column">
         </ul>
       </li>
-      <li class="nav-item" data-level="2"><a href="#configure-integrated-routing" class="nav-link">Configure Integrated Routing</a>
-        <ul class="nav flex-column">
-        </ul>
-      </li>
-      <li class="nav-item" data-level="2"><a href="#configure-vxlan-segments" class="nav-link">Configure VXLAN Segments</a>
+      <li class="nav-item" data-level="2"><a href="#configuration-tasks" class="nav-link">Configuration Tasks</a>
         <ul class="nav flex-column">
         </ul>
       </li>
       <li class="nav-item" data-level="2"><a href="#verification" class="nav-link">Verification</a>
-        <ul class="nav flex-column">
-        </ul>
-      </li>
-      <li class="nav-item" data-level="2"><a href="#behind-the-scenes" class="nav-link">Behind the Scenes</a>
         <ul class="nav flex-column">
         </ul>
       </li>
@@ -201,6 +193,10 @@
         <ul class="nav flex-column">
         </ul>
       </li>
+      <li class="nav-item" data-level="3"><a href="#bgp" class="nav-link">IBGP sessions</a>
+        <ul class="nav flex-column">
+        </ul>
+      </li>
         </ul>
       </li>
         </ul>
@@ -214,129 +210,87 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="routing-between-vxlan-segments">Routing between VXLAN Segments</h1>
-<p>In the previous lab exercises, we extended isolated VLANs with VXLAN segments. Now, we&rsquo;ll add routing to the mix: the switches using VXLAN to extend VLANs will also route between them.</p>
-<p>The lab topology is as simple as it was in the previous exercises: a pair of hosts per VLAN attached to two directly-connected switches:</p>
-<p><img alt="Lab topology" src="../topology-irb.png" /></p>
+<h1 id="more-complex-evpnvxlan-bridging-scenario">More Complex EVPN/VXLAN Bridging Scenario</h1>
+<p>After finishing the <a href="../1-bridging/">Build an EVPN-based MAC-VRF instance</a> lab exercise, let&rsquo;s do a slightly more complex scenario:</p>
+<ul>
+<li>We&rsquo;re extending several VLANs across an underlay network;</li>
+<li>Some VLANs are not present on all switches;</li>
+<li>We&rsquo;re using different VLAN tags for the <em>Red</em> bridge domain<sup id="fnref:VTBD"><a class="footnote-ref" href="#fn:VTBD">1</a></sup></li>
+</ul>
+<p><img alt="Lab topology" src="../topology-complex.png" /></p>
+<p>The lab exercise will help you clarify some key points about the EVPN control plane:</p>
+<ul>
+<li>EVPN supports numerous MAC VRFs on a single device, and is usually limited only by the number of bridging domains supported by your hardware.</li>
+<li>VLAN tags have local significance. EVPN updates include only VXLAN VNI.</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>In theory, you could use different VNIs in the same MAC-VRF instance; all that matters (to EVPN) is the match between import route targets configured in a MAC-VRF and the route targets attached to an incoming EVPN route. Unfortunately, not all platforms support this setup; for example, it works with Nokia SR Linux but not with Arista cEOS.</p>
+</div>
+<ul>
+<li>The VXLAN ingress replication list is built from EVPN type-3 routes and can be different for every VNI.</li>
+</ul>
 <h3 id="req">Device Requirements</h3>
-<p>You can use any device supported by the <em>netlab</em> <a href="https://netlab.tools/module/ospf/#platform-support">OSPF</a> and <a href="https://netlab.tools/module/vlan/#platform-support">VLAN</a> configuration modules. The device should support VXLAN with static ingress replication and routing between VLAN segments.</p>
+<p>You can use any device supported by the <em>netlab</em> <a href="https://netlab.tools/module/ospf/#platform-support">OSPF</a>, <a href="https://netlab.tools/module/bgp/#platform-support">BGP</a>, and <a href="https://netlab.tools/module/vlan/#platform-support">VLAN</a> configuration modules. The device should support VXLAN and EVPN.</p>
+<p>The Linux hosts attached to the lab switches are implemented with containers; your <em>netlab</em> installation will thus have to include Docker and <em>containerlab</em><sup id="fnref:UBI"><a class="footnote-ref" href="#fn:UBI">2</a></sup>.</p>
 <h2 id="start-the-lab">Start the Lab</h2>
 <p>Assuming you already <a href="../../1-setup/">set up your lab infrastructure</a>:</p>
 <ul>
-<li>Change directory to <code>vxlan/3-irb</code></li>
+<li>Change directory to <code>evpn/2-complex</code></li>
 <li>Execute <strong>netlab up</strong></li>
 <li>Log into lab devices with <strong>netlab connect</strong> and verify that the IP addresses and the OSPF are properly configured.</li>
 </ul>
 <h2 id="existing-device-configuration">Existing Device Configuration</h2>
 <ul>
-<li>The switches in your lab (S1 and S2) are preconfigured with <em>red</em> and <em>blue</em> VLANs.</li>
-<li>The <em>red</em> and <em>blue</em> VLANs have these VLAN tags and IPv4 prefixes:</li>
+<li>The switches in your lab (S1, S2, and S3) are preconfigured with <em>red</em> and <em>blue</em> VLANs. The VLANs use these VLAN tags:</li>
 </ul>
 <table>
 <thead>
 <tr>
 <th>VLAN</th>
+<th>switch</th>
 <th style="text-align: right;">VLAN tag</th>
-<th style="text-align: right;">IPv4 prefix</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>red</td>
-<td style="text-align: right;">100</td>
-<td style="text-align: right;">172.16.10.0/24</td>
+<td>S1</td>
+<td style="text-align: right;">201</td>
+</tr>
+<tr>
+<td></td>
+<td>S2</td>
+<td style="text-align: right;">202</td>
+</tr>
+<tr>
+<td></td>
+<td>S3</td>
+<td style="text-align: right;">203</td>
 </tr>
 <tr>
 <td>blue</td>
+<td>S1</td>
 <td style="text-align: right;">101</td>
-<td style="text-align: right;">172.16.11.0/24</td>
+</tr>
+<tr>
+<td></td>
+<td>S2</td>
+<td style="text-align: right;">101</td>
 </tr>
 </tbody>
 </table>
 <ul>
 <li>IPv4 addresses are configured on Linux hosts, switch loopback interfaces, and the interswitch link (<a href="#addr">details</a>).</li>
-<li>Static routes pointing to the to-be-configured switch VLAN IP addresses are configured on the Linux hosts. Each static route points to the IP address of the adjacent switch:</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>Host</th>
-<th style="text-align: right;"> IPv4 prefix</th>
-<th style="text-align: right;">Next hop</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>HR1</td>
-<td style="text-align: right;">172.16.0.0/16</td>
-<td style="text-align: right;">172.16.10.1</td>
-</tr>
-<tr>
-<td>HR2</td>
-<td style="text-align: right;">172.16.0.0/16</td>
-<td style="text-align: right;">172.16.10.2</td>
-</tr>
-<tr>
-<td>HB1</td>
-<td style="text-align: right;">172.16.0.0/16</td>
-<td style="text-align: right;">172.16.11.1</td>
-</tr>
-<tr>
-<td>HB2</td>
-<td style="text-align: right;">172.16.0.0/16</td>
-<td style="text-align: right;">172.16.11.2</td>
-</tr>
-</tbody>
-</table>
-<ul>
 <li>The switches run OSPF in area 0 across the interswitch link (<a href="#ospf">details</a>).</li>
+<li>The switches have IBGP sessions between their loopback interfaces. These sessions are currently configured to exchange IPv4 prefixes (<a href="#bgp">details</a>).</li>
 </ul>
-<h2 id="configure-integrated-routing">Configure Integrated Routing</h2>
-<p>You&rsquo;ll configure IP addresses on switch VLAN interfaces before configuring VXLAN segments:</p>
+<h2 id="configuration-tasks">Configuration Tasks</h2>
+<p>Using the commands you mastered in the <a href="../1-bridging/">Build an EVPN-based MAC-VRF instance</a> lab exercise:</p>
 <ul>
-<li>Configure the following IP addresses on S1 and S2:</li>
+<li>Enable EVPN address family on the IBGP sessions</li>
+<li>Configure VLAN-to-VXLAN mapping on all switches using these VNIs:</li>
 </ul>
-<table>
-<thead>
-<tr>
-<th>VLAN</th>
-<th>Switch</th>
-<th style="text-align: right;">IP address</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>red</td>
-<td>S1</td>
-<td style="text-align: right;">172.16.10.1/24</td>
-</tr>
-<tr>
-<td></td>
-<td>S2</td>
-<td style="text-align: right;">172.16.10.2/24</td>
-</tr>
-<tr>
-<td>blue</td>
-<td>S1</td>
-<td style="text-align: right;">172.16.11.1/24</td>
-</tr>
-<tr>
-<td></td>
-<td>S2</td>
-<td style="text-align: right;">172.16.11.2/24</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>Check that the local inter-VLAN routing works: HR1 should be able to reach HB1, and HR2 should be able to reach HB2</li>
-<li>Verify that cross-switch VLAN connectivity does not work: HR1 cannot reach HR2, HB1 cannot reach HB2, and HR1 cannot reach HB2.</li>
-</ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Do not configure OSPF on VLAN interfaces; you&rsquo;d get recursive routing (and interesting periodic black holes). Even better, create a <em>tenant</em> VRF and assign VLAN interfaces to that VRF.</p>
-</div>
-<h2 id="configure-vxlan-segments">Configure VXLAN Segments</h2>
-<p>Using the procedure you mastered in the <a href="../1-single/">Extend a Single VLAN Segment with VXLAN</a> lab exercise, extend both VLANs across the IP network using these VXLAN network identifiers:</p>
 <table>
 <thead>
 <tr>
@@ -347,68 +301,58 @@
 <tbody>
 <tr>
 <td>red</td>
-<td style="text-align: right;">10010</td>
+<td style="text-align: right;">1000</td>
 </tr>
 <tr>
 <td>blue</td>
-<td style="text-align: right;">10011</td>
+<td style="text-align: right;">1001</td>
 </tr>
 </tbody>
 </table>
+<ul>
+<li>Configure MAC-VRFs for <em>red</em> and <em>blue</em> VLANs.</li>
+</ul>
+<p>If you feel adventurous, use a different VNI for the <em>red</em> MAC-VRF on every switch, for example:</p>
+<table>
+<thead>
+<tr>
+<th>switch</th>
+<th style="text-align: right;">red VNI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td style="text-align: right;">1201</td>
+</tr>
+<tr>
+<td>S2</td>
+<td style="text-align: right;">1202</td>
+</tr>
+<tr>
+<td>S3</td>
+<td style="text-align: right;">1203</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<ul>
+<li>Some platforms (for example, Arista cEOS) do not support multiple VNIs per MAC-VRF</li>
+<li>Make sure you use the same import/export route targets in all instances of the <em>red</em> MAC-VRF, or your setup has no chance of working.</li>
+</ul>
+</div>
 <h2 id="verification">Verification</h2>
-<p>Use <strong>ping</strong> on hosts to verify that they can all reach each other:</p>
-<pre><code>$ netlab connect hr1
-Connecting to container clab-irb-hr1, starting bash
-hr1:/# ping -c 3 hr2
-PING hr2 (172.16.10.4): 56 data bytes
-64 bytes from 172.16.10.4: seq=0 ttl=64 time=4.142 ms
-64 bytes from 172.16.10.4: seq=1 ttl=64 time=2.205 ms
-64 bytes from 172.16.10.4: seq=2 ttl=64 time=2.318 ms
-
---- hr2 ping statistics ---
-3 packets transmitted, 3 packets received, 0% packet loss
-round-trip min/avg/max = 2.205/2.888/4.142 ms
-hr1:/# ping -c 3 hb1
-PING hb1 (172.16.11.5): 56 data bytes
-64 bytes from 172.16.11.5: seq=0 ttl=63 time=1.758 ms
-64 bytes from 172.16.11.5: seq=1 ttl=63 time=0.871 ms
-64 bytes from 172.16.11.5: seq=2 ttl=63 time=0.741 ms
-
---- hb1 ping statistics ---
-3 packets transmitted, 3 packets received, 0% packet loss
-round-trip min/avg/max = 0.741/1.123/1.758 ms
-hr1:/# ping -c 3 hb2
-PING hb2 (172.16.11.6): 56 data bytes
-64 bytes from 172.16.11.6: seq=0 ttl=63 time=5.410 ms
-64 bytes from 172.16.11.6: seq=1 ttl=63 time=2.072 ms
-64 bytes from 172.16.11.6: seq=2 ttl=63 time=2.098 ms
-
---- hb2 ping statistics ---
-3 packets transmitted, 3 packets received, 0% packet loss
-round-trip min/avg/max = 2.072/3.193/5.410 ms
-</code></pre>
-<p>Use the <a href="../1-single/#tshoot">troubleshooting hints</a> from the <a href="../1-single/">Extend a Single VLAN Segment with VXLAN</a> lab exercise if needed (we expect you&rsquo;re familiar with the traditional routing between VLAN segments)</p>
-<p>Done? Continue to <a href="../4-anycast/">Anycast Gateways on VXLAN Segments</a>.</p>
-<h2 id="behind-the-scenes">Behind the Scenes</h2>
-<p>Each host uses the adjacent switch as the first-hop router. Stretching VLANs over the VXLAN segment thus results in <em>asymmetric</em> Integrated Routing and Bridging (IRB) &ndash; the router in the HB1-HR2 path differs from the router in the HR2-HB1 path.</p>
-<p><img alt="Lab topology" src="../packet-flow-irb.png" /></p>
-<p>The <em>traceroute</em> printout taken on HB1 and HR2 illustrates the traffic flow:</p>
-<pre><code>$ netlab connect hb1 traceroute hr2
-Connecting to container clab-irb-hb1, executing traceroute hr2
-traceroute to hr2 (172.16.10.4), 30 hops max, 46 byte packets
- 1  Vlan101.s1 (172.16.11.1)  0.694 ms  0.244 ms  0.203 ms
- 2  hr2 (172.16.10.4)  5.399 ms  1.373 ms  1.140 ms
-$ netlab connect hr2 traceroute hb1
-Connecting to container clab-irb-hr2, executing traceroute hb1
-traceroute to hb1 (172.16.11.5), 30 hops max, 46 byte packets
- 1  Vlan100.s2 (172.16.10.2)  0.756 ms  0.428 ms  0.223 ms
- 2  hb1 (172.16.11.5)  1.112 ms  0.754 ms  0.667 ms
-</code></pre>
+<ul>
+<li>Ping HR2 and HR3 from HR1 using a command similar to <strong>netlab connect hr1 ping hr2</strong></li>
+<li>Ping HB2 from HB1</li>
+</ul>
+<p>Use the <a href="../1-bridging/#tshoot">troubleshooting hints</a> from the previous lab exercise if you can&rsquo;t establish end-to-end connectivity.</p>
 <h2 id="cheating">Cheating</h2>
 <ul>
 <li>Shut down your lab with the <strong>netlab down</strong> command</li>
 <li>Start the lab from the <code>solution.yml</code> topology with the <strong>netlab up solution.yml</strong> command</li>
-<li>Explore the S1/S2 device configuration</li>
+<li>Explore the device configurations</li>
 </ul>
 <h2 id="reference-information">Reference Information</h2>
 <h3 id="wiring">Lab Wiring</h3>
@@ -429,28 +373,46 @@ traceroute to hb1 (172.16.11.5), 30 hops max, 46 byte packets
 <td>Ethernet1</td>
 </tr>
 <tr>
+<td>s2</td>
+<td>Ethernet2</td>
+<td>s3</td>
+<td>Ethernet1</td>
+</tr>
+<tr>
+<td>s3</td>
+<td>Ethernet2</td>
+<td>s1</td>
+<td>Ethernet2</td>
+</tr>
+<tr>
+<td>s1</td>
+<td>Ethernet3</td>
 <td>hr1</td>
 <td>eth1</td>
-<td>s1</td>
-<td>Ethernet2</td>
 </tr>
 <tr>
+<td>s2</td>
+<td>Ethernet3</td>
 <td>hr2</td>
 <td>eth1</td>
-<td>s2</td>
-<td>Ethernet2</td>
 </tr>
 <tr>
+<td>s3</td>
+<td>Ethernet3</td>
+<td>hr3</td>
+<td>eth1</td>
+</tr>
+<tr>
+<td>s1</td>
+<td>Ethernet4</td>
 <td>hb1</td>
 <td>eth1</td>
-<td>s1</td>
-<td>Ethernet3</td>
 </tr>
 <tr>
+<td>s2</td>
+<td>Ethernet4</td>
 <td>hb2</td>
 <td>eth1</td>
-<td>s2</td>
-<td>Ethernet3</td>
 </tr>
 </tbody>
 </table>
@@ -479,15 +441,9 @@ traceroute to hb1 (172.16.11.5), 30 hops max, 46 byte packets
 </tr>
 <tr>
 <td>Ethernet2</td>
+<td style="text-align: right;">10.1.0.9/30</td>
 <td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td>[Access VLAN red] s1 -&gt; hr1</td>
-</tr>
-<tr>
-<td>Ethernet3</td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td>[Access VLAN blue] s1 -&gt; hb1</td>
+<td>s1 -&gt; s3</td>
 </tr>
 <tr>
 <td><strong>s2</strong></td>
@@ -503,15 +459,27 @@ traceroute to hb1 (172.16.11.5), 30 hops max, 46 byte packets
 </tr>
 <tr>
 <td>Ethernet2</td>
+<td style="text-align: right;">10.1.0.5/30</td>
 <td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td>[Access VLAN red] s2 -&gt; hr2</td>
+<td>s2 -&gt; s3</td>
 </tr>
 <tr>
-<td>Ethernet3</td>
+<td><strong>s3</strong></td>
+<td style="text-align: right;">10.0.0.3/32</td>
 <td style="text-align: right;"></td>
+<td>Loopback</td>
+</tr>
+<tr>
+<td>Ethernet1</td>
+<td style="text-align: right;">10.1.0.6/30</td>
 <td style="text-align: right;"></td>
-<td>[Access VLAN blue] s2 -&gt; hb2</td>
+<td>s3 -&gt; s2</td>
+</tr>
+<tr>
+<td>Ethernet2</td>
+<td style="text-align: right;">10.1.0.10/30</td>
+<td style="text-align: right;"></td>
+<td>s3 -&gt; s1</td>
 </tr>
 <tr>
 <td><strong>hr1</strong></td>
@@ -521,9 +489,9 @@ traceroute to hb1 (172.16.11.5), 30 hops max, 46 byte packets
 </tr>
 <tr>
 <td>eth1</td>
-<td style="text-align: right;">172.16.10.3/24</td>
+<td style="text-align: right;">172.16.0.4/24</td>
 <td style="text-align: right;"></td>
-<td>hr1 -&gt; [s1,hr2,s2]</td>
+<td>hr1 -&gt; [s1]</td>
 </tr>
 <tr>
 <td><strong>hr2</strong></td>
@@ -533,9 +501,21 @@ traceroute to hb1 (172.16.11.5), 30 hops max, 46 byte packets
 </tr>
 <tr>
 <td>eth1</td>
-<td style="text-align: right;">172.16.10.4/24</td>
+<td style="text-align: right;">172.16.0.5/24</td>
 <td style="text-align: right;"></td>
-<td>hr2 -&gt; [hr1,s1,s2]</td>
+<td>hr2 -&gt; [s2]</td>
+</tr>
+<tr>
+<td><strong>hr3</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td></td>
+</tr>
+<tr>
+<td>eth1</td>
+<td style="text-align: right;">172.16.0.6/24</td>
+<td style="text-align: right;"></td>
+<td>hr3 -&gt; [s3]</td>
 </tr>
 <tr>
 <td><strong>hb1</strong></td>
@@ -545,7 +525,7 @@ traceroute to hb1 (172.16.11.5), 30 hops max, 46 byte packets
 </tr>
 <tr>
 <td>eth1</td>
-<td style="text-align: right;">172.16.11.5/24</td>
+<td style="text-align: right;">172.16.1.7/24</td>
 <td style="text-align: right;"></td>
 <td>hb1 -&gt; [s1,hb2,s2]</td>
 </tr>
@@ -557,7 +537,7 @@ traceroute to hb1 (172.16.11.5), 30 hops max, 46 byte packets
 </tr>
 <tr>
 <td>eth1</td>
-<td style="text-align: right;">172.16.11.6/24</td>
+<td style="text-align: right;">172.16.1.8/24</td>
 <td style="text-align: right;"></td>
 <td>hb2 -&gt; [hb1,s1,s2]</td>
 </tr>
@@ -587,6 +567,12 @@ traceroute to hb1 (172.16.11.5), 30 hops max, 46 byte packets
 <td>s2</td>
 </tr>
 <tr>
+<td></td>
+<td>Ethernet2</td>
+<td style="text-align: right;">10.1.0.9/30</td>
+<td>s3</td>
+</tr>
+<tr>
 <td>s2</td>
 <td>Loopback</td>
 <td style="text-align: right;">10.0.0.2/32</td>
@@ -598,8 +584,110 @@ traceroute to hb1 (172.16.11.5), 30 hops max, 46 byte packets
 <td style="text-align: right;">10.1.0.2/30</td>
 <td>s1</td>
 </tr>
+<tr>
+<td></td>
+<td>Ethernet2</td>
+<td style="text-align: right;">10.1.0.5/30</td>
+<td>s3</td>
+</tr>
+<tr>
+<td>s3</td>
+<td>Loopback</td>
+<td style="text-align: right;">10.0.0.3/32</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Ethernet1</td>
+<td style="text-align: right;">10.1.0.6/30</td>
+<td>s2</td>
+</tr>
+<tr>
+<td></td>
+<td>Ethernet2</td>
+<td style="text-align: right;">10.1.0.10/30</td>
+<td>s1</td>
+</tr>
 </tbody>
-</table></div>
+</table>
+<h3 id="bgp">IBGP sessions</h3>
+<table>
+<thead>
+<tr>
+<th>Node</th>
+<th>Router ID/<br />Neighbor</th>
+<th style="text-align: right;">Router AS/<br />Neighbor AS</th>
+<th style="text-align: right;">Neighbor IPv4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>s1</strong></td>
+<td>10.0.0.1</td>
+<td style="text-align: right;">65000</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td></td>
+<td>s2</td>
+<td style="text-align: right;">65000</td>
+<td style="text-align: right;">10.0.0.2</td>
+</tr>
+<tr>
+<td></td>
+<td>s3</td>
+<td style="text-align: right;">65000</td>
+<td style="text-align: right;">10.0.0.3</td>
+</tr>
+<tr>
+<td><strong>s2</strong></td>
+<td>10.0.0.2</td>
+<td style="text-align: right;">65000</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td></td>
+<td>s1</td>
+<td style="text-align: right;">65000</td>
+<td style="text-align: right;">10.0.0.1</td>
+</tr>
+<tr>
+<td></td>
+<td>s3</td>
+<td style="text-align: right;">65000</td>
+<td style="text-align: right;">10.0.0.3</td>
+</tr>
+<tr>
+<td><strong>s3</strong></td>
+<td>10.0.0.3</td>
+<td style="text-align: right;">65000</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td></td>
+<td>s1</td>
+<td style="text-align: right;">65000</td>
+<td style="text-align: right;">10.0.0.1</td>
+</tr>
+<tr>
+<td></td>
+<td>s2</td>
+<td style="text-align: right;">65000</td>
+<td style="text-align: right;">10.0.0.2</td>
+</tr>
+</tbody>
+</table>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:VTBD">
+<p>Using different (per-switch) VLAN tags for the same bridge domain is confusing and thus usually not a good idea, but you could easily encounter this challenge in migration/merger scenarios.&#160;<a class="footnote-backref" href="#fnref:VTBD" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:UBI">
+<p>Use the <strong>netlab install containerlab</strong> command on Ubuntu/Debian to install them.&#160;<a class="footnote-backref" href="#fnref:UBI" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div></div>
             </div>
         </div>
 
