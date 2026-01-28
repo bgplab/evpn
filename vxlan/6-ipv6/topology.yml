@@ -1,0 +1,42 @@
+# Running VXLAN over an IPv6-only Underlay Network
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+
+addressing:
+  loopback.ipv6: 2001:db8:cafe::/48
+  p2p:
+    ipv6: 2001:db8:101::/48
+    ipv4: False
+
+version: 25.10
+#_include: [ validate.yml ]
+
+groups:
+  _auto_create: True
+  switches:
+    members: [ s1, s2, s3 ]
+  hosts:
+    members: [ h1, h2, h3 ]
+    device: linux
+
+module: [ vlan, ospf ]
+
+prefix:
+  red.ipv4: 172.16.0.0/24
+
+vlans:
+  red:
+    id: 100
+    mode: bridge
+    links: [ s1-h1, s2-h2, s3-h3 ]
+    prefix: red
+
+links:
+- s1-s2
+- s2-s3
+- s3-s1
+
+message: |
+  The "Running VXLAN over an IPv6-only Underlay Network" lab is ready.
+
+  Use "netlab connect" to connect to lab devices.
