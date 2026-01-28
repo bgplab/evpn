@@ -1,0 +1,6 @@
+# More Complex EVPN/VXLAN Bridging Scenario
+
+This directory contains the *netlab* topology file for the
+**[More Complex EVPN/VXLAN Bridging Scenario](../../docs/evpn/2-complex.md)** lab.
+
+![](../../docs/evpn/topology-complex.png)
