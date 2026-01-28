@@ -12,4 +12,3 @@ You can already get your hands dirty with the [first VXLAN labs](index.md#vxlan)
 ## Complex Scenarios
 
 * Using EVPN to implement L3VPN service
-* Layer-2 Common Services VPN
