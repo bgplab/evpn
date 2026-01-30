@@ -31,6 +31,7 @@ nav:
 - "EVPN":
   - evpn/1-bridging.md
   - evpn/2-complex.md
+  - services/1-pvlan.md
 - "Designs":
   - "EBGP-Only EVPN": design/2-ebgp.md
 
