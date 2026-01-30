@@ -6,9 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="author" content="Ivan Pepelnjak, ipSpace.net AG">
-        <link rel="canonical" href="https://evpn.bgplabs.net/evpn/1-bridging/">
+        <link rel="canonical" href="https://evpn.bgplabs.net/services/1-pvlan/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>Build an EVPN-based MAC-VRF instance &#171; VXLAN and EVPN Labs</title>
+  <title>Building a Private VLAN with EVPN/VXLAN &#171; VXLAN and EVPN Labs</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/fontawesome.min.css" rel="stylesheet">
         <link href="../../css/brands.min.css" rel="stylesheet">
@@ -98,15 +98,15 @@
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="./" class="dropdown-item active" aria-current="page">Build an EVPN-based MAC-VRF instance</a>
+    <a href="../../evpn/1-bridging/" class="dropdown-item">Build an EVPN-based MAC-VRF instance</a>
 </li>
                                     
 <li>
-    <a href="../2-complex/" class="dropdown-item">More Complex EVPN/VXLAN Bridging Scenario</a>
+    <a href="../../evpn/2-complex/" class="dropdown-item">More Complex EVPN/VXLAN Bridging Scenario</a>
 </li>
                                     
 <li>
-    <a href="../../services/1-pvlan/" class="dropdown-item">Building a Private VLAN with EVPN/VXLAN</a>
+    <a href="./" class="dropdown-item active" aria-current="page">Building a Private VLAN with EVPN/VXLAN</a>
 </li>
                                 </ul>
                             </li>
@@ -128,12 +128,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../../vxlan/6-ipv6/" class="nav-link">
+                                <a rel="prev" href="../../evpn/2-complex/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../2-complex/" class="nav-link">
+                                <a rel="next" href="../../design/2-ebgp/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -161,7 +161,7 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary"  style="margin-bottom: 1em;">
       <ul class="nav flex-column">
           
-      <li class="nav-item" data-level="1"><a href="#build-an-evpn-based-mac-vrf-instance" class="nav-link">Build an EVPN-based MAC-VRF instance</a>
+      <li class="nav-item" data-level="1"><a href="#building-a-private-vlan-with-evpnvxlan" class="nav-link">Building a Private VLAN with EVPN/VXLAN</a>
         <ul class="nav flex-column">
       <li class="nav-item" data-level="3"><a href="#req" class="nav-link">Device Requirements</a>
         <ul class="nav flex-column">
@@ -183,7 +183,7 @@
         <ul class="nav flex-column">
         </ul>
       </li>
-      <li class="nav-item" data-level="2"><a href="#tshoot" class="nav-link">Troubleshooting</a>
+      <li class="nav-item" data-level="2"><a href="#troubleshooting" class="nav-link">Troubleshooting</a>
         <ul class="nav flex-column">
         </ul>
       </li>
@@ -205,7 +205,7 @@
         <ul class="nav flex-column">
         </ul>
       </li>
-      <li class="nav-item" data-level="3"><a href="#bgp" class="nav-link">BGP Routing</a>
+      <li class="nav-item" data-level="3"><a href="#bgp" class="nav-link">IBGP Sessions</a>
         <ul class="nav flex-column">
         </ul>
       </li>
@@ -222,131 +222,142 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="build-an-evpn-based-mac-vrf-instance">Build an EVPN-based MAC-VRF instance</h1>
-<p>By completing the <a href="../../#vxlan">VXLAN lab exercises</a>, you learned how to configure the transport of Ethernet frames across an IP network. Those solutions lacked a control plane; you had to manually configure the remote VTEPs, and the VXLAN-based network relied on data-plane learning to establish the mapping between MAC addresses and VTEPs. In this lab exercise, you&rsquo;ll add EVPN control plane (another BGP address family) to the VXLAN network:</p>
-<p><img alt="Lab topology" src="../topology-bridging.png" /></p>
+<h1 id="building-a-private-vlan-with-evpnvxlan">Building a Private VLAN with EVPN/VXLAN</h1>
+<p>A Private VLAN (PVLAN) is (according to <a href="https://en.wikipedia.org/wiki/Private_VLAN">Wikipedia</a>) a VLAN in which devices connected to a <em>private</em> port can communicate with devices connected to <em>uplink</em> ports but not with those connected to other <em>private</em> ports.</p>
+<p>For example, in the lab topology we&rsquo;ll be using, H1 and H2 can communicate with SRV but not with each other.</p>
+<p><img alt="Lab topology" src="../topology-pvlan.png" /></p>
+<p>In this lab exercise, you&rsquo;ll implement the private VLAN using the concepts you mastered in the <a href="../../evpn/1-bridging/">Build an EVPN-based MAC-VRF instance</a> exercise, but using slightly different route targets.</p>
 <h3 id="req">Device Requirements</h3>
 <p>You can use any device supported by the <em>netlab</em> <a href="https://netlab.tools/module/ospf/#platform-support">OSPF</a>, <a href="https://netlab.tools/module/bgp/#platform-support">BGP</a>, and <a href="https://netlab.tools/module/vlan/#platform-support">VLAN</a> configuration modules. The device should support VXLAN and EVPN.</p>
+<p>The Linux hosts attached to the lab switches are implemented with containers; your <em>netlab</em> installation will thus have to include Docker and <em>containerlab</em><sup id="fnref:UBI"><a class="footnote-ref" href="#fn:UBI">1</a></sup>.</p>
 <h2 id="start-the-lab">Start the Lab</h2>
 <p>Assuming you already <a href="../../1-setup/">set up your lab infrastructure</a>:</p>
 <ul>
-<li>Change directory to <code>evpn/1-bridging</code></li>
+<li>Change directory to <code>services/1-pvlan</code></li>
 <li>Execute <strong>netlab up</strong></li>
-<li>Log into lab devices with <strong>netlab connect</strong> and verify that the IP addresses and OSPF and BGP routing protocols are properly configured.</li>
+<li>Log into lab devices with <strong>netlab connect</strong> and verify that the IP addresses and the OSPF/BGP routing are properly configured.</li>
 </ul>
+<p>The default lab topology (<code>topology.yml</code>) configures a simple EVPN MAC-VRF. Start a simplified lab with <strong>netlab up minimal.yml</strong> if <em>netlab</em> cannot configure VXLAN or EVPN on the device you want to use (you&rsquo;ll have to configure VXLAN and EVPN yourself). </p>
 <h2 id="existing-device-configuration">Existing Device Configuration</h2>
 <ul>
-<li>The switches in your lab (S1 and S2) are preconfigured with a <em>tenant</em> VLAN with VLAN tag 100.</li>
+<li>The switches in your lab (S1, S2, and S3) are preconfigured with <em>red</em> VLAN using VLAN tag 100 and VXLAN VNI 1000.</li>
 <li>IPv4 addresses are configured on Linux hosts, switch loopback interfaces, and the interswitch link (<a href="#addr">details</a>).</li>
 <li>The switches run OSPF in area 0 across the interswitch link (<a href="#ospf">details</a>).</li>
-<li>The switches have an IBGP session between their loopback interfaces. The IBGP session is currently configured to exchange IPv4 prefixes (<a href="#bgp">details</a>).</li>
+<li>The switches have IBGP sessions between their loopback interfaces (<a href="#bgp">details</a>). These sessions are configured to exchange IPv4 and EVPN prefixes.</li>
+<li>A MAC-VRF is configured for the <em>red</em> VLAN using import- and export route target <code>65000:100</code></li>
 </ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Your lab won&rsquo;t have the EVPN address family on IBGP sessions, VXLAN configuration, or MAC-VRF configuration if you started it with the <code>minimal.yml</code> topology.</p>
+</div>
 <h2 id="configuration-tasks">Configuration Tasks</h2>
-<p>Configuring a VXLAN segment with EVPN control plane is a multi-step process:</p>
+<p>Change the route targets used in the <em>red</em> MAC-VRF as follows:</p>
 <ul>
-<li>Configure the VXLAN interface (VTEP) and map the VLAN 100 into VXLAN VNI 100100. Do not configure the ingress replication (flooding) list. You&rsquo;ll find the detailed instructions in the <a href="../../vxlan/1-single/">Extend a Single VLAN Segment with VXLAN</a> lab exercise.</li>
-<li>Enable the EVPN address family on the IBGP session. This should be as simple as selecting the correct address family in the BGP configuration and activating the configured neighbors.</li>
-<li>Configure an EVPN MAC-VRF instance (the crux of this lab exercise).</li>
+<li>The MAC-VRFs with private ports should have export route target 65000:200 (private MACs) and import route target 65000:201 (uplink MACs).</li>
+<li>The MAC-VRFs with uplink ports should have export route target 65000:201 (uplink MACs) and two import route targets: 65000:201 (uplink MACs) and 65000:200 (private MACs).</li>
 </ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Some devices (for example, Arista cEOS) do not support multiple import/export route targets per MAC-VRF. In that case, configure just the <em>private MACs</em> route target as the import route target in the uplink MAC-VRF; devices connected to the <em>uplink</em> ports will be able to reach the devices connected to the <em>private</em> ports, but not those connected to other <em>uplink</em> ports.</p>
+</div>
+<p>The required route targets are summarized in the following table:</p>
+<table>
+<thead>
+<tr>
+<th>switch</th>
+<th style="text-align: right;">export RT</th>
+<th style="text-align: right;">import RT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td style="text-align: right;">65000:200</td>
+<td style="text-align: right;">65000:201</td>
+</tr>
+<tr>
+<td>S2</td>
+<td style="text-align: right;">65000:200</td>
+<td style="text-align: right;">65000:201</td>
+</tr>
+<tr>
+<td>S3</td>
+<td style="text-align: right;">65000:201</td>
+<td style="text-align: right;">65000:200 65000:201</td>
+</tr>
+</tbody>
+</table>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p><a href="https://datatracker.ietf.org/doc/html/rfc7432">RFC 7432</a> (BGP MPLS-Based Ethernet VPN) defines EVPN instances (independent MAC forwarding tables) and three types of EVPN instances (VLAN-based, VLAN bundle, and VLAN-aware bundle). <a href="https://datatracker.ietf.org/doc/html/rfc9469">RFC 9469</a> (Applicability of Ethernet Virtual Private Network (EVPN) to Network Virtualization over Layer 3 (NVO3) Networks) redefines an EVPN instance as MAC-VRF.</p>
-<p>On most data center switches, it&rsquo;s easiest to configure VLAN-based MAC-VRFs; Junos is one of the few exceptions. We&rsquo;re not concerned with interoperability in this lab exercise; use the EVPN VLAN service that is easiest to configure.</p>
+<p>If you&rsquo;re familiar with MPLS/VPN designs, you might recognize the RT pattern used in hub-and-spoke VPNs. That&rsquo;s exactly what Private VLANs are.</p>
 </div>
-<p>The configuration of an EVPN MAC-VRF instance usually requires configuring three parameters:</p>
-<ul>
-<li>The EVPN <em>route targets</em> (RT) used to import/export MAC routes into/from the MAC-VRF instance. A good default value in simple deployments is <code>BGP-ASN:VLAN-ID</code>; in our network, that would be 65000:100.</li>
-<li>The MAC-VRF instance <em>route distinguisher</em> (RD) that makes the MAC-VRF routes globally unique. Each MAC-VRF instance should have a unique route distinguisher<sup id="fnref:MPRD"><a class="footnote-ref" href="#fn:MPRD">1</a></sup>; <code>VTEP-IP:VLAN-ID</code> is a good default.</li>
-<li>You usually have to tell the device that you want to use EVPN as the control-plane protocol for the VXLAN segment, and that you want the dynamically-learned MAC addresses redistributed into EVPN MAC/IP (type-1) routes.</li>
-</ul>
-<p>The configuration details vary significantly across different EVPN implementations. On Arista EOS, you have to:</p>
-<ul>
-<li>Configure a VLAN within the BGP configuration</li>
-<li>Configure EVPN RT and RD within the BGP VLAN configuration</li>
-<li>Configure redistribution of <em>learned</em> routes into EVPN within the BGP VLAN configuration</li>
-</ul>
-<p>FRRouting configuration is similar, but:</p>
-<ul>
-<li>Uses VNIs (not VLANs) to identify MAC-VRF instances within BGP configuration</li>
-<li>Specifies redistribution of MAC addresses into EVPN routes within the EVPN address family (applicable to all MAC-VRFs)</li>
-</ul>
-<p>Nexus OS uses a completely different syntax:</p>
-<ul>
-<li>MAC-VRF instances are configured for VNI segments (not VLANs) under <strong>evpn</strong> configuration.</li>
-<li>The use of the EVPN control plane (to build ingress replication lists and learn MAC-to-VTEP mappings) is configured within the VXLAN interface configuration.</li>
-</ul>
 <h2 id="verification">Verification</h2>
-<p>Try to ping h2 from h1:</p>
-<pre><code>$ netlab connect h1 ping h2
-Connecting to container clab-single-h1, executing ping h2
-PING h2 (172.16.0.4): 56 data bytes
-64 bytes from 172.16.0.4: seq=0 ttl=64 time=5.273 ms
-64 bytes from 172.16.0.4: seq=1 ttl=64 time=2.048 ms
-^C
---- h2 ping statistics ---
-2 packets transmitted, 2 packets received, 0% packet loss
-round-trip min/avg/max = 2.048/3.660/5.273 ms
-</code></pre>
-<p>Done? Let&rsquo;s do a <a href="../2-complex/">slightly more complex scenario</a>.</p>
-<h2 id="tshoot">Troubleshooting</h2>
-<p>Use these troubleshooting steps if the Linux hosts can&rsquo;t communicate over the stretched VLAN segment:</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The troubleshooting instructions use Arista EOS <strong>show</strong> commands and corresponding printouts. You&rsquo;ll need to find matching commands if you use a different platform.</p>
-<p>It&rsquo;s also highly recommended to follow the vendor&rsquo;s EVPN/VXLAN troubleshooting procedures; some of them tend to be quite good.</p>
-</div>
 <ul>
-<li>Perform the basic troubleshooting steps from the <a href="../../vxlan/1-single/">Extend a Single VLAN Segment with VXLAN</a> lab exercise.</li>
-<li>Check the IBGP session between S1 and S2 and verify that the EVPN address family is active:</li>
+<li>H1 and H2 should be able to ping SRV</li>
+<li>H1 should not be able to ping H2 (or vice versa)</li>
 </ul>
-<pre><code>s1#show bgp evpn summary
-BGP summary information for VRF default
-Router identifier 10.0.0.1, local AS number 65000
-Neighbor Status Codes: m - Under maintenance
-  Description              Neighbor V AS           MsgRcvd   MsgSent  InQ OutQ  Up/Down State   PfxRcd PfxAcc PfxAdv
-  s2                       10.0.0.2 4 65000              7         9    0    0 00:00:03 Estab   1      1      1
-</code></pre>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<p>Start with the <a href="../../evpn/1-bridging/#tshoot">troubleshooting hints</a> from the <a href="../../evpn/1-bridging/">Build an EVPN-based MAC-VRF instance</a> lab exercise, then focus on the PVLAN-specific EVPN routes:</p>
 <ul>
-<li>Some platforms allow you to check the control plane for the VXLAN segments:</li>
+<li>Inspect the EVPN IMET (type-3) routes. Each switch should have three IMET routes (one per switch). Two of those routes (S1/S2) should have route target 65000:200, the third one (S3) should have route target 65000:201. All three routes should have the same VXLAN VNI.</li>
 </ul>
-<pre><code>s1#show vxlan control-plane
-   VLAN       Control Plane       Direction    Source
----------- ------------------- --------------- -------------
-   100        EVPN                both         configuration
-</code></pre>
-<ul>
-<li>You should see the Inclusive Multicast Ethernet Tag (IMET; type-3) EVPN routes immediately after configuring the MAC-VRF instances. An IMET route should originate from a local switch, and another should be received from the IBGP neighbor. You misconfigured the MAC-VRF or forgot to configure RD/RT if you don&rsquo;t see the local IMET route. You probably forgot to activate the EVPN session if you can see the local one but not the remote one.</li>
-</ul>
-<pre><code>s1#show bgp evpn
+<p class="code-caption">EVPN IMET routes on S1 running Arista EOS<br /></p>
+<pre><code>s1#show bgp evpn route-type imet detail
 BGP routing table information for VRF default
 Router identifier 10.0.0.1, local AS number 65000
-Route status codes: * - valid, &gt; - active, S - Stale, E - ECMP head, e - ECMP
-                    c - Contributing to ECMP, % - Pending best path selection
-Origin codes: i - IGP, e - EGP, ? - incomplete
-AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
-
-          Network                Next Hop              Metric  LocPref Weight  Path
- * &gt;      RD: 10.0.0.1:100 imet 10.0.0.1
-                                 -                     -       -       0       i
- * &gt;      RD: 10.0.0.2:100 imet 10.0.0.2
-                                 10.0.0.2              -       100     0       i
+BGP routing table entry for imet 10.0.0.1, Route Distinguisher: 10.0.0.1:100
+ Paths: 1 available
+  Local
+    - from - (0.0.0.0)
+      Origin IGP, metric -, localpref -, weight 0, tag 0, valid, local, best
+      Extended Community: Route-Target-AS:65000:200 TunnelEncap:tunnelTypeVxlan
+      VNI: 1000
+      PMSI Tunnel: Ingress Replication, MPLS Label: 1000, Leaf Information Required: false, Tunnel ID: 10.0.0.1
+BGP routing table entry for imet 10.0.0.2, Route Distinguisher: 10.0.0.2:100
+ Paths: 1 available
+  Local
+    10.0.0.2 from 10.0.0.2 (10.0.0.2)
+      Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, internal, best
+      Extended Community: Route-Target-AS:65000:200 TunnelEncap:tunnelTypeVxlan
+      VNI: 1000
+      PMSI Tunnel: Ingress Replication, MPLS Label: 1000, Leaf Information Required: false, Tunnel ID: 10.0.0.2
+BGP routing table entry for imet 10.0.0.3, Route Distinguisher: 10.0.0.3:100
+ Paths: 1 available
+  Local
+    10.0.0.3 from 10.0.0.3 (10.0.0.3)
+      Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, internal, best
+      Extended Community: Route-Target-AS:65000:201 TunnelEncap:tunnelTypeVxlan
+      VNI: 1000
+      PMSI Tunnel: Ingress Replication, MPLS Label: 1000, Leaf Information Required: false, Tunnel ID: 10.0.0.3
 </code></pre>
 <ul>
-<li>The IMET routes should be used to configure the VXLAN flood lists. You misconfigured the VXLAN control plane (where applicable) or EVPN route targets if you can&rsquo;t see the remote VTEP.</li>
+<li>The route targets in the IMET routes are used to build VXLAN ingress replication lists. S1 and S2 should have just S3 as the remote VTEP; S3 should have both S1 and S2 as remote VTEPs:</li>
 </ul>
-<pre><code>s1#show vxlan vtep detail
+<p class="code-caption">Remote VTEPs on S1 running Arista EOS<br /></p>
+<pre><code>s1#show vxlan vtep
 Remote VTEPS for Vxlan1:
 
-VTEP           Learned Via         MAC Address Learning       Tunnel Type(s)
--------------- ------------------- -------------------------- --------------
-10.0.0.2       control plane       control plane              flood
+VTEP           Tunnel Type(s)
+-------------- --------------
+10.0.0.3       flood
 
 Total number of remote VTEPS:  1
 </code></pre>
-<ul>
-<li>You should see MAC/IP routes after trying to ping the remote Linux hosts. You probably forgot to configure the redistribution of dynamically-learned MAC prefixes into EVPN if you can&rsquo;t see the MAC/IP routes.</li>
-</ul>
-<pre><code>s1#show bgp evpn
+<p class="code-caption">Remote VTEPs on S3 running Arista EOS<br /></p>
+<pre><code>s3#show vxlan vtep
+Remote VTEPS for Vxlan1:
+
+VTEP           Tunnel Type(s)
+-------------- --------------
+10.0.0.1       flood
+10.0.0.2       flood
+
+Total number of remote VTEPS:  2
+</code></pre>
+<p>Since you started with a working MAC-VRF instance, the verification steps should pass once you see the expected remote VTEPs (indicating that the route targets are configured correctly). Nonetheless, you might want to inspect the MAC/IP (type-2) EVPN routes and compare them to the MAC address table. </p>
+<p>For example, S1 has three MAC/IP EVPN routes in its BGP table but only two addresses in the MAC address table for the <em>red</em> VLAN due to a route target mismatch on the EVPN route advertised by S2:</p>
+<p class="code-caption">EVPN MAC-IP routes on S1 running Arista EOS<br /></p>
+<pre><code>s1#show bgp evpn route-type mac-ip
 BGP routing table information for VRF default
 Router identifier 10.0.0.1, local AS number 65000
 Route status codes: * - valid, &gt; - active, S - Stale, E - ECMP head, e - ECMP
@@ -355,56 +366,36 @@ Origin codes: i - IGP, e - EGP, ? - incomplete
 AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
 
           Network                Next Hop              Metric  LocPref Weight  Path
- * &gt;      RD: 10.0.0.1:100 mac-ip aac1.ab1e.f7d5
+ * &gt;      RD: 10.0.0.1:100 mac-ip aac1.aba9.cac6
                                  -                     -       -       0       i
- * &gt;      RD: 10.0.0.2:100 mac-ip aac1.ab47.43b2
-                                 10.0.0.2              -       100     0       i
- * &gt;      RD: 10.0.0.1:100 imet 10.0.0.1
-                                 -                     -       -       0       i
- * &gt;      RD: 10.0.0.2:100 imet 10.0.0.2
+ * &gt;      RD: 10.0.0.3:100 mac-ip aac1.abcf.1fb1
+                                 10.0.0.3              -       100     0       i
+ * &gt;      RD: 10.0.0.2:100 mac-ip aac1.abf8.d7c2
                                  10.0.0.2              -       100     0       i
 </code></pre>
-<ul>
-<li>The remote MAC/IP routes should be present in the local MAC address table. You probably misconfigured (or forgot to configure) the EVPN route targets if you can see the EVPN MAC/IP routes, but they aren&rsquo;t present in the VLAN MAC address table.</li>
-</ul>
+<p class="code-caption">MAC address table for the <em>red</em> VLAN on S1 running Arista EOS<br /></p>
 <pre><code>s1#show mac address-table vlan 100
           Mac Address Table
 ------------------------------------------------------------------
 
 Vlan    Mac Address       Type        Ports      Moves   Last Move
 ----    -----------       ----        -----      -----   ---------
- 100    aac1.ab1e.f7d5    DYNAMIC     Et2        1       0:05:05 ago
- 100    aac1.ab47.43b2    DYNAMIC     Vx1        1       0:05:05 ago
+ 100    aac1.aba9.cac6    DYNAMIC     Et3        1       0:01:13 ago
+ 100    aac1.abcf.1fb1    DYNAMIC     Vx1        1       0:01:13 ago
 Total Mac Addresses for this criterion: 2
+
+          Multicast Mac Address Table
+------------------------------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       ----        -----
+Total Mac Addresses for this criterion: 0
 </code></pre>
-<ul>
-<li>When needed, use the <strong>show bgp evpn detail</strong> (or similar) command to inspect the details of individual EVPN routes. EVPN BGP tables can get pretty big; most vendors have <strong>show</strong> command options that you can use to select only the routes you&rsquo;re interested in:</li>
-</ul>
-<pre><code>s1#show bgp evpn route-type mac-ip detail
-BGP routing table information for VRF default
-Router identifier 10.0.0.1, local AS number 65000
-BGP routing table entry for mac-ip aac1.ab1e.f7d5, Route Distinguisher: 10.0.0.1:100
- Paths: 1 available
-  Local
-    - from - (0.0.0.0)
-      Origin IGP, metric -, localpref -, weight 0, tag 0, valid, local, best
-      Extended Community: Route-Target-AS:65000:100 TunnelEncap:tunnelTypeVxlan
-      VNI: 100100 ESI: 0000:0000:0000:0000:0000
-BGP routing table entry for mac-ip aac1.ab47.43b2, Route Distinguisher: 10.0.0.2:100
- Paths: 1 available
-  Local
-    10.0.0.2 from 10.0.0.2 (10.0.0.2)
-      Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, internal, best
-      Extended Community: Route-Target-AS:65000:100 TunnelEncap:tunnelTypeVxlan
-      VNI: 100100 ESI: 0000:0000:0000:0000:0000
-</code></pre>
-<p>If everything else fails, read the <a href="https://arista.my.site.com/AristaCommunity/s/article/VxLAN-EVPN-Troubleshooting-Guidebook">Arista EOS VXLAN-EVPN Troubleshooting Guidebook</a> or the corresponding documentation for your platform.</p>
-<p>Got it to work? Let&rsquo;s do a <a href="../2-complex/">slightly more complex scenario</a>.</p>
 <h2 id="cheating">Cheating</h2>
 <ul>
 <li>Shut down your lab with the <strong>netlab down</strong> command</li>
 <li>Start the lab from the <code>solution.yml</code> topology with the <strong>netlab up solution.yml</strong> command</li>
-<li>Explore the S1/S2 device configuration</li>
+<li>Explore the device configurations</li>
 </ul>
 <h2 id="reference-information">Reference Information</h2>
 <h3 id="wiring">Lab Wiring</h3>
@@ -425,16 +416,34 @@ BGP routing table entry for mac-ip aac1.ab47.43b2, Route Distinguisher: 10.0.0.2
 <td>Ethernet1</td>
 </tr>
 <tr>
-<td>h1</td>
-<td>eth1</td>
+<td>s2</td>
+<td>Ethernet2</td>
+<td>s3</td>
+<td>Ethernet1</td>
+</tr>
+<tr>
+<td>s3</td>
+<td>Ethernet2</td>
 <td>s1</td>
 <td>Ethernet2</td>
 </tr>
 <tr>
+<td>s1</td>
+<td>Ethernet3</td>
+<td>h1</td>
+<td>eth1</td>
+</tr>
+<tr>
+<td>s2</td>
+<td>Ethernet3</td>
 <td>h2</td>
 <td>eth1</td>
-<td>s2</td>
-<td>Ethernet2</td>
+</tr>
+<tr>
+<td>s3</td>
+<td>Ethernet3</td>
+<td>srv</td>
+<td>eth1</td>
 </tr>
 </tbody>
 </table>
@@ -463,15 +472,9 @@ BGP routing table entry for mac-ip aac1.ab47.43b2, Route Distinguisher: 10.0.0.2
 </tr>
 <tr>
 <td>Ethernet2</td>
+<td style="text-align: right;">10.1.0.9/30</td>
 <td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td>[Access VLAN tenant] s1 -&gt; h1</td>
-</tr>
-<tr>
-<td>Vlan100</td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td>VLAN tenant (100) -&gt; [h1,h2,s2]</td>
+<td>s1 -&gt; s3</td>
 </tr>
 <tr>
 <td><strong>s2</strong></td>
@@ -487,15 +490,27 @@ BGP routing table entry for mac-ip aac1.ab47.43b2, Route Distinguisher: 10.0.0.2
 </tr>
 <tr>
 <td>Ethernet2</td>
+<td style="text-align: right;">10.1.0.5/30</td>
 <td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td>[Access VLAN tenant] s2 -&gt; h2</td>
+<td>s2 -&gt; s3</td>
 </tr>
 <tr>
-<td>Vlan100</td>
+<td><strong>s3</strong></td>
+<td style="text-align: right;">10.0.0.3/32</td>
 <td style="text-align: right;"></td>
+<td>Loopback</td>
+</tr>
+<tr>
+<td>Ethernet1</td>
+<td style="text-align: right;">10.1.0.6/30</td>
 <td style="text-align: right;"></td>
-<td>VLAN tenant (100) -&gt; [h1,s1,h2]</td>
+<td>s3 -&gt; s2</td>
+</tr>
+<tr>
+<td>Ethernet2</td>
+<td style="text-align: right;">10.1.0.10/30</td>
+<td style="text-align: right;"></td>
+<td>s3 -&gt; s1</td>
 </tr>
 <tr>
 <td><strong>h1</strong></td>
@@ -505,9 +520,9 @@ BGP routing table entry for mac-ip aac1.ab47.43b2, Route Distinguisher: 10.0.0.2
 </tr>
 <tr>
 <td>eth1</td>
-<td style="text-align: right;">172.16.0.3/24</td>
+<td style="text-align: right;">172.16.0.4/24</td>
 <td style="text-align: right;"></td>
-<td>h1 -&gt; [s1,h2,s2]</td>
+<td>h1 -&gt; [s1,h2,s2,srv,s3]</td>
 </tr>
 <tr>
 <td><strong>h2</strong></td>
@@ -517,9 +532,21 @@ BGP routing table entry for mac-ip aac1.ab47.43b2, Route Distinguisher: 10.0.0.2
 </tr>
 <tr>
 <td>eth1</td>
-<td style="text-align: right;">172.16.0.4/24</td>
+<td style="text-align: right;">172.16.0.5/24</td>
 <td style="text-align: right;"></td>
-<td>h2 -&gt; [h1,s1,s2]</td>
+<td>h2 -&gt; [h1,s1,s2,srv,s3]</td>
+</tr>
+<tr>
+<td><strong>srv</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td></td>
+</tr>
+<tr>
+<td>eth1</td>
+<td style="text-align: right;">172.16.0.6/24</td>
+<td style="text-align: right;"></td>
+<td>srv -&gt; [h1,s1,h2,s2,s3]</td>
 </tr>
 </tbody>
 </table>
@@ -547,6 +574,12 @@ BGP routing table entry for mac-ip aac1.ab47.43b2, Route Distinguisher: 10.0.0.2
 <td>s2</td>
 </tr>
 <tr>
+<td></td>
+<td>Ethernet2</td>
+<td style="text-align: right;">10.1.0.9/30</td>
+<td>s3</td>
+</tr>
+<tr>
 <td>s2</td>
 <td>Loopback</td>
 <td style="text-align: right;">10.0.0.2/32</td>
@@ -558,9 +591,33 @@ BGP routing table entry for mac-ip aac1.ab47.43b2, Route Distinguisher: 10.0.0.2
 <td style="text-align: right;">10.1.0.2/30</td>
 <td>s1</td>
 </tr>
+<tr>
+<td></td>
+<td>Ethernet2</td>
+<td style="text-align: right;">10.1.0.5/30</td>
+<td>s3</td>
+</tr>
+<tr>
+<td>s3</td>
+<td>Loopback</td>
+<td style="text-align: right;">10.0.0.3/32</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Ethernet1</td>
+<td style="text-align: right;">10.1.0.6/30</td>
+<td>s2</td>
+</tr>
+<tr>
+<td></td>
+<td>Ethernet2</td>
+<td style="text-align: right;">10.1.0.10/30</td>
+<td>s1</td>
+</tr>
 </tbody>
 </table>
-<h3 id="bgp">BGP Routing</h3>
+<h3 id="bgp">IBGP Sessions</h3>
 <table>
 <thead>
 <tr>
@@ -584,6 +641,12 @@ BGP routing table entry for mac-ip aac1.ab47.43b2, Route Distinguisher: 10.0.0.2
 <td style="text-align: right;">10.0.0.2</td>
 </tr>
 <tr>
+<td></td>
+<td>s3</td>
+<td style="text-align: right;">65000</td>
+<td style="text-align: right;">10.0.0.3</td>
+</tr>
+<tr>
 <td><strong>s2</strong></td>
 <td>10.0.0.2</td>
 <td style="text-align: right;">65000</td>
@@ -595,13 +658,37 @@ BGP routing table entry for mac-ip aac1.ab47.43b2, Route Distinguisher: 10.0.0.2
 <td style="text-align: right;">65000</td>
 <td style="text-align: right;">10.0.0.1</td>
 </tr>
+<tr>
+<td></td>
+<td>s3</td>
+<td style="text-align: right;">65000</td>
+<td style="text-align: right;">10.0.0.3</td>
+</tr>
+<tr>
+<td><strong>s3</strong></td>
+<td>10.0.0.3</td>
+<td style="text-align: right;">65000</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td></td>
+<td>s1</td>
+<td style="text-align: right;">65000</td>
+<td style="text-align: right;">10.0.0.1</td>
+</tr>
+<tr>
+<td></td>
+<td>s2</td>
+<td style="text-align: right;">65000</td>
+<td style="text-align: right;">10.0.0.2</td>
+</tr>
 </tbody>
 </table>
 <div class="footnote">
 <hr />
 <ol>
-<li id="fn:MPRD">
-<p>We usually recommend using the same MPLS/VPN route distinguisher for a given (simple) VRF on all PE-routers. EVPN is different; you should use a unique RD for each VRF instance (different RDs for the same MAC-VRF on different PE devices).&#160;<a class="footnote-backref" href="#fnref:MPRD" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<li id="fn:UBI">
+<p>Use the <strong>netlab install containerlab</strong> command on Ubuntu/Debian to install them.&#160;<a class="footnote-backref" href="#fnref:UBI" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div></div>
