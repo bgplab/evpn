@@ -15,7 +15,7 @@ This series of VXLAN/EVPN hands-on labs will help you master numerous aspects of
 
 [^PC]: Some assembly required: while some virtual machines or containers are easy to download, you'll have to build a Vagrant box or install a vendor-supplied Vagrant box or Docker container image for most other platforms. See [installation and setup](1-setup.md) for details.
 
-Several labs are already waiting for you (with more [coming soon](3-upcoming.md)), but if this is your first visit to this site, you should start with the [Installation and Setup](1-setup.md) documentation or [run VXLAN/EVPN labs in GitHub codespaces](4-codespaces.md).
+Several labs are already waiting for you (with more coming soon), but if this is your first visit to this site, you should start with the [Installation and Setup](1-setup.md) documentation or [run VXLAN/EVPN labs in GitHub codespaces](4-codespaces.md).
 
 ## Configure VXLAN {#vxlan}
 
@@ -34,10 +34,9 @@ After mastering the basics of using VXLAN to stretch Ethernet segments across an
 
 * [Build an EVPN-based MAC-VRF instance](evpn/1-bridging.md)
 * [More complex EVPN/VXLAN bridging scenario](evpn/2-complex.md)
-* Integrated Routing and Bridging (IRB) with EVPN MAC-VRF instances (coming soon)
+* [Integrated Routing and Bridging (IRB) with EVPN MAC-VRF instances](evpn/3-irb.md)
+* Asymmetric IRB with MAC-VRF EVPN instances (coming soon)
 * Symmetric IRB with IP-VRF EVPN instances (coming soon)
-* Anycast gateways in an EVPN environment
-* Implementing L3VPN with EVPN and VXLAN
 * Intra-subnet symmetric routing with proxy ARP
 * Using EVPN in an IPv6-only underlay network
 
@@ -46,7 +45,7 @@ After mastering the basics of using VXLAN to stretch Ethernet segments across an
 Got fluent with the EVPN control plane? Try out more complex EVPN-based services:
 
 * [Private VLANs](services/1-pvlan.md)
-* Layer-3 VPNs using EVPN control plane
+* Implementing Layer-3 VPN with EVPN and VXLAN
 
 ## EVPN Designs {#design}
 
@@ -54,4 +53,5 @@ EVPN was designed for use with IBGP sessions, with BGP next hops resolved via an
 
 * Using BGP route reflectors to scale EVPN fabrics (coming soon)
 * [EBGP-only EVPN](design/2-ebgp.md)
-* Multi-pod EVPN (coming soon)
+* Multi-pod EVPN
+

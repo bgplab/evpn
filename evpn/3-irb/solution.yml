@@ -1,0 +1,70 @@
+# Integrated Routing and Bridging (IRB) with EVPN
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+
+version: 25.10
+_include: [ validate.yml ]
+
+module: [ vlan, ospf, vxlan, vrf, gateway, bgp, evpn ]
+bgp.as: 65000
+
+gateway.id: 42
+
+groups:
+  switches:
+    members: [ s1, s2 ]
+  hosts:
+    module: [ routing ]
+    members: [ hr1, hr2, hb1, hb2 ]
+    device: linux
+
+vrfs:
+  tenant:
+    ospf: False
+
+vlans:
+  red:
+    prefix.ipv4: 172.16.10.0/24
+    id: 100
+    vni: 10010
+    vrf: tenant
+    mode: irb
+    links: [ hr1-s1, hr2-s2 ]
+    gateway.protocol: anycast
+  blue:
+    prefix.ipv4: 172.16.11.0/24
+    id: 101
+    vni: 10011
+    vrf: tenant
+    mode: irb
+    links: [ hb1-s1, hb2-s2 ]
+    gateway.protocol: anycast
+
+nodes:
+  s1:
+  s2:
+  hr1:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.10.42
+  hr2:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.10.42
+  hb1:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.11.42
+  hb2:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.11.42
+
+links: [ s1-s2 ]
+
+message: |
+  The solution for the "Integrated Routing and Bridging (IRB) with EVPN" lab is
+  ready. Do not cheat (you learn more if you figure things out on your own). Use
+  this topology only when everything else fails.
+
+  Use "netlab connect" to connect to lab devices.
