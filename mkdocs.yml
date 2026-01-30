@@ -27,6 +27,7 @@ nav:
   - vxlan/3-irb.md
   - vxlan/4-anycast.md
   - vxlan/5-vrf-lite.md
+  - vxlan/6-ipv6.md
 - "EVPN":
   - evpn/1-bridging.md
   - evpn/2-complex.md

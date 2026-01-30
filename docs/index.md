@@ -22,19 +22,19 @@ Several labs are already waiting for you (with more [coming soon](3-upcoming.md)
 In these labs, you'll learn how to configure VXLAN with static ingress replication and use it to build VLANs, layer-3 segments, or VRF-Lite deployments:
 
 * [Extend a single VLAN segment with VXLAN](vxlan/1-single.md)
-* [More Complex VXLAN Deployment Scenario](vxlan/2-complex.md)
+* [More complex VXLAN deployment scenario](vxlan/2-complex.md)
 * [Routing between VXLAN segments](vxlan/3-irb.md)
 * [Anycast gateways on VXLAN segments](vxlan/4-anycast.md)
 * [Implement VRF-Lite with VXLAN](vxlan/5-vrf-lite.md)
-* Running VXLAN over an IPv6-only underlay network
+* [Running VXLAN over an IPv6-only underlay network](vxlan/6-ipv6.md)
 
 ## Configure EVPN {#evpn}
 
 After mastering the basics of using VXLAN to stretch Ethernet segments across an IP network, you'll add EVPN control plane to a VXLAN setup:
 
 * [Build an EVPN-based MAC-VRF instance](evpn/1-bridging.md)
-* [More Complex EVPN/VXLAN Bridging Scenario](evpn/2-complex.md)
-* Integrated Routing and Bridging with EVPN MAC-VRF instances (coming soon)
+* [More complex EVPN/VXLAN bridging scenario](evpn/2-complex.md)
+* Integrated Routing and Bridging (IRB) with EVPN MAC-VRF instances (coming soon)
 * Symmetric IRB with IP-VRF EVPN instances (coming soon)
 * Anycast gateways in an EVPN environment
 * Implementing L3VPN with EVPN and VXLAN
@@ -52,6 +52,6 @@ Got fluent with the EVPN control plane? Try out more complex EVPN-based services
 
 EVPN was designed for use with IBGP sessions, with BGP next hops resolved via an IGP (usually OSPF or IS-IS). Today, you can see a plethora of alternative designs, including:
 
-* Using Route Reflectors to Scale EVPN Fabrics (coming soon)
+* Using BGP route reflectors to scale EVPN fabrics (coming soon)
 * [EBGP-only EVPN](design/2-ebgp.md)
 * Multi-pod EVPN (coming soon)
