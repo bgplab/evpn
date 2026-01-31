@@ -85,6 +85,8 @@ If you feel adventurous, use a different VNI for the *red* MAC-VRF on every swit
 
 Use the [troubleshooting hints](1-bridging.md#tshoot) from the previous lab exercise if you can't establish end-to-end connectivity.
 
+Done? Let's [add routing (inter-VLAN forwarding) to the mix](3-irb.md).
+
 ## Cheating
 
 * Shut down your lab with the **netlab down** command

@@ -1,0 +1,58 @@
+# Integrated Routing and Bridging (IRB) with EVPN
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+
+version: 25.10
+_include: [ validate.yml ]
+
+module: [ vlan, ospf, bgp ]
+bgp.as: 65000
+
+groups:
+  switches:
+    members: [ s1, s2 ]
+  hosts:
+    module: [ routing ]
+    members: [ hr1, hr2, hb1, hb2 ]
+    device: linux
+
+vlans:
+  red:
+    prefix.ipv4: 172.16.10.0/24
+    id: 100
+    mode: bridge
+    links: [ hr1-s1, hr2-s2 ]
+    ospf: False
+  blue:
+    prefix.ipv4: 172.16.11.0/24
+    id: 101
+    mode: bridge
+    links: [ hb1-s1, hb2-s2 ]
+    ospf: False
+
+nodes:
+  s1:
+  s2:
+  hr1:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.10.42
+  hr2:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.10.42
+  hb1:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.11.42
+  hb2:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.11.42
+
+links: [ s1-s2 ]
+
+message: |
+  The "Integrated Routing and Bridging (IRB) with EVPN" lab is ready.
+  
+  Use "netlab connect" to connect to lab devices.
