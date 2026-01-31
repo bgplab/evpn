@@ -106,6 +106,10 @@
 </li>
                                     
 <li>
+    <a href="evpn/3-irb/" class="dropdown-item">Integrated Routing and Bridging (IRB) with EVPN</a>
+</li>
+                                    
+<li>
     <a href="services/1-pvlan/" class="dropdown-item">Building a Private VLAN with EVPN/VXLAN</a>
 </li>
                                 </ul>
@@ -201,7 +205,7 @@
 <li>Nokia SR OS and SR Linux</li>
 <li>Vyatta VyOS</li>
 </ul>
-<p>Several labs are already waiting for you (with more <a href="3-upcoming/">coming soon</a>), but if this is your first visit to this site, you should start with the <a href="1-setup/">Installation and Setup</a> documentation or <a href="4-codespaces/">run VXLAN/EVPN labs in GitHub codespaces</a>.</p>
+<p>Several labs are already waiting for you (with more coming soon), but if this is your first visit to this site, you should start with the <a href="1-setup/">Installation and Setup</a> documentation or <a href="4-codespaces/">run VXLAN/EVPN labs in GitHub codespaces</a>.</p>
 <h2 id="vxlan">Configure VXLAN</h2>
 <p>In these labs, you&rsquo;ll learn how to configure VXLAN with static ingress replication and use it to build VLANs, layer-3 segments, or VRF-Lite deployments:</p>
 <ul>
@@ -217,10 +221,9 @@
 <ul>
 <li><a href="evpn/1-bridging/">Build an EVPN-based MAC-VRF instance</a></li>
 <li><a href="evpn/2-complex/">More complex EVPN/VXLAN bridging scenario</a></li>
-<li>Integrated Routing and Bridging (IRB) with EVPN MAC-VRF instances (coming soon)</li>
+<li><a href="evpn/3-irb/">Integrated Routing and Bridging (IRB) with EVPN MAC-VRF instances</a></li>
+<li>Asymmetric IRB with MAC-VRF EVPN instances (coming soon)</li>
 <li>Symmetric IRB with IP-VRF EVPN instances (coming soon)</li>
-<li>Anycast gateways in an EVPN environment</li>
-<li>Implementing L3VPN with EVPN and VXLAN</li>
 <li>Intra-subnet symmetric routing with proxy ARP</li>
 <li>Using EVPN in an IPv6-only underlay network</li>
 </ul>
@@ -228,14 +231,14 @@
 <p>Got fluent with the EVPN control plane? Try out more complex EVPN-based services:</p>
 <ul>
 <li><a href="services/1-pvlan/">Private VLANs</a></li>
-<li>Layer-3 VPNs using EVPN control plane</li>
+<li>Implementing Layer-3 VPN with EVPN and VXLAN</li>
 </ul>
 <h2 id="design">EVPN Designs</h2>
 <p>EVPN was designed for use with IBGP sessions, with BGP next hops resolved via an IGP (usually OSPF or IS-IS). Today, you can see a plethora of alternative designs, including:</p>
 <ul>
 <li>Using BGP route reflectors to scale EVPN fabrics (coming soon)</li>
 <li><a href="design/2-ebgp/">EBGP-only EVPN</a></li>
-<li>Multi-pod EVPN (coming soon)</li>
+<li>Multi-pod EVPN</li>
 </ul>
 <div class="footnote">
 <hr />
