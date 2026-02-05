@@ -20,7 +20,7 @@ Assuming you already [set up your lab infrastructure](../1-setup.md):
 
 ## Existing Device Configuration
 
-* The switches in your lab (S1 and S2) are preconfigured with a *tenant* VLAN with VLAN tag 100.
+* The leaf switches in your lab (L1 and L2) are preconfigured with a *tenant* VLAN with VLAN tag 100.
 * IPv4 addresses are configured on Linux hosts, switch loopback interfaces, and the interswitch links ([details](#addr)).
 * The switches run OSPF in area 0 across the interswitch links ([details](#ospf)).
 * The leaf switches have IBGP sessions with the spine switch. The spine switch is a BGP route reflector ([details](#bgp)). 
@@ -66,7 +66,7 @@ Apart from using the usual [troubleshooting hints](../vxlan/1-single.md#tshoot) 
 
 For example, this is the IMET route originated by L1 as seen on L1:
 
-EVPN IMET route displayed on the originating router (L1 running Arista cEOS)
+EVPN IMET route displayed on the originating switch (L1 running Arista cEOS)
 {.code-caption}
 ```
 l1#show bgp evpn route-type imet 10.0.0.2 detail
@@ -84,7 +84,7 @@ BGP routing table entry for imet 10.0.0.2, Route Distinguisher: 10.0.0.2:100
 
 This is the same route inspected on the remote leaf switch (L2). The only differences in the BGP attribute are RR-specific attributes (*Originator* and *Cluster list*)
 
-EVPN IMET route displayed on the originating router (L1 running Arista cEOS)
+EVPN IMET route displayed on the remote leaf switch (L2 running Arista cEOS)
 {.code-caption}
 ```
 BGP routing table information for VRF default

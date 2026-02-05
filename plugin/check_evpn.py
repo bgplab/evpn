@@ -1,7 +1,3 @@
-import os
-
-from netsim import __version__
-from netsim.utils import log,strings
 from netsim.augment import devices
 from box import Box
 
@@ -17,7 +13,7 @@ def pre_transform(topology: Box) -> None:
       continue
 
     f_list += [ f'{node}({n_data.device})' ]
-    n_data.module = [ m for m in n_data.module if m not in ('evpn','vxlan') ]    
+    n_data.module = [ m for m in n_data.module if m not in ('evpn','vxlan') ]
     n_data.pop('evpn',None)
     n_data.pop('vxlan',None)
 
