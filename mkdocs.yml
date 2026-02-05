@@ -34,6 +34,7 @@ nav:
   - evpn/3-irb.md
   - services/1-pvlan.md
 - "Designs":
+  - design/1-rr.md
   - "EBGP-Only EVPN": design/2-ebgp.md
 
 markdown_extensions:

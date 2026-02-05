@@ -1,0 +1,40 @@
+# BGP Route Reflectors in EVPN Fabrics
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+plugin: [ check_evpn ]
+
+version: 25.10
+#_include: [ validate.yml ]
+
+groups:
+  _auto_create: True
+  switches:
+    members: [ l1, l2, spine ]
+  hosts:
+    members: [ h1, h2 ]
+    device: linux
+
+module: [ vlan, bgp, ospf, vxlan, evpn ]
+
+bgp.as: 65000
+evpn.session: [ ebgp ]
+nodes.spine.bgp.rr: True
+
+vlans:
+  tenant:
+    id: 100
+    vni: 1000
+    mode: bridge
+    links: [ h1-l1, h2-l2 ]
+
+links:
+- group: core
+  mtu: 1550
+  members:
+  - l1-spine
+  - l2-spine
+
+message: |
+  The "BGP Route Reflectors in EVPN Fabrics" lab is ready.
+
+  Use "netlab connect" to connect to lab devices.
