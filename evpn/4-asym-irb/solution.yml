@@ -25,6 +25,7 @@ vlans:
   red:
     prefix.ipv4: 172.16.10.0/24
     id: 100
+    vni: 10010
     mode: irb
     links: [ hr-s1 ]
     vrf: tenant
@@ -33,6 +34,7 @@ vlans:
   blue:
     prefix.ipv4: 172.16.11.0/24
     id: 101
+    vni: 10011
     mode: irb
     links: [ hb-s2 ]
     vrf: tenant
