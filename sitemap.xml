@@ -2,66 +2,70 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://evpn.bgplabs.net/</loc>
-         <lastmod>2026-01-31</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://evpn.bgplabs.net/1-setup/</loc>
-         <lastmod>2026-01-31</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://evpn.bgplabs.net/3-upcoming/</loc>
-         <lastmod>2026-01-31</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://evpn.bgplabs.net/4-codespaces/</loc>
-         <lastmod>2026-01-31</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://evpn.bgplabs.net/99-about/</loc>
-         <lastmod>2026-01-31</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://evpn.bgplabs.net/design/2-ebgp/</loc>
-         <lastmod>2026-01-31</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://evpn.bgplabs.net/evpn/1-bridging/</loc>
-         <lastmod>2026-01-31</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://evpn.bgplabs.net/evpn/2-complex/</loc>
-         <lastmod>2026-01-31</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://evpn.bgplabs.net/evpn/3-irb/</loc>
-         <lastmod>2026-01-31</lastmod>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://evpn.bgplabs.net/evpn/4-asym-irb/</loc>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://evpn.bgplabs.net/services/1-pvlan/</loc>
-         <lastmod>2026-01-31</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://evpn.bgplabs.net/vxlan/1-single/</loc>
-         <lastmod>2026-01-31</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://evpn.bgplabs.net/vxlan/2-complex/</loc>
-         <lastmod>2026-01-31</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://evpn.bgplabs.net/vxlan/3-irb/</loc>
-         <lastmod>2026-01-31</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://evpn.bgplabs.net/vxlan/4-anycast/</loc>
-         <lastmod>2026-01-31</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://evpn.bgplabs.net/vxlan/5-vrf-lite/</loc>
-         <lastmod>2026-01-31</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://evpn.bgplabs.net/vxlan/6-ipv6/</loc>
-         <lastmod>2026-01-31</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
 </urlset>

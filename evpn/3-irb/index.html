@@ -110,6 +110,10 @@
 </li>
                                     
 <li>
+    <a href="../4-asym-irb/" class="dropdown-item">EVPN Asymmetric Integrated Routing and Bridging</a>
+</li>
+                                    
+<li>
     <a href="../../services/1-pvlan/" class="dropdown-item">Building a Private VLAN with EVPN/VXLAN</a>
 </li>
                                 </ul>
@@ -137,7 +141,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../services/1-pvlan/" class="nav-link">
+                                <a rel="next" href="../4-asym-irb/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -187,7 +191,7 @@
         <ul class="nav flex-column">
         </ul>
       </li>
-      <li class="nav-item" data-level="2"><a href="#verification" class="nav-link">Verification</a>
+      <li class="nav-item" data-level="2"><a href="#tshoot" class="nav-link">Verification and Troubleshooting</a>
         <ul class="nav flex-column">
         </ul>
       </li>
@@ -417,7 +421,7 @@
 <p class="admonition-title">Tip</p>
 <p>See <em>EVPN Routes and ARP Resolution</em> section for more details (the <a href="https://blog.ipspace.net/2025/04/evpn-symmetric-irb-arp/">ARP Challenges in EVPN/VXLAN Symmetric IRB</a> blog post describes a similar challenge). </p>
 </div>
-<h2 id="verification">Verification</h2>
+<h2 id="tshoot">Verification and Troubleshooting</h2>
 <p>Use <strong>netlab validate</strong> or <strong>ping</strong> on hosts to verify that all hosts can reach each other:</p>
 <pre><code>hr1:/# ping -c 3 hb2
 PING hb2 (172.16.11.6): 56 data bytes
