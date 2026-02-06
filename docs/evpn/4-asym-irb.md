@@ -49,7 +49,7 @@ Assuming you already [set up your lab infrastructure](../1-setup.md):
 You'll configure the VLANs, *tenant* VRF, IP addresses on switch VLAN interfaces, and anycast gateways before configuring VXLAN or EVPN:
 
 * Configure *blue* VLAN and an associated VLAN interface on S1
-* Configure *red* VLAN and an associated VLAN interface on S1
+* Configure *red* VLAN and an associated VLAN interface on S2
 * Create a *tenant* VRF and enable IP routing in that VRF
 * Put the *red* and *blue* VLAN interfaces into the *tenant* VRF
 * Configure the following IP addresses on S1 and S2:
@@ -57,11 +57,11 @@ You'll configure the VLANs, *tenant* VRF, IP addresses on switch VLAN interfaces
 | Node/Interface | IPv4 Address | Description |
 |----------------|-------------:|-------------|
 | **s1** |||
-| Vlan100 | 172.16.10.1/24 | VLAN red (100) -> [hr1,hr2,s2] (VRF: tenant) |
-| Vlan101 | 172.16.11.1/24 | VLAN blue (101) -> [hb1,hb2,s2] (VRF: tenant) |
+| Vlan100 | 172.16.10.1/24 | VLAN red (100) -> [hr,s2] (VRF: tenant) |
+| Vlan101 | 172.16.11.1/24 | VLAN blue (101) -> [hb,s2] (VRF: tenant) |
 | **s2** |||
-| Vlan100 | 172.16.10.2/24 | VLAN red (100) -> [hr1,s1,hr2] (VRF: tenant) |
-| Vlan101 | 172.16.11.2/24 | VLAN blue (101) -> [hb1,s1,hb2] (VRF: tenant) |
+| Vlan101 | 172.16.11.2/24 | VLAN blue (101) -> [s1,hb] (VRF: tenant) |
+| Vlan100 | 172.16.10.2/24 | VLAN red (100) -> [hr,s1] (VRF: tenant) |
 
 * Using the commands you mastered in the [Anycast Gateways on VXLAN Segments](../vxlan/4-anycast.md) lab exercise, configure the anycast gateways (or active-active VRRP) on *red* and *blue* VLANs using these IP addresses:
 
@@ -88,18 +88,23 @@ Using the procedure you mastered in the [Build an EVPN-based MAC-VRF instance](1
 
 ## Verification
 
-Use **netlab validate** or **ping** on hosts to verify that all hosts can reach each other:
+If you used FRRouting or Arista EOS devices as the lab switches, you can use the **netlab validate** command to check your work:
+
+![Validation results](validate-asym-irb.png)
+
+Alternatively, use **ping** to check that HR and HB can communicate (proving that inter-subnet routing across VXLAN segments works):
 
 ```
-hr1:/# ping -c 3 hb2
-PING hb2 (172.16.11.6): 56 data bytes
-64 bytes from 172.16.11.6: seq=0 ttl=63 time=5.410 ms
-64 bytes from 172.16.11.6: seq=1 ttl=63 time=2.072 ms
-64 bytes from 172.16.11.6: seq=2 ttl=63 time=2.098 ms
+$ netlab connect hr ping -c 3 hb
+Connecting to container clab-asymirb-hr, executing ping -c 3 hb
+PING hb (172.16.11.4): 56 data bytes
+64 bytes from 172.16.11.4: seq=0 ttl=63 time=2.307 ms
+64 bytes from 172.16.11.4: seq=1 ttl=63 time=1.944 ms
+64 bytes from 172.16.11.4: seq=2 ttl=63 time=2.407 ms
 
---- hb2 ping statistics ---
+--- hb ping statistics ---
 3 packets transmitted, 3 packets received, 0% packet loss
-round-trip min/avg/max = 2.072/3.193/5.410 ms
+round-trip min/avg/max = 1.944/2.219/2.407 ms
 ```
 
 Use the troubleshooting hints from the [Build an EVPN-based MAC-VRF instance](1-bridging.md#tshoot) and [Integrated Routing and Bridging (IRB) with EVPN](3-irb.md#tshoot) lab exercises if needed (we expect you're familiar with the traditional routing between VLAN segments).
@@ -129,9 +134,9 @@ Use the troubleshooting hints from the [Build an EVPN-based MAC-VRF instance](1-
 | **s2** |  10.0.0.2/32 |  | Loopback |
 | Ethernet1 | 10.1.0.2/30 |  | s2 -> s1 |
 | **hr** | 
-| eth1 | 172.16.10.3/24 |  | hr -> [s1,s2] |
+| eth1 | 172.16.10.3/24 |  | hr -> s1 [red VLAN] |
 | **hb** | 
-| eth1 | 172.16.11.4/24 |  | hb -> [s1,s2] |
+| eth1 | 172.16.11.4/24 |  | hb -> s2 [blue VLAN] |
 
 ### OSPF Routing (Area 0) {#ospf}
 
