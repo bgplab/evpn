@@ -32,6 +32,7 @@ nav:
   - evpn/1-bridging.md
   - evpn/2-complex.md
   - evpn/3-irb.md
+  - evpn/4-asym-irb.md
   - services/1-pvlan.md
 - "Designs":
   - design/1-rr.md
