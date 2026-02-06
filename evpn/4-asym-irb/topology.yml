@@ -1,0 +1,50 @@
+# EVPN Asymmetric IRB
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+
+version: 25.10
+_include: [ validate.yml ]
+
+module: [ vlan, ospf, bgp ]
+bgp.as: 65000
+
+groups:
+  switches:
+    members: [ s1, s2 ]
+  hosts:
+    module: [ routing ]
+    members: [ hr, hb ]
+    device: linux
+
+vlans:
+  red:
+    prefix.ipv4: 172.16.10.0/24
+    id: 100
+    mode: bridge
+    links: [ hr-s1 ]
+    ospf: False
+  blue:
+    prefix.ipv4: 172.16.11.0/24
+    id: 101
+    mode: bridge
+    links: [ hb-s2 ]
+    ospf: False
+
+nodes:
+  s1:
+  s2:
+  hr:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.10.42
+  hb:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.11.42
+
+links: [ s1-s2 ]
+
+message: |
+  The "EVPN Asymmetric Integrated Routing and Bridging (IRB)" lab is ready.
+  
+  Use "netlab connect" to connect to lab devices.

@@ -90,7 +90,7 @@ Some platforms might require additional nerd knobs to make ARP resolution work. 
 !!! tip 
     See *EVPN Routes and ARP Resolution* section for more details (the [ARP Challenges in EVPN/VXLAN Symmetric IRB](https://blog.ipspace.net/2025/04/evpn-symmetric-irb-arp/) blog post describes a similar challenge). 
 
-## Verification
+## Verification and Troubleshooting {#tshoot}
 
 Use **netlab validate** or **ping** on hosts to verify that all hosts can reach each other:
 
