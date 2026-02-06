@@ -1,0 +1,67 @@
+# EVPN Asymmetric IRB
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+
+version: 25.10
+_include: [ validate.yml ]
+
+module: [ vlan, vrf, ospf, bgp, vxlan, evpn, gateway ]
+bgp.as: 65000
+gateway.id: 42
+gateway.protocol: anycast
+
+vrfs:
+  tenant:
+
+groups:
+  switches:
+    members: [ s1, s2 ]
+  hosts:
+    module: [ routing ]
+    members: [ hr, hb ]
+    device: linux
+
+vlans:
+  red:
+    prefix.ipv4: 172.16.10.0/24
+    id: 100
+    mode: irb
+    links: [ hr-s1 ]
+    vrf: tenant
+    ospf: False
+    gateway: True
+  blue:
+    prefix.ipv4: 172.16.11.0/24
+    id: 101
+    mode: irb
+    links: [ hb-s2 ]
+    vrf: tenant
+    ospf: False
+    gateway: True
+
+nodes:
+  s1:
+    vlans:
+      red:
+      blue:
+  s2:
+    vlans:
+      red:
+      blue:
+  hr:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.10.42
+  hb:
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.11.42
+
+links: [ s1-s2 ]
+
+message: |
+  The solution for the "EVPN Asymmetric Integrated Routing and Bridging (IRB)"
+  lab is ready. Do not cheat (you learn more if you figure things out on your
+  own). Use this topology only when everything else fails.
+  
+  Use "netlab connect" to connect to lab devices.
