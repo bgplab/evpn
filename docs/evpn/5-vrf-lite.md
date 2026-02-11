@@ -120,11 +120,11 @@ Gateway of last resort is not set
  C        172.16.0.0/24
            directly connected, Ethernet2
  O        172.16.1.0/24 [110/20]
-           via 172.17.0.2, Vlan101
+           via 192.168.100.2, Vlan100
  O        172.16.2.0/24 [110/20]
-           via 172.17.0.3, Vlan101
- C        172.17.0.0/24
-           directly connected, Vlan101
+           via 192.168.100.3, Vlan100
+ C        192.168.100.0/24
+           directly connected, Vlan100
 ```
 
 * Ping between **hr1**, **hr2**, and **hr3**
