@@ -74,7 +74,7 @@ You'll implement the transport between VRF instances on S1, S2, and S3 with VXLA
 
 ## Verification
 
-* Check EVPN routes and VXLAN segments on S1, S2, and S3. You might see only the IMET EVPN routes on some platforms.
+* Check EVPN routes and VXLAN segments on S1, S2, and S3. You might see only the IMET EVPN routes on some platforms ([more about that](#ccmmr) in a minute)
 * Try to ping between the VLAN interfaces. Please note that you have to use VRF **ping** as the VLAN interfaces belong to Red/Blue VRFs:
 
 Using VRF Red to ping the Red VLAN interface on S2 from S1
@@ -130,15 +130,188 @@ Gateway of last resort is not set
 * Ping between **hr1**, **hr2**, and **hr3**
 * Ping between **hb1** and **hb2**
 
-## Cheating
+Does it all work? Fantastic. However, don't congratulate yourself too quickly; depending on the platform you're using, you might have more work to do.
 
-* Shut down your lab with the **netlab down** command
-* Start the lab from the `solution.yml` topology with the **netlab up solution.yml** command
-* Explore the S1/S2/S3 device configuration
+!!! tip
+    Can't get it to work? Maybe you can cheat your way to the next step:
+    
+    * Shut down your lab with the **netlab down** command
+    * Start the lab from the `solution.yml` topology with the `netlab up solution.yml` command
+    * Explore the S1/S2/S3 device configuration
 
-## The Curious Case of the Missing MAC Routes
+## The Curious Case of the Missing MAC Routes {#ccmmr}
 
-... and the missing section 😎
+Let's revisit one particular entry in the *red* routing table on S1. The next hop is 192.168.100.2, and the outgoing interface is the transit VLAN interface. So far, so good.
+
+The route toward the S2 red subnet, as observed on S1 running Arista EOS
+{.code-caption}
+```
+s1#show ip route vrf red 172.16.1.0/24 detail
+...
+ O        172.16.1.0/24 [110/20] PM
+           via 192.168.100.2, Vlan100 VLAN red (100) -> [s2,s3]
+```
+
+There should be an ARP entry associated with the next hop. We can see it in the ARP table for the *red* VRF, but there's that curious *not learned* bit next to it:
+
+The ARP table for the *red* VRF on S1 running Arista EOS
+{.code-caption}
+```
+s1#show arp vrf red
+Address         Age (sec)  Hardware Addr   Interface
+172.16.0.5        0:11:41  aac1.ab43.9f43  Ethernet2
+192.168.100.2     1:09:35  001c.738d.c7ca  Vlan100, not learned
+192.168.100.3     3:24:02  001c.7351.01b3  Vlan100, not learned
+```
+
+Even worse, there are no MAC addresses in the VLAN 100 MAC address table:
+
+The MAC address table for VLAN 100 on S1 running Arista EOS
+{.code-caption}
+```
+s1#show mac address-table vlan 100
+          Mac Address Table
+------------------------------------------------------------------
+
+Vlan    Mac Address       Type        Ports      Moves   Last Move
+----    -----------       ----        -----      -----   ---------
+Total Mac Addresses for this criterion: 0
+```
+
+!!! tip
+    You can stop reading and move straight to the [Recap section](#recap) if you see the MAC addresses for S2 and S3 in S1's VLAN 100 MAC address table on your device. Or keep going if you're curious 😎
+
+How does a packet from S1 even get to S2? Remember the "flooding" bit inherent in every Ethernet implementation? Every packet sent to VLAN 100 is flooded to all the switches connected to that VLAN. Congratulations, we just turned a VXLAN segment into an ancient Ethernet cable.
+
+How could that happen? Let's inspect the EVPN routes for VNI 5100 (corresponding to VLAN 100). On Arista EOS, the BGP table has the IMET routes (VTEP addresses used for flooding), but no MAC/IP routes.
+
+```
+s1#show bgp evpn vni 5100
+BGP routing table information for VRF default
+Router identifier 10.0.0.1, local AS number 65000
+Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending best path selection
+Origin codes: i - IGP, e - EGP, ? - incomplete
+AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  LocPref Weight  Path
+ * >      RD: 10.0.0.1:100 imet 10.0.0.1
+                                 -                     -       -       0       i
+ * >      RD: 10.0.0.2:100 imet 10.0.0.2
+                                 10.0.0.2              -       100     0       i
+ * >      RD: 10.0.0.3:100 imet 10.0.0.3
+                                 10.0.0.3              -       100     0       i
+```
+
+That's by design. Arista EOS is optimized for symmetric IRB deployments with anycast gateways and does not advertise the local MAC/IP address as a type-2 EVPN route. However, most EVPN implementations have way too many nerd knobs; it's just the question of which one to turn.
+
+The "magic" knob to turn on Arista EOS turns out to be **‌ redistribute router-mac system ip**. After configuring it on all three routers, the MAC-IP routes appear in the EVPN table, and the ARP/MAC tables are properly populated.
+
+!!! tip
+    If you're using Arista EOS, you can use the `netlab config system_ip --limit 's*'` command to configure that nerd knob on both VLANs on all edge switches.
+
+After configuring the advertising of system IP/MAC addresses on the VLANs 100 and 101, Arista EOS displays MAC-IP routes for all VLAN interfaces in the BGP EVPN table:
+
+BGP EVPN table on S1 running Arista EOS
+{.code-caption}
+```
+s1#show bgp evpn
+BGP routing table information for VRF default
+Router identifier 10.0.0.1, local AS number 65000
+Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending best path selection
+Origin codes: i - IGP, e - EGP, ? - incomplete
+AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  LocPref Weight  Path
+ * >      RD: 10.0.0.3:100 mac-ip 001c.7351.01b3 192.168.100.3
+                                 10.0.0.3              -       100     0       i
+ * >      RD: 10.0.0.1:100 mac-ip 001c.735e.6484 192.168.100.1
+                                 -                     -       -       0       i
+ * >      RD: 10.0.0.1:101 mac-ip 001c.735e.6484 192.168.101.1
+                                 -                     -       -       0       i
+ * >      RD: 10.0.0.2:100 mac-ip 001c.738d.c7ca 192.168.100.2
+                                 10.0.0.2              -       100     0       i
+ * >      RD: 10.0.0.2:101 mac-ip 001c.738d.c7ca 192.168.101.2
+                                 10.0.0.2              -       100     0       i
+ * >      RD: 10.0.0.1:100 imet 10.0.0.1
+                                 -                     -       -       0       i
+ * >      RD: 10.0.0.1:101 imet 10.0.0.1
+                                 -                     -       -       0       i
+ * >      RD: 10.0.0.2:100 imet 10.0.0.2
+                                 10.0.0.2              -       100     0       i
+ * >      RD: 10.0.0.2:101 imet 10.0.0.2
+                                 10.0.0.2              -       100     0       i
+ * >      RD: 10.0.0.3:100 imet 10.0.0.3
+                                 10.0.0.3              -       100     0       i
+```
+
+Not surprisingly, the ARP table for the *red* VRF is populated with static ARP entries (the "age" field is empty) derived from the EVPN MAC-IP routes:
+
+ARP table for the *red* VRF on S1 running Arista EOS
+{.code-caption}
+```
+s1#show arp vrf red
+Address         Age (sec)  Hardware Addr   Interface
+172.16.0.5        0:30:55  aac1.ab43.9f43  Ethernet2
+192.168.100.2           -  001c.738d.c7ca  Vlan100, Vxlan1
+192.168.100.3           -  001c.7351.01b3  Vlan100, Vxlan1
+```
+
+The MAC address table for VLAN 100 also shows static MAC entries  derived from the EVPN MAC-IP routes:
+
+MAC address table for VLAN 100 on S1 running Arista EOS
+{.code-caption}
+```
+s1#show mac address-table vlan 100
+          Mac Address Table
+------------------------------------------------------------------
+
+Vlan    Mac Address       Type        Ports      Moves   Last Move
+----    -----------       ----        -----      -----   ---------
+ 100    001c.7351.01b3    STATIC      Vx1
+ 100    001c.738d.c7ca    STATIC      Vx1
+```
+
+Finally, the VXLAN address table maps router MACs to VTEPs:
+
+VXLAN address table for VLAN 100 on S1 running Arista EOS
+{.code-caption}
+```
+s1#show vxlan address-table vlan 100
+          Vxlan Mac Address Table
+----------------------------------------------------------------------
+
+VLAN  Mac Address     Type      Prt  VTEP             Moves   Last Move
+----  -----------     ----      ---  ----             -----   ---------
+ 100  001c.7351.01b3  STATIC    Vx1  10.0.0.3
+ 100  001c.738d.c7ca  STATIC    Vx1  10.0.0.2
+```
+
+And now we're ready to move to the next exercise.
+
+## Recap {#recap}
+
+Let's summarize all the bits we needed to get this solution to work:
+
+* A transit VLAN for each VRF
+* A MAC-VRF instance to extend that transit VLAN across all switches participating in the VRF
+* MAC-IP EVPN routes for VLAN MAC/IP addresses of all participating switches
+* ARP entries for all switches connected to the transit VLAN
+* MAC address entries for all switches connected to the transit VLAN
+* VXLAN address entries mapping router MAC addresses to VTEPs
+* A routing protocol running across the transit VLAN
+* Routing table entries pointing to next hops reachable over the transit VLAN.
+
+And now, from the packet forwarding perspective:
+
+* Destination IP address of an incoming packet matches an entry in the VRF routing table
+* The outgoing interface for that entry is the transit VLAN. The routing table entry also has a next-hop IP address
+* Using the ARP table, the next-hop IP address is mapped into a remote MAC address.
+* Using the VLAN MAC address table, the remote MAC address is mapped into the VXLAN interface
+* Using the VXLAN address table, the remote MAC address is mapped into the remote VTEP IP address
+
+Using the information gathered in those lookup steps, the ingress router can build the (inner) MAC header, the VXLAN header, and the UDP/IP header for the packet sent across the IP fabric.
 
 ## Reference Information
 

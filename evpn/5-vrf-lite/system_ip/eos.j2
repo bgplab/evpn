@@ -1,0 +1,5 @@
+router bgp {{ bgp.as }}
+{% for vdata in vlans.values() if 'evpn' in vdata %}
+   vlan {{ vdata.id }}
+      redistribute router-mac system ip
+{% endfor %}
