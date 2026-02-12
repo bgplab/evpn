@@ -36,6 +36,7 @@ After mastering the basics of using VXLAN to stretch Ethernet segments across an
 * [More complex EVPN/VXLAN bridging scenario](evpn/2-complex.md)<!-- new -->
 * [Integrated Routing and Bridging (IRB) with EVPN MAC-VRF instances](evpn/3-irb.md)<!-- new -->
 * [EVPN Asymmetric Integrated Routing and Bridging (IRB)](evpn/4-asym-irb.md)<!--new-->
+* [Implement VRF-Lite with EVPN/VXLAN](evpn/5-vrf-lite.md)<!--new-->
 * Symmetric IRB with IP-VRF EVPN instances (coming soon)
 * Intra-subnet symmetric routing with proxy ARP
 * Using EVPN in an IPv6-only underlay network
