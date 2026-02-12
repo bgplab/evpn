@@ -8,7 +8,7 @@ The project uses _[netlab](https://netlab.tools)_[^HT] to set up the labs.  You 
  
 You'll find the lab topology files in a [GitHub repository](https://github.com/bgplab/evpn), but you might [explore the lab exercises first](https://evpn.bgplabs.net/).
 
-Complex network technologies tend to be fun[^ON]: there's always another nook to explore. If I missed one of them, please [open an issue](https://github.com/bgplab/isis/issues) or a [discussion](https://github.com/bgplab/isis/discussions), or (even better) become a contributor and submit a PR.
+Complex network technologies tend to be fun[^ON]: there's always another nook to explore. If I missed one of them, please [open an issue](https://github.com/bgplab/evpn/issues) or a [discussion](https://github.com/bgplab/evpn/discussions), or (even better) become a contributor and submit a PR.
 
 [^HT]: When you happen to have a Hammer of Thor handy, everything looks like a nail waiting to be hit ;)
 
