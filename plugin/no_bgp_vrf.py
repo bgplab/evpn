@@ -1,4 +1,3 @@
-from netsim.augment import devices
 from box import Box
 
 def cleanup(topology: Box) -> None:
