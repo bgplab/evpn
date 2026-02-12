@@ -7,6 +7,7 @@ This series of VXLAN/EVPN hands-on labs will help you master numerous aspects of
 
 * Arista EOS
 * Aruba AOS-CX
+* Cisco IOS/XE
 * Cisco Nexus OS
 * Dell OS10
 * Juniper switches
@@ -15,7 +16,7 @@ This series of VXLAN/EVPN hands-on labs will help you master numerous aspects of
 
 [^PC]: Some assembly required: while some virtual machines or containers are easy to download, you'll have to build a Vagrant box or install a vendor-supplied Vagrant box or Docker container image for most other platforms. See [installation and setup](1-setup.md) for details.
 
-Several labs are already waiting for you (with more coming soon), but if this is your first visit to this site, you should start with the [Installation and Setup](1-setup.md) documentation or [run VXLAN/EVPN labs in GitHub codespaces](4-codespaces.md).
+Over a dozen labs are already waiting for you (with more coming soon), but if this is your first visit to this site, you should start with the [Installation and Setup](1-setup.md) documentation or [run VXLAN/EVPN labs in GitHub codespaces](4-codespaces.md).
 
 ## Configure VXLAN {#vxlan}
 
@@ -37,6 +38,7 @@ After mastering the basics of using VXLAN to stretch Ethernet segments across an
 * [Integrated Routing and Bridging (IRB) with EVPN MAC-VRF instances](evpn/3-irb.md)<!-- new -->
 * [EVPN Asymmetric Integrated Routing and Bridging (IRB)](evpn/4-asym-irb.md)<!--new-->
 * [Implement VRF-Lite with EVPN/VXLAN](evpn/5-vrf-lite.md)<!--new-->
+* [VPN IP Routing in EVPN Fabrics](evpn/6-ip-routing.md)<!--new-->
 * Symmetric IRB with IP-VRF EVPN instances (coming soon)
 * Intra-subnet symmetric routing with proxy ARP
 * Using EVPN in an IPv6-only underlay network
@@ -55,4 +57,3 @@ EVPN was designed for use with IBGP sessions, with BGP next hops resolved via an
 * [BGP Route Reflectors in EVPN Fabrics](design/1-rr.md)<!-- new -->
 * [EBGP-only EVPN](design/2-ebgp.md)<!-- new -->
 * Multi-pod EVPN
-
