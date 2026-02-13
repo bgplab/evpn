@@ -1,0 +1,5 @@
+{% for vdata in vlans.values() if 'evpn' in vdata %}
+l2vpn evpn instance {{ vdata.evpn.evi }} vlan-based
+ default-gateway advertise enable
+!
+{% endfor %}

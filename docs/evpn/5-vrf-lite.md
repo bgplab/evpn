@@ -96,7 +96,7 @@ rtt min/avg/max/mdev = 0.827/1.222/1.768/0.315 ms, ipg/ewma 2.000/1.475 ms
 !!! tip
     If needed, follow the [troubleshooting hints](1-bridging.md#tshoot) from the [Build an EVPN-based MAC-VRF instance](1-bridging.md) lab exercise.
 
-* Check in-VRF routing protocol adjacences between S1, S2, and S3.
+* Check in-VRF routing protocol adjacences between S1, S2, and S3. On some platforms (for example, Cisco IOS/XE), the OSPF protocol might not start, or might not work properly until you fix the [missing MAC/IP routes](#ccmmr).
 
 OSPF neighbors (global and VRF) on S1
 {.code-caption}
@@ -205,10 +205,10 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
 
 That's by design. Arista EOS is optimized for symmetric IRB deployments with anycast gateways and does not advertise the local MAC/IP address as a type-2 EVPN route. However, most EVPN implementations have way too many nerd knobs; it's just the question of which one to turn.
 
-The "magic" knob to turn on Arista EOS turns out to be **‌ redistribute router-mac system ip**. After configuring it on all three routers, the MAC-IP routes appear in the EVPN table, and the ARP/MAC tables are properly populated.
+The "magic" knob to tweak is **redistribute router-mac system ip** on Arista EOS and **default-gateway advertise enable** (in **l2vpn evpn instance**) on Cisco IOS/XE. After configuring it on all three routers, the MAC-IP routes should appear in the EVPN table, and the ARP/MAC tables would be properly populated.
 
 !!! tip
-    If you're using Arista EOS, you can use the `netlab config system_ip --limit 's*'` command to configure that nerd knob on both VLANs on all edge switches.
+    If you're using Arista EOS or Cisco IOS/XE, you can use the `netlab config system_ip --limit 's*'` command to configure that nerd knob on both VLANs on all edge switches.
 
 After configuring the advertising of system IP/MAC addresses on the VLANs 100 and 101, Arista EOS displays MAC-IP routes for all VLAN interfaces in the BGP EVPN table:
 
