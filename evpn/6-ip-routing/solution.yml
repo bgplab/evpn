@@ -1,0 +1,37 @@
+# VPN IP Routing in EVPN Fabrics
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+
+version: 25.10
+#_include: [ validate.yml ]
+plugin: [ check_validate, no_bgp_vrf ]
+
+module: [ vrf, ospf, bgp, vlan, vxlan, evpn ]
+bgp.as: 65000
+
+groups:
+  _auto_create: True
+  switches:
+    members: [ s1, s2, s3 ]
+  external:
+    members: [ core ]
+    module: [ ospf ]
+  hosts:
+    members: [ hr1, hr2, hr3, hb1, hb2 ]
+
+vrfs:
+  red:
+    links: [ hr1-s1, hr2-s2, hr3-s3 ]
+    evpn.transit_vni: 5100
+  blue:
+    links: [ hb1-s1, hb2-s2 ]
+    evpn.transit_vni: 5101
+
+links: [ s1-core, s2-core, s3-core ]
+
+message: |
+  The solution for the "VPN IP Routing in EVPN Fabrics" lab is ready. Do not
+  cheat (you learn more if you figure things out on your own). Use this topology
+  only when everything else fails.
+  
+  Use "netlab connect" to connect to lab devices.

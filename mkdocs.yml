@@ -14,13 +14,11 @@ plugins:
 - search
 - include_dir_to_nav
 nav:
-- Home:
+- Overview:
   - index.md
-  - "Upcoming Labs": 3-upcoming.md
-  - 99-about.md
-- Installation:
   - 1-setup.md
   - 4-codespaces.md
+  - 99-about.md
 - "VXLAN":
   - vxlan/1-single.md
   - vxlan/2-complex.md
@@ -34,6 +32,8 @@ nav:
   - evpn/3-irb.md
   - evpn/4-asym-irb.md
   - evpn/5-vrf-lite.md
+  - evpn/6-ip-routing.md
+- "Services":
   - services/1-pvlan.md
 - "Designs":
   - design/1-rr.md

@@ -288,8 +288,6 @@ VLAN  Mac Address     Type      Prt  VTEP             Moves   Last Move
  100  001c.738d.c7ca  STATIC    Vx1  10.0.0.2
 ```
 
-And now we're ready to move to the next exercise.
-
 ## Recap {#recap}
 
 Let's summarize all the bits we needed to get this solution to work:
@@ -312,6 +310,8 @@ And now, from the packet forwarding perspective:
 * Using the VXLAN address table, the remote MAC address is mapped into the remote VTEP IP address
 
 Using the information gathered in those lookup steps, the ingress router can build the (inner) MAC header, the VXLAN header, and the UDP/IP header for the packet sent across the IP fabric.
+
+And now we're ready to move to the next exercise: [VPN IP Routing in EVPN Fabrics](6-ip-routing.md).
 
 ## Reference Information
 

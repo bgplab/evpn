@@ -22,6 +22,7 @@ The labs cover:
 * [Integrated Routing and Bridging (IRB) with EVPN MAC-VRF instances](evpn/3-irb)
 * [EVPN Asymmetric Integrated Routing and Bridging (IRB)](evpn/4-asym-irb)
 * [Implement VRF-Lite with EVPN/VXLAN](evpn/5-vrf-lite)
+* [VPN IP Routing in EVPN Fabrics](evpn/6-ip-routing)
 
 **Complex EVPN Services**
 
