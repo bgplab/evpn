@@ -184,8 +184,6 @@ That setup results in the following forwarding paths:
 
 ### BGP Routing {#bgp}
 
-## BGP Neighbors
-
 | Node | Router ID/<br />Neighbor | Router AS/<br />Neighbor AS | Neighbor IPv4 |
 |------|------------------|---------------------:|--------------:|
 | **s1** | 10.0.0.1 | 65000 |
