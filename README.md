@@ -23,6 +23,7 @@ The labs cover:
 * [EVPN Asymmetric Integrated Routing and Bridging (IRB)](evpn/4-asym-irb)
 * [Implement VRF-Lite with EVPN/VXLAN](evpn/5-vrf-lite)
 * [VPN IP Routing in EVPN Fabrics](evpn/6-ip-routing)
+* [Symmetric IRB with IP-VRF EVPN instances](evpn/7-symm-irb) 
 
 **Complex EVPN Services**
 

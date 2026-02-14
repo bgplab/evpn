@@ -61,7 +61,7 @@ In our scenario, you only have to redistribute **connected** subnets into the *r
 
 Finally, you must enable the EVPN address family on the IBGP sessions between S1, S2, and S3.
 
-## Verification
+## Verification {#tshoot}
 
 * Check the VRF BGP tables. They should include the connected subnets.
 
@@ -136,7 +136,7 @@ Gateway of last resort is not set
 
 Once the VRF routing tables have all the expected subnets, verify that you can ping between **hr1**, **hr2**, and **hr3** and between **hb1** and **hb2**
 
-Does it all work? Fantastic. You can move on or explore the [behind-the-scenes details](#bds).
+Does it all work? Fantastic. You can [move on](7-symm-irb.md) or explore the [behind-the-scenes details](#bds).
 
 ## Cheating
 

@@ -1,0 +1,51 @@
+# Symmetric IRB with IP-VRF EVPN instances
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+
+version: 25.10
+_include: [ validate.yml ]
+
+module: [ vlan, vrf, ospf, bgp ]
+bgp.as: 65000
+
+groups:
+  _auto_create: True
+  switches:
+    members: [ s1, s2 ]
+  hosts:
+    members: [ red_hosts, hb, hg ]
+    device: linux
+  red_hosts:
+    module: [ routing ]
+    members: [ hr1, hr2 ]
+    routing.static:
+    - pool: lan
+      nexthop.ipv4: 172.16.11.42
+
+vlans:
+  red:
+    prefix.ipv4: 172.16.11.0/24
+    id: 101
+    links: [ hr1-s1, hr2-s2 ]
+    vrf: tenant
+  blue:
+    prefix.ipv4: 172.16.12.0/24
+    id: 102
+    links: [ hb-s1 ]
+    vrf: tenant
+  green:
+    prefix.ipv4: 172.16.13.0/24
+    id: 103
+    links: [ hg-s2 ]
+    vrf: tenant
+
+vrfs:
+  tenant:
+    ospf: False
+
+links: [ s1-s2 ]
+
+message: |
+  The "Symmetric IRB with IP-VRF EVPN instances" lab is ready.
+  
+  Use "netlab connect" to connect to lab devices.
