@@ -10,13 +10,13 @@ You can check out whether the devices you plan to use support the ARP suppressio
 
 ### Device Requirements {#req}
 
-You can use any device supported by the _netlab_ [OSPF](https://netlab.tools/module/ospf/#platform-support), [BGP](https://netlab.tools/module/bgp/#platform-support), [VRF](https://netlab.tools/module/vlan/#platform-support), and [VLAN](https://netlab.tools/module/vlan/#platform-support) configuration modules. _netlab_ will also try to configure VXLAN, EVPN, and MAC-VRF for the tenant VLAN. 
+You can use any device supported by the _netlab_ [OSPF](https://netlab.tools/module/ospf/#platform-support), [BGP](https://netlab.tools/module/bgp/#platform-support), [VRF](https://netlab.tools/module/vrf/#platform-support), and [VLAN](https://netlab.tools/module/vlan/#platform-support) configuration modules. _netlab_ will also try to configure VXLAN, EVPN, and MAC-VRF for the tenant VLAN.
 
 ## Start the Lab
 
 Assuming you already [set up your lab infrastructure](../1-setup.md):
 
-* Change directory to `evpn/8-proxy.arp`
+* Change directory to `evpn/8-proxy-arp`
 * Execute **netlab up**
 * Log into lab devices with **netlab connect** and verify that they are properly configured.
 * If _netlab_ configured VXLAN and EVPN on your devices, ping H2 from H1 to verify everything works as expected.
@@ -31,7 +31,7 @@ Assuming you already [set up your lab infrastructure](../1-setup.md):
 * A MAC-VRF is configured for the *red* VLAN using import- and export route target `65000:100`
 
 !!! warning
-    Your lab won't have the EVPN address family in IBGP sessions, VXLAN configuration, or MAC-VRF configuration if _netlab_ can't configure them on your device. In that case,  use the procedure you've mastered in the [Extend a Single VLAN Segment with VXLAN](../vxlan/1-single.md) lab exercise to configure them.
+    Your lab won't have the EVPN address family in IBGP sessions, VXLAN configuration, or MAC-VRF configuration if _netlab_ can't configure them on your device. In that case, use the procedure you've mastered in the [Extend a Single VLAN Segment with VXLAN](../vxlan/1-single.md) lab exercise to configure them.
 
 ## Establishing the Baseline
 
@@ -40,7 +40,7 @@ You might want to observe the ARP traffic between H1 and H2 before starting devi
 1. Start `netlab capture h2 eth1 arp` in a terminal window to capture ARP requests sent to H2 and its replies.
 2. Connect to H1 with `netlab connect h1`
 3. Execute `arp -d h2` to clear the ARP entry for H2[^NCE] followed by `ping h2 -c 1` to trigger the ARP address resolution.
-3. You should see an ARP request and a corresponding ARP reply in the **netlab capture** printout every time you execute the  above commands
+4. You should see an ARP request and a corresponding ARP reply in the **netlab capture** printout every time you execute the above commands
 
 ARP traffic observed on the **eth1** interface of H2
 {.code-caption}
@@ -157,7 +157,7 @@ Address         Age (sec)  Hardware Addr   Interface
 * Use the `netlab capture h2 eth1 arp or icmp` command to start the capture of ARP and ICMP packets on H2 Ethernet interface. You should not see any ARP requests preceding the ICMP packets after clearing the ARP cache on H1 and pinging H2.
 
 !!! tip
-    You will probably see unicast ARP requests (sent as unicast Ethernet packets) that H1 uses to test whether H2 is still alive. Use the `‌netlab capture h2 eth1 -e -l -vv arp or icmp` command to display Ethernet headers in the captured packets.
+    You will probably see unicast ARP requests (sent as unicast Ethernet packets) that H1 uses to test whether H2 is still alive. Use the `netlab capture h2 eth1 -e -l -vv arp or icmp` command to display Ethernet headers in the captured packets.
 
 ## Cheating
 
