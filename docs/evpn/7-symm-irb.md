@@ -111,7 +111,7 @@ Gateway of last resort is not set
 * Ping **hg** from **hb**. If you get no response, your IP-VRF instance doesn't work correctly; use [these troubleshooting hints](6-ip-routing.md#tshoot)
 * Ping **hb** from **hr1** and **hg** from **hr2**. These pings rely on the (local) anycast gateway in the *red* VLAN. If they don't work, figure out what you missed there.
 
-Does it all work? Fantastic. You mastered the most important EVPN concepts and implementation details (but don't skip the *[packet forwarding](#pfd)* recap).
+Does it all work? Fantastic. You mastered the most important EVPN concepts and implementation details (but don't skip the *[packet forwarding](#pfd)* recap). Let's move into more arcane topics, starting with [Proxy ARP in EVPN MAC-VRF Instances](8-proxy-arp.md).
 
 ## Cheating
 
