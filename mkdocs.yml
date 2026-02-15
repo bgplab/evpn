@@ -33,6 +33,7 @@ nav:
   - evpn/4-asym-irb.md
   - evpn/5-vrf-lite.md
   - evpn/6-ip-routing.md
+  - evpn/7-symm-irb.md
 - "Services":
   - services/1-pvlan.md
 - "Designs":
