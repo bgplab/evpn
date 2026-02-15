@@ -6,9 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="author" content="Ivan Pepelnjak, ipSpace.net AG">
-        <link rel="canonical" href="https://evpn.bgplabs.net/evpn/4-asym-irb/">
+        <link rel="canonical" href="https://evpn.bgplabs.net/evpn/7-symm-irb/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>EVPN Asymmetric Integrated Routing and Bridging &#171; VXLAN and EVPN Labs</title>
+  <title>Symmetric IRB with IP-VRF EVPN instances &#171; VXLAN and EVPN Labs</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/fontawesome.min.css" rel="stylesheet">
         <link href="../../css/brands.min.css" rel="stylesheet">
@@ -101,7 +101,7 @@
 </li>
                                     
 <li>
-    <a href="./" class="dropdown-item active" aria-current="page">EVPN Asymmetric Integrated Routing and Bridging</a>
+    <a href="../4-asym-irb/" class="dropdown-item">EVPN Asymmetric Integrated Routing and Bridging</a>
 </li>
                                     
 <li>
@@ -113,7 +113,7 @@
 </li>
                                     
 <li>
-    <a href="../7-symm-irb/" class="dropdown-item">Symmetric IRB with IP-VRF EVPN instances</a>
+    <a href="./" class="dropdown-item active" aria-current="page">Symmetric IRB with IP-VRF EVPN instances</a>
 </li>
                                 </ul>
                             </li>
@@ -148,12 +148,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../3-irb/" class="nav-link">
+                                <a rel="prev" href="../6-ip-routing/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../5-vrf-lite/" class="nav-link">
+                                <a rel="next" href="../../services/1-pvlan/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -181,7 +181,7 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary"  style="margin-bottom: 1em;">
       <ul class="nav flex-column">
           
-      <li class="nav-item" data-level="1"><a href="#evpn-asymmetric-integrated-routing-and-bridging" class="nav-link">EVPN Asymmetric Integrated Routing and Bridging</a>
+      <li class="nav-item" data-level="1"><a href="#symmetric-irb-with-ip-vrf-evpn-instances" class="nav-link">Symmetric IRB with IP-VRF EVPN instances</a>
         <ul class="nav flex-column">
       <li class="nav-item" data-level="3"><a href="#req" class="nav-link">Device Requirements</a>
         <ul class="nav flex-column">
@@ -195,11 +195,7 @@
         <ul class="nav flex-column">
         </ul>
       </li>
-      <li class="nav-item" data-level="2"><a href="#configure-integrated-routing" class="nav-link">Configure Integrated Routing</a>
-        <ul class="nav flex-column">
-        </ul>
-      </li>
-      <li class="nav-item" data-level="2"><a href="#configure-vxlan-and-evpn" class="nav-link">Configure VXLAN and EVPN</a>
+      <li class="nav-item" data-level="2"><a href="#configuration-guidelines" class="nav-link">Configuration Guidelines</a>
         <ul class="nav flex-column">
         </ul>
       </li>
@@ -208,6 +204,10 @@
         </ul>
       </li>
       <li class="nav-item" data-level="2"><a href="#cheating" class="nav-link">Cheating</a>
+        <ul class="nav flex-column">
+        </ul>
+      </li>
+      <li class="nav-item" data-level="2"><a href="#pfd" class="nav-link">Recap: Packet Forwarding in Tenant Network</a>
         <ul class="nav flex-column">
         </ul>
       </li>
@@ -242,202 +242,198 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="evpn-asymmetric-integrated-routing-and-bridging">EVPN Asymmetric Integrated Routing and Bridging</h1>
-<p>In the <a href="../3-irb/">previous lab exercise</a>, we created an EVPN-based VRF that connected two stretched VLANs. We had an easy task because hosts from every VLAN were connected to every switch. Can you use the same trick if the hosts are sparsely connected (like in the lab topology we&rsquo;ll use in this exercise)?</p>
-<p><img alt="Lab topology" src="../topology-asym-irb.png" /></p>
-<p>Of course, you can. If you extend every VLAN to every fabric switch, you get the exact same scenario as in the previous lab exercise:</p>
-<p><img alt="Lab topology" src="../../vxlan/packet-flow-irb.png" /></p>
-<p>Obviously, you&rsquo;d also create too many VLANs, extend the bridging domains, have more entries in the ARP/MAC tables on all switches, and increase flooding traffic, but that&rsquo;s the price you have to pay if you don&rsquo;t want to learn any new concepts ;)</p>
-<p>Even though <em>asymmetric IRB</em> is clearly a bad solution in scenarios like the one described in this exercise, let&rsquo;s still go through the motions and figure out how to make it work before moving on to a better solution (<em>symmetric IRB</em>).</p>
+<h1 id="symmetric-irb-with-ip-vrf-evpn-instances">Symmetric IRB with IP-VRF EVPN instances</h1>
+<p>In the <a href="../1-bridging/">Build an EVPN-based MAC-VRF instance</a> lab exercise, you learned how to configure a MAC-VRF instance to enable bridging across a VXLAN segment with the EVPN control plane. In the <a href="../6-ip-routing/">VPN IP Routing in EVPN Fabrics</a> one, you used an IP-VRF instance to implement IP routing for a tenant network. Can we combine the two approaches? Definitely, you&rsquo;ll master that in this lab exercise.</p>
+<p><img alt="Lab topology" src="../topology-symm-irb.png" /></p>
+<p>To build a network for our tenant, you could use <a href="../4-asym-irb/">asymmetric IRB</a>: extend the <em>blue</em> VLAN to S2, extend the <em>green</em> VLAN to S1, and create three MAC-VRF instances. We&rsquo;ll use a much better approach: we&rsquo;ll configure a MAC-VRF instance to extend the <em>red</em> VLAN and an EVPN IP-VRF instance with a transit VXLAN segment to route between the three VLANs.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>This lab exercise does not introduce new concepts. It&rsquo;s a comprehensive recap of everything you&rsquo;ve learned so far.</p>
+</div>
 <h3 id="req">Device Requirements</h3>
-<p>You can use any device supported by the <em>netlab</em> <a href="https://netlab.tools/module/ospf/#platform-support">OSPF</a>, <a href="https://netlab.tools/module/bgp/#platform-support">BGP</a>, and <a href="https://netlab.tools/module/vlan/#platform-support">VLAN</a> configuration modules. The device should support VXLAN and EVPN.</p>
+<p>You can use any device supported by the <em>netlab</em> <a href="https://netlab.tools/module/ospf/#platform-support">OSPF</a>, <a href="https://netlab.tools/module/bgp/#platform-support">BGP</a>, <a href="https://netlab.tools/module/vlan/#platform-support">VLAN</a>, and <a href="https://netlab.tools/module/vrf/#platform-support">VRF</a> configuration modules. The device should also support:</p>
+<ul>
+<li>VXLAN encapsulation with EVPN control plane</li>
+<li>EVPN transit VNI</li>
+<li>EVPN type-5 routes</li>
+<li>Routing in and out of VXLAN tunnels (VXLAN RIOT)</li>
+</ul>
 <h2 id="start-the-lab">Start the Lab</h2>
 <p>Assuming you already <a href="../../1-setup/">set up your lab infrastructure</a>:</p>
 <ul>
-<li>Change directory to <code>evpn/4-asym-irb</code></li>
+<li>Change directory to <code>evpn/7-symm-irb</code></li>
 <li>Execute <strong>netlab up</strong></li>
-<li>Log into lab devices with <strong>netlab connect</strong> and verify that the IP addresses and the OSPF are properly configured.</li>
+<li>Log into lab devices with <strong>netlab connect</strong> and verify that the IP addresses and IP routing are properly configured.</li>
 </ul>
 <h2 id="existing-device-configuration">Existing Device Configuration</h2>
 <ul>
-<li><em>red</em> VLAN is configured on S1. <em>blue</em> VLAN is configured on S2:</li>
+<li>The switches in your lab (S1 and S2) are preconfigured with the <em>red</em>, <em>blue</em>, and <em>green</em> VLANs.</li>
+<li>IPv4 addresses are configured on links and VLANs (<a href="#addr">details</a>).</li>
+<li>Linux hosts in the <em>blue</em> and <em>green</em> VLAN use the adjacent switches as the default gateways</li>
+<li>Linux hosts in the <em>red</em> VLAN rely on an anycast gateway you&rsquo;ll configure as part of this lab exercise</li>
+<li>The switches run OSPF in area 0 in the default VRF with the core router (<a href="#ospf">details</a>).</li>
+<li>There&rsquo;s a full mesh of IBGP sessions between the three switches.</li>
+</ul>
+<h2 id="configuration-guidelines">Configuration Guidelines</h2>
+<p>Use the following steps to configure S1 and S2:</p>
+<ul>
+<li>Configure the anycast first-hop gateway (<code>172.16.11.42</code>) in the <em>red</em> VLAN using what you&rsquo;ve learned in the <a href="../3-irb/">Integrated Routing and Bridging (IRB) with EVPN</a> exercise</li>
+<li>Using the process you&rsquo;ve mastered in the <a href="../1-bridging/">Build an EVPN-based MAC-VRF instance</a> lab exercise, enable EVPN and configure a MAC-VRF instance for the <em>red</em> VLAN.</li>
 </ul>
 <table>
 <thead>
 <tr>
-<th>VLAN</th>
-<th style="text-align: right;">VLAN tag</th>
-<th style="text-align: right;">IPv4 prefix</th>
+<th>Parameter</th>
+<th style="text-align: right;">Value</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>red</td>
-<td style="text-align: right;">100</td>
-<td style="text-align: right;">172.16.10.0/24</td>
-</tr>
-<tr>
-<td>blue</td>
+<td>EVPN instance</td>
 <td style="text-align: right;">101</td>
-<td style="text-align: right;">172.16.11.0/24</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>IPv4 addresses are configured on Linux hosts, switch loopback interfaces, and the interswitch link (<a href="#addr">details</a>).</li>
-<li>Static routes pointing to the anycast gateway are configured on the Linux hosts:</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>Host</th>
-<th style="text-align: right;"> IPv4 prefix</th>
-<th style="text-align: right;">Next hop</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>HR</td>
-<td style="text-align: right;">172.16.0.0/16</td>
-<td style="text-align: right;">172.16.10.42</td>
 </tr>
 <tr>
-<td>HB</td>
-<td style="text-align: right;">172.16.0.0/16</td>
-<td style="text-align: right;">172.16.11.42</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>The switches run OSPF in area 0 across the interswitch link (<a href="#ospf">details</a>).</li>
-<li>The switches have an IBGP session between their loopback interfaces. The IBGP session is currently configured to exchange IPv4 prefixes (<a href="#bgp">details</a>).</li>
-</ul>
-<h2 id="configure-integrated-routing">Configure Integrated Routing</h2>
-<p>You&rsquo;ll configure the VLANs, <em>tenant</em> VRF, IP addresses on switch VLAN interfaces, and anycast gateways before configuring VXLAN or EVPN:</p>
-<ul>
-<li>Configure <em>blue</em> VLAN and an associated VLAN interface on S1</li>
-<li>Configure <em>red</em> VLAN and an associated VLAN interface on S2</li>
-<li>Create a <em>tenant</em> VRF and enable IP routing in that VRF</li>
-<li>Put the <em>red</em> and <em>blue</em> VLAN interfaces into the <em>tenant</em> VRF</li>
-<li>Configure the following IP addresses on S1 and S2:</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>Node/Interface</th>
-<th style="text-align: right;">IPv4 Address</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>s1</strong></td>
-<td style="text-align: right;"></td>
-<td></td>
+<td>VXLAN VNI</td>
+<td style="text-align: right;">10101</td>
 </tr>
 <tr>
-<td>Vlan100</td>
-<td style="text-align: right;">172.16.10.1/24</td>
-<td>VLAN red (100) -&gt; [hr,s2] (VRF: tenant)</td>
-</tr>
-<tr>
-<td>Vlan101</td>
-<td style="text-align: right;">172.16.11.1/24</td>
-<td>VLAN blue (101) -&gt; [hb,s2] (VRF: tenant)</td>
-</tr>
-<tr>
-<td><strong>s2</strong></td>
-<td style="text-align: right;"></td>
-<td></td>
-</tr>
-<tr>
-<td>Vlan101</td>
-<td style="text-align: right;">172.16.11.2/24</td>
-<td>VLAN blue (101) -&gt; [s1,hb] (VRF: tenant)</td>
-</tr>
-<tr>
-<td>Vlan100</td>
-<td style="text-align: right;">172.16.10.2/24</td>
-<td>VLAN red (100) -&gt; [hr,s1] (VRF: tenant)</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>Using the commands you mastered in the <a href="../../vxlan/4-anycast/">Anycast Gateways on VXLAN Segments</a> lab exercise, configure the anycast gateways (or active-active VRRP) on <em>red</em> and <em>blue</em> VLANs using these IP addresses:</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>VLAN</th>
-<th style="text-align: right;">Gateway IP address</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>red</td>
-<td style="text-align: right;">172.16.10.42/24</td>
-</tr>
-<tr>
-<td>blue</td>
-<td style="text-align: right;">172.16.11.42/24</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>If you&rsquo;re using VRRP, make sure that the switch closer to the host becomes the VRRP master</li>
-</ul>
-<h2 id="configure-vxlan-and-evpn">Configure VXLAN and EVPN</h2>
-<p>Using the procedure you mastered in the <a href="../1-bridging/">Build an EVPN-based MAC-VRF instance</a> and <a href="../3-irb/">Integrated Routing and Bridging (IRB) with EVPN</a> lab exercises, configure:</p>
-<ul>
-<li>EVPN address family on the S1-S2 IBGP session</li>
-<li>MAC-VRF for the <em>red</em> and <em>blue</em> VLANs <em>on S1 and S2</em> using these parameters:</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>VLAN</th>
-<th style="text-align: right;">VNI</th>
-<th style="text-align: right;">route target</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>red</td>
-<td style="text-align: right;">10010</td>
-<td style="text-align: right;">65000:100</td>
-</tr>
-<tr>
-<td>blue</td>
-<td style="text-align: right;">10011</td>
+<td>Route target</td>
 <td style="text-align: right;">65000:101</td>
 </tr>
 </tbody>
 </table>
 <ul>
-<li>Any additional nerd knobs that might be required to make IRB work on your platform.</li>
+<li>Using the knowledge gained in the <a href="../6-ip-routing/">VPN IP Routing in EVPN Fabrics</a> lab exercise, configure an IP-VRF instance for the <em>tenant</em> VRF</li>
 </ul>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th style="text-align: right;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EVPN instance</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr>
+<td>Transit (L3) VNI</td>
+<td style="text-align: right;">5042</td>
+</tr>
+<tr>
+<td>Route distinguisher</td>
+<td style="text-align: right;">65000:1</td>
+</tr>
+<tr>
+<td>Route target</td>
+<td style="text-align: right;">65000:1</td>
+</tr>
+</tbody>
+</table>
 <h2 id="verification">Verification</h2>
-<p>If you used FRRouting or Arista EOS devices as the lab switches, you can use the <strong>netlab validate</strong> command to check your work:</p>
-<p><img alt="Validation results" src="../validate-asym-irb.png" /></p>
-<p>Alternatively, use <strong>ping</strong> to check that HR and HB can communicate (proving that inter-subnet routing across VXLAN segments works):</p>
-<pre><code>$ netlab connect hr ping -c 3 hb
-Connecting to container clab-asymirb-hr, executing ping -c 3 hb
-PING hb (172.16.11.4): 56 data bytes
-64 bytes from 172.16.11.4: seq=0 ttl=63 time=2.307 ms
-64 bytes from 172.16.11.4: seq=1 ttl=63 time=1.944 ms
-64 bytes from 172.16.11.4: seq=2 ttl=63 time=2.407 ms
+<ul>
+<li>Check the EVPN routes. You should see the IMET routes for the <em>red</em> VLAN and the IP-PREFIX routes for all three subnets. Both routers should originate the prefix for the <em>red</em> subnet.</li>
+</ul>
+<p class="code-caption">EVPN routes on S1 running Arista EOS<br /></p>
+<pre><code class="language-text">s1#show bgp evpn
+BGP routing table information for VRF default
+Router identifier 10.0.0.1, local AS number 65000
+Route status codes: * - valid, &gt; - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending best path selection
+Origin codes: i - IGP, e - EGP, ? - incomplete
+AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
 
---- hb ping statistics ---
-3 packets transmitted, 3 packets received, 0% packet loss
-round-trip min/avg/max = 1.944/2.219/2.407 ms
+          Network                Next Hop              Metric  LocPref Weight  Path
+ * &gt;      RD: 10.0.0.1:101 imet 10.0.0.1
+                                 -                     -       -       0       i
+ * &gt;      RD: 10.0.0.1:102 imet 10.0.0.1
+                                 -                     -       -       0       i
+ * &gt;      RD: 10.0.0.2:101 imet 10.0.0.2
+                                 10.0.0.2              -       100     0       i
+ * &gt;      RD: 10.0.0.2:103 imet 10.0.0.2
+                                 10.0.0.2              -       100     0       i
+ * &gt;      RD: 65000:1 ip-prefix 172.16.11.0/24
+                                 -                     -       -       0       i
+ *        RD: 65000:1 ip-prefix 172.16.11.0/24
+                                 10.0.0.2              -       100     0       i
+ * &gt;      RD: 65000:1 ip-prefix 172.16.12.0/24
+                                 -                     -       -       0       i
+ * &gt;      RD: 65000:1 ip-prefix 172.16.13.0/24
+                                 10.0.0.2              -       100     0       i
 </code></pre>
-<p>Use the troubleshooting hints from the <a href="../1-bridging/#tshoot">Build an EVPN-based MAC-VRF instance</a> and <a href="../3-irb/#tshoot">Integrated Routing and Bridging (IRB) with EVPN</a> lab exercises if needed (we expect you&rsquo;re familiar with the traditional routing between VLAN segments).</p>
+<ul>
+<li>Check the VRF IP routing table. It should contain all three subnets</li>
+</ul>
+<p class="code-caption">VRF IP routing table on S1 running Arista EOS<br /></p>
+<pre><code class="language-text">s1#show ip route vrf tenant | begin Gateway
+Gateway of last resort is not set
+
+ C        172.16.11.0/24
+           directly connected, Vlan101
+ C        172.16.12.0/24
+           directly connected, Vlan102
+ B I      172.16.13.0/24 [200/0]
+           via VTEP 10.0.0.2 VNI 5042 router-mac 00:1c:73:c8:82:78 local-interface Vxlan1
+</code></pre>
+<ul>
+<li>Ping <strong>hr2</strong> from <strong>hr1</strong>. If the ping doesn&rsquo;t work, you misconfigured the MAC-VRF instance and might revisit these <a href="../1-bridging/#tshoot">troubleshooting hints</a></li>
+<li>Ping <strong>hg</strong> from <strong>hb</strong>. If you get no response, your IP-VRF instance doesn&rsquo;t work correctly; use <a href="../6-ip-routing/#tshoot">these troubleshooting hints</a></li>
+<li>Ping <strong>hb</strong> from <strong>hr1</strong> and <strong>hg</strong> from <strong>hr2</strong>. These pings rely on the (local) anycast gateway in the <em>red</em> VLAN. If they don&rsquo;t work, figure out what you missed there.</li>
+</ul>
+<p>Does it all work? Fantastic. You mastered the most important EVPN concepts and implementation details (but don&rsquo;t skip the <em><a href="#pfd">packet forwarding</a></em> recap).</p>
 <h2 id="cheating">Cheating</h2>
+<p>Can&rsquo;t get your lab to work? Maybe you can cheat your way through it:</p>
 <ul>
 <li>Shut down your lab with the <strong>netlab down</strong> command</li>
-<li>Start the lab from the <code>solution.yml</code> topology with the <strong>netlab up solution.yml</strong> command</li>
+<li>Start the lab from the <code>solution.yml</code> topology with the <code>netlab up solution.yml</code> command</li>
 <li>Explore the S1/S2 device configuration</li>
 </ul>
+<h2 id="pfd">Recap: Packet Forwarding in Tenant Network</h2>
+<p>Let&rsquo;s recap how we implemented the packet forwarding in the tenant network:</p>
+<ul>
+<li>Bridging within the <em>red</em> VLAN uses a MAC-VRF instance</li>
+<li>Routing within the <em>tenant</em> VRF uses an IP-VRF instance</li>
+<li>Both switches act as first-hop gateways for the attached hosts</li>
+</ul>
+<p><img alt="Lab topology" src="../topology-symm-irb.png" /></p>
+<p>That setup results in the following forwarding paths:</p>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>To</th>
+<th>Forwarding<br>mechanism</th>
+<th>Forwarding<br>path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HR1</td>
+<td>HR2</td>
+<td>Bridging</td>
+<td>Bridging into <em>red</em> VNI on S1<br>Bridging from <em>red</em> VNI into <em>red</em> VLAN on S2</td>
+</tr>
+<tr>
+<td>HB</td>
+<td>HG</td>
+<td>Routing</td>
+<td>Routing into transit VNI on S1<br>Routing from transit VNI into green VLAN on S2</td>
+</tr>
+<tr>
+<td>HB</td>
+<td>HR2</td>
+<td>Routing +<br>bridging</td>
+<td>Routing into <em>red</em> VLAN on S1<br>Bridging into <em>red</em> VNI on S1<br>Bridging from <em>red</em> VNI into <em>red</em> VLAN on S2</td>
+</tr>
+<tr>
+<td>HR1</td>
+<td>HG</td>
+<td>Routing</td>
+<td>Routing into transit VNI on S1<br>Routing from transit VNI into green VLAN on S2</td>
+</tr>
+</tbody>
+</table>
 <h2 id="reference-information">Reference Information</h2>
 <h3 id="wiring">Lab Wiring</h3>
 <table>
@@ -457,16 +453,28 @@ round-trip min/avg/max = 1.944/2.219/2.407 ms
 <td>Ethernet1</td>
 </tr>
 <tr>
-<td>hr</td>
+<td>hr1</td>
 <td>eth1</td>
 <td>s1</td>
 <td>Ethernet2</td>
 </tr>
 <tr>
-<td>hb</td>
+<td>hr2</td>
 <td>eth1</td>
 <td>s2</td>
 <td>Ethernet2</td>
+</tr>
+<tr>
+<td>hb</td>
+<td>eth1</td>
+<td>s1</td>
+<td>Ethernet3</td>
+</tr>
+<tr>
+<td>hg</td>
+<td>eth1</td>
+<td>s2</td>
+<td>Ethernet3</td>
 </tr>
 </tbody>
 </table>
@@ -494,6 +502,18 @@ round-trip min/avg/max = 1.944/2.219/2.407 ms
 <td>s1 -&gt; s2</td>
 </tr>
 <tr>
+<td>Vlan101</td>
+<td style="text-align: right;">172.16.11.1/24</td>
+<td style="text-align: right;"></td>
+<td>VLAN red (101) -&gt; [hr1,hr2,s2] (VRF: tenant)</td>
+</tr>
+<tr>
+<td>Vlan102</td>
+<td style="text-align: right;">172.16.12.1/24</td>
+<td style="text-align: right;"></td>
+<td>VLAN blue (102) -&gt; [hb] (VRF: tenant)</td>
+</tr>
+<tr>
 <td><strong>s2</strong></td>
 <td style="text-align: right;">10.0.0.2/32</td>
 <td style="text-align: right;"></td>
@@ -506,16 +526,16 @@ round-trip min/avg/max = 1.944/2.219/2.407 ms
 <td>s2 -&gt; s1</td>
 </tr>
 <tr>
-<td><strong>hr</strong></td>
+<td>Vlan101</td>
+<td style="text-align: right;">172.16.11.2/24</td>
 <td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td></td>
+<td>VLAN red (101) -&gt; [hr1,s1,hr2] (VRF: tenant)</td>
 </tr>
 <tr>
-<td>eth1</td>
-<td style="text-align: right;">172.16.10.3/24</td>
+<td>Vlan103</td>
+<td style="text-align: right;">172.16.13.2/24</td>
 <td style="text-align: right;"></td>
-<td>hr -&gt; s1 [red VLAN]</td>
+<td>VLAN green (103) -&gt; [hg] (VRF: tenant)</td>
 </tr>
 <tr>
 <td><strong>hb</strong></td>
@@ -525,9 +545,45 @@ round-trip min/avg/max = 1.944/2.219/2.407 ms
 </tr>
 <tr>
 <td>eth1</td>
-<td style="text-align: right;">172.16.11.4/24</td>
+<td style="text-align: right;">172.16.12.3/24</td>
 <td style="text-align: right;"></td>
-<td>hb -&gt; s2 [blue VLAN]</td>
+<td>hb -&gt; [s1]</td>
+</tr>
+<tr>
+<td><strong>hg</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td></td>
+</tr>
+<tr>
+<td>eth1</td>
+<td style="text-align: right;">172.16.13.4/24</td>
+<td style="text-align: right;"></td>
+<td>hg -&gt; [s2]</td>
+</tr>
+<tr>
+<td><strong>hr1</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td></td>
+</tr>
+<tr>
+<td>eth1</td>
+<td style="text-align: right;">172.16.11.5/24</td>
+<td style="text-align: right;"></td>
+<td>hr1 -&gt; [s1,hr2,s2]</td>
+</tr>
+<tr>
+<td><strong>hr2</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td></td>
+</tr>
+<tr>
+<td>eth1</td>
+<td style="text-align: right;">172.16.11.6/24</td>
+<td style="text-align: right;"></td>
+<td>hr2 -&gt; [hr1,s1,s2]</td>
 </tr>
 </tbody>
 </table>
