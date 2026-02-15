@@ -1,0 +1,5 @@
+ip prefix-list VLANs permit 172.16.0.0/16
+!
+router l2-vpn
+  arp learning bridged
+  arp proxy prefix-list VLANs
