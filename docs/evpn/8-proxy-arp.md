@@ -8,6 +8,9 @@ You can check out whether the devices you plan to use support the ARP suppressio
 
 ![Lab topology](topology-bridging.png)
 
+!!! Expert
+    This lab is more challenging than the previous EVPN lab exercises, and the Arista EOS documentation on the proxy ARP feature could be much better.
+
 ### Device Requirements {#req}
 
 You can use any device supported by the _netlab_ [OSPF](https://netlab.tools/module/ospf/#platform-support), [BGP](https://netlab.tools/module/bgp/#platform-support), [VRF](https://netlab.tools/module/vrf/#platform-support), and [VLAN](https://netlab.tools/module/vlan/#platform-support) configuration modules. _netlab_ will also try to configure VXLAN, EVPN, and MAC-VRF for the tenant VLAN.
