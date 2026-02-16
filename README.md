@@ -20,10 +20,11 @@ The labs cover:
 * [Build an EVPN-based MAC-VRF instance](evpn/1-bridging)
 * [More complex EVPN/VXLAN bridging scenario](evpn/2-complex)
 * [Integrated Routing and Bridging (IRB) with EVPN MAC-VRF instances](evpn/3-irb)
-* [EVPN Asymmetric Integrated Routing and Bridging (IRB)](evpn/4-asym-irb)
+* [EVPN asymmetric Integrated Routing and Bridging (IRB)](evpn/4-asym-irb)
 * [Implement VRF-Lite with EVPN/VXLAN](evpn/5-vrf-lite)
-* [VPN IP Routing in EVPN Fabrics](evpn/6-ip-routing)
+* [VPN IP routing in EVPN Fabrics](evpn/6-ip-routing)
 * [Symmetric IRB with IP-VRF EVPN instances](evpn/7-symm-irb)
+* [Proxy ARP in EVPN MAC-VRF instances](evpn/8-proxy-arp)
 
 **Complex EVPN Services**
 
