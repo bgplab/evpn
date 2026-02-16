@@ -115,6 +115,10 @@
 <li>
     <a href="./" class="dropdown-item active" aria-current="page">Symmetric IRB with IP-VRF EVPN instances</a>
 </li>
+                                    
+<li>
+    <a href="../8-proxy-arp/" class="dropdown-item">Proxy ARP in EVPN MAC-VRF Instances</a>
+</li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
@@ -153,7 +157,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../services/1-pvlan/" class="nav-link">
+                                <a rel="next" href="../8-proxy-arp/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -381,7 +385,7 @@ Gateway of last resort is not set
 <li>Ping <strong>hg</strong> from <strong>hb</strong>. If you get no response, your IP-VRF instance doesn&rsquo;t work correctly; use <a href="../6-ip-routing/#tshoot">these troubleshooting hints</a></li>
 <li>Ping <strong>hb</strong> from <strong>hr1</strong> and <strong>hg</strong> from <strong>hr2</strong>. These pings rely on the (local) anycast gateway in the <em>red</em> VLAN. If they don&rsquo;t work, figure out what you missed there.</li>
 </ul>
-<p>Does it all work? Fantastic. You mastered the most important EVPN concepts and implementation details (but don&rsquo;t skip the <em><a href="#pfd">packet forwarding</a></em> recap).</p>
+<p>Does it all work? Fantastic. You mastered the most important EVPN concepts and implementation details (but don&rsquo;t skip the <em><a href="#pfd">packet forwarding</a></em> recap). Let&rsquo;s move into more arcane topics, starting with <a href="../8-proxy-arp/">Proxy ARP in EVPN MAC-VRF Instances</a>.</p>
 <h2 id="cheating">Cheating</h2>
 <p>Can&rsquo;t get your lab to work? Maybe you can cheat your way through it:</p>
 <ul>
