@@ -1,4 +1,4 @@
-# Proxy ARP in EVPN MAC-VRF instances
+# Intra-Subnet Routing with ARP Routes
 ---
 defaults.sources.extra: [ ../../defaults.yml ]
 plugin: [ check_evpn ]
