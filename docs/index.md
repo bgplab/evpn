@@ -41,7 +41,7 @@ After mastering the basics of using VXLAN to stretch Ethernet segments across an
 * [VPN IP routing in EVPN Fabrics](evpn/6-ip-routing.md)<!--new-->
 * [Symmetric IRB with IP-VRF EVPN instances](evpn/7-symm-irb.md)<!--new-->
 * [Proxy ARP in EVPN MAC-VRF instances](evpn/8-proxy-arp.md)<!--new-->
-* Intra-subnet symmetric routing with proxy ARP
+* [Intra-Subnet Routing with ARP Routes](evpn/9-arp-routes.md)<!--new-->
 * Using EVPN in an IPv6-only underlay network
 
 ## Complex EVPN Services {#services}

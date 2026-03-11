@@ -25,6 +25,7 @@ The labs cover:
 * [VPN IP routing in EVPN Fabrics](evpn/6-ip-routing)
 * [Symmetric IRB with IP-VRF EVPN instances](evpn/7-symm-irb)
 * [Proxy ARP in EVPN MAC-VRF instances](evpn/8-proxy-arp)
+* [Intra-Subnet Routing with ARP Routes](evpn/9-arp-routes)
 
 **Complex EVPN Services**
 

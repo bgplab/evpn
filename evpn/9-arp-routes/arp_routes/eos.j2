@@ -1,0 +1,15 @@
+{% for intf in interfaces if intf.type == 'svi' %}{# vlan.access is defined #}
+!
+interface {{ intf.ifname }}
+  ip attached-host route export 200
+{% endfor %}
+!
+{% for vname,vdata in vrfs|default({})|dictsort %}
+{%   if loop.first %}
+router bgp {{ bgp.as }}
+!
+{%   endif %}
+  vrf {{ vname }}
+    address-family ipv4
+      redistribute attached-host
+{% endfor %}
