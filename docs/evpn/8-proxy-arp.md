@@ -34,7 +34,7 @@ Assuming you already [set up your lab infrastructure](../1-setup.md):
 * A MAC-VRF is configured for the *red* VLAN using import- and export route target `65000:100`
 
 !!! warning
-    Your lab won't have the EVPN address family in IBGP sessions, VXLAN configuration, or MAC-VRF configuration if _netlab_ can't configure them on your device. In that case, use the procedure you've mastered in the [Extend a Single VLAN Segment with VXLAN](../vxlan/1-single.md) lab exercise to configure them.
+    Your lab won't have the EVPN address family in IBGP sessions, VXLAN configuration, or MAC-VRF configuration if _netlab_ can't configure them on your device. In that case, use the procedure you've mastered in the [Build an EVPN-based MAC-VRF instance](1-bridging.md) lab exercise to configure them.
 
 ## Establishing the Baseline
 
@@ -162,9 +162,11 @@ Address         Age (sec)  Hardware Addr   Interface
 !!! tip
     You will probably see unicast ARP requests (sent as unicast Ethernet packets) that H1 uses to test whether H2 is still alive. Use the `netlab capture h2 eth1 -e -l -vv arp or icmp` command to display Ethernet headers in the captured packets.
 
+Done? Let's see how you can use this functionality to implement [Intra-Subnet Routing with ARP Routes](9-arp-routes.md).
+
 ## Cheating
 
-If you're using Arista EOS, you can use the **netlab config -l s1,s2 proxy_arp** to configure ARP suppression on S1 and S2.
+If you're using Arista EOS, you can use `netlab config -l s1,s2 proxy_arp` to configure ARP suppression on S1 and S2.
 
 ## Reference Information
 

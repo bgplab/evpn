@@ -1,0 +1,5 @@
+ip prefix-list VLANs permit {{ addressing.lan.ipv4 }}
+!
+router l2-vpn
+  arp learning bridged
+  arp proxy prefix-list VLANs

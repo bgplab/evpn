@@ -35,6 +35,7 @@ nav:
   - evpn/6-ip-routing.md
   - evpn/7-symm-irb.md
   - evpn/8-proxy-arp.md
+  - evpn/9-arp-routes.md
 - "Services":
   - services/1-pvlan.md
 - "Designs":

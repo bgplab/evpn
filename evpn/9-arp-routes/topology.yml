@@ -1,0 +1,43 @@
+# Intra-Subnet Routing with ARP Routes
+---
+defaults.sources.extra: [ ../../defaults.yml ]
+plugin: [ check_evpn ]
+
+version: 25.10
+#_include: [ validate.yml ]
+
+groups:
+  _auto_create: True
+  switches:
+    members: [ s1, s2, s3 ]
+  stretch:
+    members: [ s1, s2 ]
+  external:
+    members: [ core ]
+    module: [ ospf ]
+  hosts:
+    members: [ hr1, hr2, hb ]
+    device: linux
+
+module: [ vlan, ospf, bgp, vrf, vxlan, evpn ]
+bgp.as: 65000
+
+vrfs:
+  tenant:
+    ospf: False
+    links: [ hb-s3 ]
+    evpn.transit_vni: 7000
+
+vlans:
+  red:
+    id: 100
+    vrf: tenant
+    vni: 10100
+    links: [ hr1-s1, hr2-s2 ]
+
+links: [ s1-core, s2-core, s3-core ]
+
+message: |
+  The "Intra-Subnet Routing with ARP Routes" lab is ready.
+
+  Use "netlab connect" to connect to lab devices.
