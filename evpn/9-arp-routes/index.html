@@ -6,9 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="author" content="Ivan Pepelnjak, ipSpace.net AG">
-        <link rel="canonical" href="https://evpn.bgplabs.net/evpn/6-ip-routing/">
+        <link rel="canonical" href="https://evpn.bgplabs.net/evpn/9-arp-routes/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>VPN IP Routing in EVPN Fabrics &#171; VXLAN and EVPN Labs</title>
+  <title>Intra-Subnet Routing with ARP Routes &#171; VXLAN and EVPN Labs</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/fontawesome.min.css" rel="stylesheet">
         <link href="../../css/brands.min.css" rel="stylesheet">
@@ -109,7 +109,7 @@
 </li>
                                     
 <li>
-    <a href="./" class="dropdown-item active" aria-current="page">VPN IP Routing in EVPN Fabrics</a>
+    <a href="../6-ip-routing/" class="dropdown-item">VPN IP Routing in EVPN Fabrics</a>
 </li>
                                     
 <li>
@@ -121,7 +121,7 @@
 </li>
                                     
 <li>
-    <a href="../9-arp-routes/" class="dropdown-item">Intra-Subnet Routing with ARP Routes</a>
+    <a href="./" class="dropdown-item active" aria-current="page">Intra-Subnet Routing with ARP Routes</a>
 </li>
                                 </ul>
                             </li>
@@ -156,12 +156,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../5-vrf-lite/" class="nav-link">
+                                <a rel="prev" href="../8-proxy-arp/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../7-symm-irb/" class="nav-link">
+                                <a rel="next" href="../../services/1-pvlan/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -189,7 +189,7 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary"  style="margin-bottom: 1em;">
       <ul class="nav flex-column">
           
-      <li class="nav-item" data-level="1"><a href="#vpn-ip-routing-in-evpn-fabrics" class="nav-link">VPN IP Routing in EVPN Fabrics</a>
+      <li class="nav-item" data-level="1"><a href="#intra-subnet-routing-with-arp-routes" class="nav-link">Intra-Subnet Routing with ARP Routes</a>
         <ul class="nav flex-column">
       <li class="nav-item" data-level="3"><a href="#req" class="nav-link">Device Requirements</a>
         <ul class="nav flex-column">
@@ -203,19 +203,23 @@
         <ul class="nav flex-column">
         </ul>
       </li>
-      <li class="nav-item" data-level="2"><a href="#configuration-guidelines" class="nav-link">Configuration Guidelines</a>
+      <li class="nav-item" data-level="2"><a href="#establishing-the-baseline" class="nav-link">Establishing the Baseline</a>
         <ul class="nav flex-column">
         </ul>
       </li>
-      <li class="nav-item" data-level="2"><a href="#tshoot" class="nav-link">Verification</a>
+      <li class="nav-item" data-level="2"><a href="#generating-evpn-host-routes-from-arp-information" class="nav-link">Generating EVPN Host Routes from ARP Information</a>
+        <ul class="nav flex-column">
+        </ul>
+      </li>
+      <li class="nav-item" data-level="2"><a href="#verification" class="nav-link">Verification</a>
+        <ul class="nav flex-column">
+        </ul>
+      </li>
+      <li class="nav-item" data-level="2"><a href="#troubleshooting" class="nav-link">Troubleshooting</a>
         <ul class="nav flex-column">
         </ul>
       </li>
       <li class="nav-item" data-level="2"><a href="#cheating" class="nav-link">Cheating</a>
-        <ul class="nav flex-column">
-        </ul>
-      </li>
-      <li class="nav-item" data-level="2"><a href="#bds" class="nav-link">Behind the Scenes</a>
         <ul class="nav flex-column">
         </ul>
       </li>
@@ -233,7 +237,7 @@
         <ul class="nav flex-column">
         </ul>
       </li>
-      <li class="nav-item" data-level="3"><a href="#bgp" class="nav-link">BGP Routing</a>
+      <li class="nav-item" data-level="3"><a href="#bgp" class="nav-link">IBGP Sessions</a>
         <ul class="nav flex-column">
         </ul>
       </li>
@@ -250,66 +254,204 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="vpn-ip-routing-in-evpn-fabrics">VPN IP Routing in EVPN Fabrics</h1>
-<p>In the <a href="../5-vrf-lite/">Implement VRF-Lite with EVPN/VXLAN</a> lab exercise, you implemented an extremely awkward way of building a layer-3 VPN with EVPN. The solution required extraneous configuration (transit VLANs and MAC-VRFs) and was clearly unscalable; running a routing protocol instance per VRF is usually a bad idea.</p>
-<p>What if there were a better way to implement the same requirements? For example, could we transport IP subnets as EVPN routes and attach all the necessary glue (transit VNI, router MAC addresses) to those routes? Welcome to the brave new world of type-5 EVPN routes<sup id="fnref:MVP"><a class="footnote-ref" href="#fn:MVP">1</a></sup> defined in <a href="https://datatracker.ietf.org/doc/html/rfc9136">RFC 9136</a> (IP Prefix Advertisement in Ethernet VPN). You&rsquo;ll practice this new concept using the same topology you used in the previous lab exercise:</p>
-<p><img alt="Lab topology" src="../topology-vrf-lite.png" /></p>
+<h1 id="intra-subnet-routing-with-arp-routes">Intra-Subnet Routing with ARP Routes</h1>
+<p>In the previous EVPN lab exercises, you explored various mechanisms EVPN provides to implement layer-2 forwarding with MAC VRFs and layer-3 forwarding with IP VRFs. Now, imagine you want to implement a stretched VLAN (MAC VRF) and want it to be reachable from other subnets in the same IP VRF:</p>
+<p><img alt="Lab topology" src="../topology-arp-routes.png" /></p>
+<p>There&rsquo;s a tiny problem in your design: S3 does not participate in the <em>red</em> MAC-VRF and thus has no idea where HR1 and HR2 are.  The only information it has about the <em>red</em> subnet is the type-5 EVPN route advertised by S1 <em>and</em> S2, which gives it a 50% chance of sending traffic to the wrong switch<sup id="fnref:ING"><a class="footnote-ref" href="#fn:ING">1</a></sup>.</p>
+<p>Some EVPN implementations include a mechanism that solves the <em>suboptimal ingress routing to stretched VLAN</em> problem. They can turn IPv4 ARP or IPv6 Neighbor Discovery (ND) information into host routes (/32 IPv4 or /128 IPv6 prefixes) and advertise them as type-5 EVPN routes, providing the remote switches with an optimal <em>per-host</em> path to the egress switch. That&rsquo;s what you&rsquo;ll practice in this lab exercise.</p>
+<div class="admonition expert">
+<p class="admonition-title">Expert</p>
+<p>This lab is more challenging than most EVPN lab exercises. Good luck and Godspeed!</p>
+</div>
 <h3 id="req">Device Requirements</h3>
-<p>You can use any device supported by the <em>netlab</em> <a href="https://netlab.tools/module/ospf/#platform-support">OSPF</a>, <a href="https://netlab.tools/module/bgp/#platform-support">BGP</a>, and <a href="https://netlab.tools/module/vrf/#platform-support">VRF</a> configuration modules. The device should also support:</p>
-<ul>
-<li>VXLAN encapsulation with EVPN control plane</li>
-<li>EVPN transit VNI</li>
-<li>EVPN type-5 routes</li>
-<li>Routing in and out of VXLAN tunnels (VXLAN RIOT)</li>
-</ul>
+<p>You can use any device supported by the <em>netlab</em> <a href="https://netlab.tools/module/ospf/#platform-support">OSPF</a>, <a href="https://netlab.tools/module/bgp/#platform-support">BGP</a>, <a href="https://netlab.tools/module/vrf/#platform-support">VRF</a>, and <a href="https://netlab.tools/module/vlan/#platform-support">VLAN</a> configuration modules. <em>netlab</em> will also try to configure VXLAN, EVPN, MAC-VRF for the <em>red</em> VLAN, and IP-VRF for the <em>tenant</em> VRF.</p>
 <h2 id="start-the-lab">Start the Lab</h2>
 <p>Assuming you already <a href="../../1-setup/">set up your lab infrastructure</a>:</p>
 <ul>
-<li>Change directory to <code>evpn/6-ip-routing</code></li>
+<li>Change directory to <code>evpn/9-arp-routes</code></li>
 <li>Execute <strong>netlab up</strong></li>
-<li>Log into lab devices with <strong>netlab connect</strong> and verify that the IP addresses and the OSPF are properly configured.</li>
+<li>Log into lab devices with <strong>netlab connect</strong> and verify that they are properly configured.</li>
+<li>If <em>netlab</em> configured VXLAN and EVPN on your devices, ping HR2 from HR1 to verify everything works as expected.</li>
 </ul>
 <h2 id="existing-device-configuration">Existing Device Configuration</h2>
 <ul>
-<li>The switches in your lab (S1, S2, and S3) are preconfigured with <em>red</em> and <em>blue</em> VRFs.</li>
-<li>IPv4 addresses are configured on all links in your lab (<a href="#addr">details</a>).</li>
-<li>Linux hosts use the adjacent switches as the default gateways</li>
-<li>The switches run OSPF in area 0 in the default VRF with the core router (<a href="#ospf">details</a>).</li>
-<li>There&rsquo;s a full mesh of IBGP sessions between the three switches.</li>
+<li>S1 and S2 are preconfigured with <em>red</em> VLAN using VLAN tag 100 and VXLAN VNI 10100.</li>
+<li>The <em>red</em> VLAN is in <em>tenant</em> VRF as is the S3-HB link</li>
+<li>IPv4 addresses are configured on all links and VLANs (<a href="#addr">details</a>).</li>
+<li>The edge switches run OSPF in area 0 with the Core switch  (<a href="#ospf">details</a>).</li>
+<li>The edge switches have a full mesh of IBGP sessions between their loopback interfaces (<a href="#bgp">details</a>). These sessions are configured to exchange IPv4 and EVPN prefixes.</li>
+<li>A MAC-VRF is configured for the <em>red</em> VLAN using import- and export route target <code>65000:100</code></li>
+<li>An IP-VRF with transit VNI 7000 is configured for the <em>tenant</em> VRF using import- and export route target <code>65000:1</code></li>
 </ul>
-<h2 id="configuration-guidelines">Configuration Guidelines</h2>
-<p>If you want to use the type-5 (IP prefix) EVPN routes, you have to create EVPN IP-VRFs. The configuration process usually includes:</p>
-<ul>
-<li>Creating VRF instances (<em>netlab</em> already did that for you)</li>
-<li>Creating EVPN IP-VRFs, often using <strong>address-family vrf</strong> within the BGP configuration (<em>netlab</em> might have done that for you as well)</li>
-<li>Attaching a route distinguisher and EVPN import/export route targets to IP VRFs, either in the VRF configuration or BGP address family configuration.</li>
-</ul>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>Several implementations use the same IP VRF configuration for MPLS/VPN and EVPN. You might have to use different configuration commands to configure route targets for MPLS/VPN and EVPN address families.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Your lab won&rsquo;t have the EVPN address family on IBGP sessions, VXLAN configuration, MAC-VRF, or IP-VRF configuration if <em>netlab</em> can&rsquo;t configure them on your device. In that case, use the procedure you&rsquo;ve mastered in the <a href="../1-bridging/">Build an EVPN-based MAC-VRF instance</a> lab exercise to configure the EVPN address family and MAC-VRF, and the configuration steps from the <a href="../6-ip-routing/">VPN IP Routing in EVPN Fabrics</a> lab exercise to configure the IP-VRF.</p>
 </div>
+<h2 id="establishing-the-baseline">Establishing the Baseline</h2>
+<p>Explore the EVPN BGP table and the VRF routing table on S3. The EVPN BGP table should contain two type-5 routes for the IP prefix 172.16.0.0/24, and the VRF routing table should contain one or two next hops for that prefix, depending on whether your device does load balancing for IBGP destinations.</p>
+<p class="code-caption">EVPN BGP table on S3 running Arista EOS<br /></p>
+<pre><code>s3#show bgp evpn
+BGP routing table information for VRF default
+Router identifier 10.0.0.3, local AS number 65000
+Route status codes: * - valid, &gt; - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending best path selection
+Origin codes: i - IGP, e - EGP, ? - incomplete
+AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  LocPref Weight  Path
+ * &gt;      RD: 10.0.0.1:100 imet 10.0.0.1
+                                 10.0.0.1              -       100     0       i
+ * &gt;      RD: 10.0.0.2:100 imet 10.0.0.2
+                                 10.0.0.2              -       100     0       i
+ * &gt;      RD: 65000:1 ip-prefix 172.16.0.0/24
+                                 10.0.0.1              -       100     0       i
+ *        RD: 65000:1 ip-prefix 172.16.0.0/24
+                                 10.0.0.2              -       100     0       i
+ * &gt;      RD: 65000:1 ip-prefix 172.16.1.0/24
+                                 -                     -       -       0       i
+</code></pre>
+<p class="code-caption">VRF routing table on S3 running Arista EOS<br /></p>
+<pre><code>s3#show ip route vrf tenant | begin Gateway
+Gateway of last resort is not set
+
+ B I      172.16.0.0/24 [200/0]
+           via VTEP 10.0.0.2 VNI 7000 router-mac 00:1c:73:4f:bb:50 local-interface Vxlan1
+ C        172.16.1.0/24
+           directly connected, Ethernet2
+</code></pre>
+<p>Not surprisingly, the <strong>traceroute</strong> from HB to HR1 and HR2 always goes through S2:</p>
+<p class="code-caption"><strong>traceroute</strong> from HB to HR1 and HR2 goes through S2<br /></p>
+<pre><code>$ netlab connect hb
+Connecting to container clab-arproutes-hb, starting bash
+hb:/# traceroute hr1
+traceroute to hr1 (172.16.0.5), 30 hops max, 46 byte packets
+ 1  Ethernet2.tenant.s3 (172.16.1.3)  0.003 ms  0.001 ms  0.001 ms
+ 2  Vlan100.tenant.s1 (172.16.0.1)  1.746 ms  0.851 ms  0.784 ms
+ 3  hr1 (172.16.0.5)  0.938 ms  0.921 ms  0.779 ms
+hb:/# traceroute hr2
+traceroute to hr2 (172.16.0.6), 30 hops max, 46 byte packets
+ 1  Ethernet2.tenant.s3 (172.16.1.3)  0.002 ms  0.001 ms  0.000 ms
+ 2  Vlan100.tenant.s2 (172.16.0.2)  1.284 ms  0.883 ms  0.683 ms
+ 3  hr2 (172.16.0.6)  1.418 ms  0.976 ms  1.037 ms
+</code></pre>
+<p>If you wish, configure BGP <strong>maximum-paths</strong> on S3 to obtain two equal-cost paths to the <em>red</em> subnet. That will not make the design any less wrong; it will just be wrong in a different, less deterministic<sup id="fnref:LDW"><a class="footnote-ref" href="#fn:LDW">2</a></sup> way.</p>
+<h2 id="generating-evpn-host-routes-from-arp-information">Generating EVPN Host Routes from ARP Information</h2>
+<p>Generating EVPN host routes from ARP information is usually a three-step process:</p>
 <ul>
-<li>Attaching a transit VXLAN segment to the EVPN IP VRF. The transit segment will transport encapsulated routed Ethernet frames between PE devices.</li>
+<li>Configure S1 and S2 to listen to bridged ARP/ND requests. Without this configuration, you&rsquo;ll get host routes only when hosts attached to S1 or S2 send an ARP request <em>for the switch&rsquo;s IP address</em>. You mastered this step in the <a href="../8-proxy-arp/">Proxy ARP in EVPN MAC-VRF Instances</a> lab exercise.</li>
+<li>Configure S1 and S2 to generate host routes from their ARP/ND information. Arista EOS expects you to configure <strong>ip attached-host route export</strong> on layer-3 interfaces<sup id="fnref:FTC"><a class="footnote-ref" href="#fn:FTC">3</a></sup>.</li>
+<li>Redistribute ARP/ND-derived host routes (<strong>attached-host</strong> routes in EOS lingo) into the VRF BGP table. The existing IP-VRF configuration should ensure they&rsquo;re advertised as type-5 EVPN routes to other PE devices.</li>
 </ul>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>The transit VXLAN segment configuration procedure is extremely implementation-dependent:</p>
+<h2 id="verification">Verification</h2>
 <ul>
-<li>Arista EOS configures it on the VXLAN interface (using <strong>vxlan vrf vni</strong> command)</li>
-<li>FRRouting, Cisco Nexus OS, or Dell OS10 use <strong>vni</strong> under <strong>vrf</strong>, <strong>vrf context</strong>, or <strong>evpn/vrf</strong></li>
-<li>Cisco IOS/XE expects you to configure a full-blown VLAN (or a <strong>bridge domain</strong>) including a VLAN (or BDI) interface.</li>
+<li>Ping HB from HR1 and HR2 to ensure S1 and S2 receive their ARP requests. You can use the <strong>netlab exec</strong> command to execute both pings with a single command:</li>
 </ul>
+<pre><code>$ netlab exec hr* ping -c1 hb
+Connecting to container clab-arproutes-hr1, executing ping -c1 hb
+PING hb (172.16.1.7): 56 data bytes
+64 bytes from 172.16.1.7: seq=0 ttl=62 time=1.640 ms
+
+--- hb ping statistics ---
+1 packets transmitted, 1 packets received, 0% packet loss
+round-trip min/avg/max = 1.640/1.640/1.640 ms
+Connecting to container clab-arproutes-hr2, executing ping -c1 hb
+PING hb (172.16.1.7): 56 data bytes
+64 bytes from 172.16.1.7: seq=0 ttl=62 time=2.409 ms
+
+--- hb ping statistics ---
+1 packets transmitted, 1 packets received, 0% packet loss
+round-trip min/avg/max = 2.409/2.409/2.409 ms
+</code></pre>
+<ul>
+<li>Inspect the EVPN BGP table on S3. It should contain /32 type-5 EVPN routes for HR1 and HR2:</li>
+</ul>
+<p class="code-caption">Type-5 EVPN routes on S3 running Arista EOS<br /></p>
+<pre><code>s3#show bgp evpn route-type ip-prefix
+BGP routing table information for VRF default
+Router identifier 10.0.0.3, local AS number 65000
+Route status codes: * - valid, &gt; - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending best path selection
+Origin codes: i - IGP, e - EGP, ? - incomplete
+AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  LocPref Weight  Path
+ * &gt;      RD: 65000:1 ip-prefix 172.16.0.0/24
+                                 10.0.0.1              -       100     0       i
+ *        RD: 65000:1 ip-prefix 172.16.0.0/24
+                                 10.0.0.2              -       100     0       i
+ * &gt;      RD: 65000:1 ip-prefix 172.16.0.5/32
+                                 10.0.0.1              -       100     0       ?
+ * &gt;      RD: 65000:1 ip-prefix 172.16.0.6/32
+                                 10.0.0.2              -       100     0       ?
+ * &gt;      RD: 65000:1 ip-prefix 172.16.1.0/24
+                                 -                     -       -       0       i
+</code></pre>
+<ul>
+<li>The VRF routing table on S3 should contain /32 routes for HR1 (pointing to S1) and HR2 (pointing to S2):</li>
+</ul>
+<p class="code-caption">VRF routing table on S3 running Arista EOS<br /></p>
+<pre><code>s3#show ip route vrf tenant | begin Gateway
+Gateway of last resort is not set
+
+ B I      172.16.0.5/32 [200/0]
+           via VTEP 10.0.0.1 VNI 7000 router-mac 00:1c:73:75:cb:45 local-interface Vxlan1
+ B I      172.16.0.6/32 [200/0]
+           via VTEP 10.0.0.2 VNI 7000 router-mac 00:1c:73:4f:bb:50 local-interface Vxlan1
+ B I      172.16.0.0/24 [200/0]
+           via VTEP 10.0.0.2 VNI 7000 router-mac 00:1c:73:4f:bb:50 local-interface Vxlan1
+ C        172.16.1.0/24
+           directly connected, Ethernet2
+</code></pre>
+<ul>
+<li>Finally, perform the <strong>traceroute</strong> toward HR1 and HR2 from HB. The traffic should now take the optimal path:</li>
+</ul>
+<p class="code-caption"><strong>traceroute</strong> from HB to HR1 and HR2<br /></p>
+<pre><code>$ netlab connect hb
+Connecting to container clab-arproutes-hb, starting bash
+hb:/# traceroute hr1
+traceroute to hr1 (172.16.0.5), 30 hops max, 46 byte packets
+ 1  Ethernet2.tenant.s3 (172.16.1.3)  0.003 ms  0.001 ms  0.001 ms
+ 2  Vlan100.tenant.s1 (172.16.0.1)  1.403 ms  0.773 ms  0.724 ms
+ 3  hr1 (172.16.0.5)  0.923 ms  0.899 ms  0.886 ms
+hb:/# traceroute hr2
+traceroute to hr2 (172.16.0.6), 30 hops max, 46 byte packets
+ 1  Ethernet2.tenant.s3 (172.16.1.3)  0.002 ms  0.001 ms  0.001 ms
+ 2  Vlan100.tenant.s2 (172.16.0.2)  1.396 ms  0.720 ms  0.657 ms
+ 3  hr2 (172.16.0.6)  1.369 ms  1.354 ms  1.311 ms
+</code></pre>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Some platforms automatically refresh the ARP information that is used to generate attached host routes. Other platforms use the regular ARP aging timers; the ARP-derived host routes might thus disappear at any time. You might need to run <strong>traceroute</strong> twice to ensure the switches use the ARP-derived host routes (the first <strong>traceroute</strong> probe reaching HR1 and HR2 should trigger the prerequisite ARP requests).</p>
 </div>
-<p>If you want to advertise VRF IP prefixes as EVPN type-5 routes, you usually have to <strong>redistribute</strong> or <strong>import</strong> or <strong>export</strong><sup id="fnref:DT"><a class="footnote-ref" href="#fn:DT">2</a></sup> them into the BGP VRF instance. Once you have the IP routes in a BGP VRF instance that has EVPN route targets, the transformation into EVPN type-5 routes usually happens automatically.</p>
-<p>In our scenario, you only have to redistribute <strong>connected</strong> subnets into the <em>red</em> and <em>blue</em> BGP VRF instances.</p>
-<p>Finally, you must enable the EVPN address family on the IBGP sessions between S1, S2, and S3.</p>
-<h2 id="tshoot">Verification</h2>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<p>The troubleshooting procedures are heavily platform-dependent, but should usually follow these steps:</p>
 <ul>
-<li>Check the VRF BGP tables. They should include the connected subnets.</li>
+<li>Check the ARP table on S1 and S2 to ensure HR1 and HR2 are in their ARP tables:</li>
 </ul>
-<p class="code-caption">BGP table for red VRF on S1 running Arista EOS<br /></p>
-<pre><code class="language-text">s1#show bgp ipv4 unicast vrf red
-BGP routing table information for VRF red
+<p class="code-caption">ARP table in <em>tenant</em> VRF on S1 running Arista EOS<br /></p>
+<pre><code>s1#show arp vrf tenant
+Legend:
+ not learned: Associated MAC address is not present in the MAC address table
+ -: Static (configuration or programmed by feature)
+Address         Age (sec)  Hardware Addr   Interface
+172.16.0.5        0:17:21  aac1.ab3c.e447  Vlan100, Ethernet2
+172.16.0.6              -  aac1.ab73.7a28  Vlan100, Vxlan1
+</code></pre>
+<ul>
+<li>Check whether the ARP information is turned into host routes. You have to use the <strong>show ip attached-host</strong> command on Arista EOS, as the attached host routes do not appear in the IP routing table. Please note that the attached host route should be generated only for locally attached hosts, not for ARP entries derived from EVPN MAC-IP routes.</li>
+</ul>
+<p class="code-caption">Attached host routes on S1 running Arista EOS<br /></p>
+<pre><code>s1#show ip attached-host route export vrf tenant
+IP Address L3 Interface L2 Interface Prefix        VRF
+---------- ------------ ------------ ------------- ------
+172.16.0.5 Vlan100      Ethernet2    172.16.0.5/32 tenant
+</code></pre>
+<ul>
+<li>Check whether the attached host routes are redistributed into the VRF BGP instance</li>
+</ul>
+<p class="code-caption">VRF BGP table on S1 running Arista EOS<br /></p>
+<pre><code>s1#show ip bgp vrf tenant
+BGP routing table information for VRF tenant
 Router identifier 10.0.0.1, local AS number 65000
 Route status codes: s - suppressed contributor, * - valid, &gt; - active, E - ECMP head, e - ECMP
                     S - Stale, c - Contributing to ECMP, b - backup, L - labeled-unicast, q - Pending FIB install
@@ -320,98 +462,19 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
 
           Network                Next Hop              Metric  AIGP       LocPref Weight  Path
  * &gt;      172.16.0.0/24          -                     -       -          -       0       i
- * &gt;      172.16.1.0/24          10.0.0.2              0       -          100     0       i
- * &gt;      172.16.2.0/24          10.0.0.3              0       -          100     0       i
+ *        172.16.0.0/24          10.0.0.2              0       -          100     0       i
+ * &gt;      172.16.0.5/32          -                     -       -          -       0       ?
+ * &gt;      172.16.0.6/32          10.0.0.2              0       -          100     0       i
+ *        172.16.0.6/32          10.0.0.2              0       -          100     0       ?
+ * &gt;      172.16.1.0/24          10.0.0.3              0       -          100     0       i
 </code></pre>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>If you don&rsquo;t see the local IP subnet in the BGP VRF table, you forgot to configure route redistribution (or however it&rsquo;s called)</p>
-</div>
-<ul>
-<li>Check the EVPN routes on S1, S2, and S3. You should not see any IMET or MAC-IP routes. The only routes in the BGP EVPN table should be the type-5 (IP-PREFIX) routes.</li>
-</ul>
-<p class="code-caption">EVPN routes on S1 running Arista EOS<br /></p>
-<pre><code class="language-text">s1#show bgp evpn
-BGP routing table information for VRF default
-Router identifier 10.0.0.1, local AS number 65000
-Route status codes: * - valid, &gt; - active, S - Stale, E - ECMP head, e - ECMP
-                    c - Contributing to ECMP, % - Pending best path selection
-Origin codes: i - IGP, e - EGP, ? - incomplete
-AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
-
-          Network                Next Hop              Metric  LocPref Weight  Path
- * &gt;      RD: 65000:1 ip-prefix 172.16.0.0/24
-                                 -                     -       -       0       i
- * &gt;      RD: 65000:1 ip-prefix 172.16.1.0/24
-                                 10.0.0.2              -       100     0       i
- * &gt;      RD: 65000:1 ip-prefix 172.16.2.0/24
-                                 10.0.0.3              -       100     0       i
- * &gt;      RD: 65000:2 ip-prefix 172.16.3.0/24
-                                 -                     -       -       0       i
- * &gt;      RD: 65000:2 ip-prefix 172.16.4.0/24
-                                 10.0.0.2              -       100     0       i
-</code></pre>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<ul>
-<li>If you have the local subnet in the VRF BGP table but don&rsquo;t see the corresponding IP-PREFIX routes, you probably forgot to configure the route distinguisher or the EVPN route targets. It&rsquo;s also possible that you configured MPLS/VPN route targets instead of EVPN route targets.</li>
-<li>If you see local IP-PREFIX routes but not the remote ones, you forgot to activate the EVPN address family on the IBGP sessions.</li>
-<li>If you see IMET (type-3) or MAC-IP (type-2) routes, you probably configured an EVPN MAC-VRF instance</li>
-</ul>
-</div>
-<ul>
-<li>Check VRF routing tables on S1, S2, and S3 &ndash; they should have BGP (or EVPN) routes for the remote subnets.</li>
-</ul>
-<p class="code-caption">Routing table for VRF Red on S1<br /></p>
-<pre><code class="language-text">s1#show ip route vrf red | begin Gateway
-Gateway of last resort is not set
-
- C        172.16.0.0/24
-           directly connected, Ethernet2
- B I      172.16.1.0/24 [200/0]
-           via VTEP 10.0.0.2 VNI 5100 router-mac 00:1c:73:aa:8d:15 local-interface Vxlan1
- B I      172.16.2.0/24 [200/0]
-           via VTEP 10.0.0.3 VNI 5100 router-mac 00:1c:73:d0:60:21 local-interface Vxlan1
-</code></pre>
-<p>Once the VRF routing tables have all the expected subnets, verify that you can ping between <strong>hr1</strong>, <strong>hr2</strong>, and <strong>hr3</strong> and between <strong>hb1</strong> and <strong>hb2</strong></p>
-<p>Does it all work? Fantastic. You can <a href="../7-symm-irb/">move on</a> or explore the <a href="#bds">behind-the-scenes details</a>.</p>
+<p>If you have the attached host routes in the VRF BGP instance but not in the EVPN BGP table, use the <a href="../6-ip-routing/#tshoot">troubleshooting procedures</a> from the <a href="../6-ip-routing/">VPN IP Routing in EVPN Fabrics</a> lab exercise.</p>
 <h2 id="cheating">Cheating</h2>
-<p>Can&rsquo;t get your lab to work? Maybe you can cheat your way to the next step:</p>
+<p>If you&rsquo;re using Arista EOS, you can use:</p>
 <ul>
-<li>Shut down your lab with the <strong>netlab down</strong> command</li>
-<li>Start the lab from the <code>solution.yml</code> topology with the <code>netlab up solution.yml</code> command</li>
-<li>Explore the S1/S2/S3 device configuration</li>
+<li><code>netlab config -l stretch proxy_arp</code> to configure ARP learning and ARP proxy on S1 and S2.</li>
+<li><code>netlab config -l stretch arp_routes</code> to configure attached host routes on S1 and S2.</li>
 </ul>
-<h2 id="bds">Behind the Scenes</h2>
-<p>If you read the <a href="../5-vrf-lite/#ccmmr">behind-the-scenes</a> part of the <a href="../5-vrf-lite/">previous lab exercise</a>, you might be wondering how the IP-PREFIX routes set up all the glue we need to make IP routing across VXLAN work. The details are implementation-dependent, but at least in Arista EOS, the IP routing table does most of the heavy lifting.</p>
-<p class="code-caption">An EVPN-derived VRF routing table entry on S1 running Arista EOS<br /></p>
-<pre><code class="language-text">s1#show ip route vrf red 172.16.1.0/24
-...
- B I      172.16.1.0/24 [200/0]
-           via VTEP 10.0.0.2 VNI 5100 router-mac 00:1c:73:aa:8d:15 local-interface Vxlan1
-</code></pre>
-<p>The route table entry contains all the information we need to forward packets across the transit VXLAN segment:</p>
-<ul>
-<li>Outgoing VXLAN interface name (Vxlan1)</li>
-<li>VXLAN network identifier (VNI, 5100)</li>
-<li>Remote VTEP (10.0.0.2)</li>
-<li>Remote MAC address</li>
-</ul>
-<p>Most of these details (route targets, encapsulation type, VNI) are carried <em>in every EVPN route</em>, as we explored in the <a href="../1-bridging/">Build an EVPN-based MAC-VRF instance</a> lab exercise. </p>
-<p>Apart from a different prefix (IPv4 or IPv6 subnet versus MAC-IP information), the EVPN type-5 routes add a new extended community (Router&rsquo;s MAC) that is used to populate the destination MAC address of the Ethernet frames sent over the IP-VRF transit VXLAN segment. You can see the details of an EVPN type-5 route in the next printout:</p>
-<p class="code-caption">EVPN IP-PREFIX (type-5) route for 172.16.1.0/24 on S1 running Arista EOS<br /></p>
-<pre><code>s1#show bgp evpn route-type ip-prefix 172.16.1.0/24
-BGP routing table information for VRF default
-Router identifier 10.0.0.1, local AS number 65000
-BGP routing table entry for ip-prefix 172.16.1.0/24, Route Distinguisher: 65000:1
- Paths: 1 available
-  Local
-    10.0.0.2 from 10.0.0.2 (10.0.0.2)
-      Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, internal, best
-      Extended Community: Route-Target-AS:65000:1 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:00:1c:73:aa:8d:15
-      VNI: 5100
-</code></pre>
-<p>After learning how to do <em>bridging</em> and <em>IP routing</em> across an EVPN fabric, you&rsquo;re probably wondering whether you can <em>combine the two</em>? That&rsquo;s the topic of the next lab exercise.</p>
 <h2 id="reference-information">Reference Information</h2>
 <h3 id="wiring">Lab Wiring</h3>
 <table>
@@ -455,22 +518,10 @@ BGP routing table entry for ip-prefix 172.16.1.0/24, Route Distinguisher: 65000:
 <td>Ethernet2</td>
 </tr>
 <tr>
-<td>hr3</td>
+<td>hb</td>
 <td>eth1</td>
 <td>s3</td>
 <td>Ethernet2</td>
-</tr>
-<tr>
-<td>hb1</td>
-<td>eth1</td>
-<td>s1</td>
-<td>Ethernet3</td>
-</tr>
-<tr>
-<td>hb2</td>
-<td>eth1</td>
-<td>s2</td>
-<td>Ethernet3</td>
 </tr>
 </tbody>
 </table>
@@ -499,15 +550,15 @@ BGP routing table entry for ip-prefix 172.16.1.0/24, Route Distinguisher: 65000:
 </tr>
 <tr>
 <td>Ethernet2</td>
-<td style="text-align: right;">172.16.0.1/24</td>
 <td style="text-align: right;"></td>
-<td>s1 -&gt; hr1 (VRF: red)</td>
+<td style="text-align: right;"></td>
+<td>[Access VLAN red] s1 -&gt; hr1</td>
 </tr>
 <tr>
-<td>Ethernet3</td>
-<td style="text-align: right;">172.16.3.1/24</td>
+<td>Vlan100</td>
+<td style="text-align: right;">172.16.0.1/24</td>
 <td style="text-align: right;"></td>
-<td>s1 -&gt; hb1 (VRF: blue)</td>
+<td>VLAN red (100) -&gt; [hr1,hr2,s2] (VRF: tenant)</td>
 </tr>
 <tr>
 <td><strong>s2</strong></td>
@@ -523,15 +574,15 @@ BGP routing table entry for ip-prefix 172.16.1.0/24, Route Distinguisher: 65000:
 </tr>
 <tr>
 <td>Ethernet2</td>
-<td style="text-align: right;">172.16.1.2/24</td>
 <td style="text-align: right;"></td>
-<td>s2 -&gt; hr2 (VRF: red)</td>
+<td style="text-align: right;"></td>
+<td>[Access VLAN red] s2 -&gt; hr2</td>
 </tr>
 <tr>
-<td>Ethernet3</td>
-<td style="text-align: right;">172.16.4.2/24</td>
+<td>Vlan100</td>
+<td style="text-align: right;">172.16.0.2/24</td>
 <td style="text-align: right;"></td>
-<td>s2 -&gt; hb2 (VRF: blue)</td>
+<td>VLAN red (100) -&gt; [hr1,s1,hr2] (VRF: tenant)</td>
 </tr>
 <tr>
 <td><strong>s3</strong></td>
@@ -547,9 +598,9 @@ BGP routing table entry for ip-prefix 172.16.1.0/24, Route Distinguisher: 65000:
 </tr>
 <tr>
 <td>Ethernet2</td>
-<td style="text-align: right;">172.16.2.3/24</td>
+<td style="text-align: right;">172.16.1.3/24</td>
 <td style="text-align: right;"></td>
-<td>s3 -&gt; hr3 (VRF: red)</td>
+<td>s3 -&gt; hb (VRF: tenant)</td>
 </tr>
 <tr>
 <td><strong>core</strong></td>
@@ -585,7 +636,7 @@ BGP routing table entry for ip-prefix 172.16.1.0/24, Route Distinguisher: 65000:
 <td>eth1</td>
 <td style="text-align: right;">172.16.0.5/24</td>
 <td style="text-align: right;"></td>
-<td>hr1 -&gt; s1</td>
+<td>hr1 -&gt; [s1,hr2,s2]</td>
 </tr>
 <tr>
 <td><strong>hr2</strong></td>
@@ -595,45 +646,21 @@ BGP routing table entry for ip-prefix 172.16.1.0/24, Route Distinguisher: 65000:
 </tr>
 <tr>
 <td>eth1</td>
-<td style="text-align: right;">172.16.1.6/24</td>
+<td style="text-align: right;">172.16.0.6/24</td>
 <td style="text-align: right;"></td>
-<td>hr2 -&gt; s2</td>
+<td>hr2 -&gt; [hr1,s1,s2]</td>
 </tr>
 <tr>
-<td><strong>hr3</strong></td>
+<td><strong>hb</strong></td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 <td></td>
 </tr>
 <tr>
 <td>eth1</td>
-<td style="text-align: right;">172.16.2.7/24</td>
+<td style="text-align: right;">172.16.1.7/24</td>
 <td style="text-align: right;"></td>
-<td>hr3 -&gt; s3</td>
-</tr>
-<tr>
-<td><strong>hb1</strong></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td></td>
-</tr>
-<tr>
-<td>eth1</td>
-<td style="text-align: right;">172.16.3.8/24</td>
-<td style="text-align: right;"></td>
-<td>hb1 -&gt; s1</td>
-</tr>
-<tr>
-<td><strong>hb2</strong></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td></td>
-</tr>
-<tr>
-<td>eth1</td>
-<td style="text-align: right;">172.16.4.9/24</td>
-<td style="text-align: right;"></td>
-<td>hb2 -&gt; s2</td>
+<td>hb -&gt; s3</td>
 </tr>
 </tbody>
 </table>
@@ -710,7 +737,7 @@ BGP routing table entry for ip-prefix 172.16.1.0/24, Route Distinguisher: 65000:
 </tr>
 </tbody>
 </table>
-<h3 id="bgp">BGP Routing</h3>
+<h3 id="bgp">IBGP Sessions</h3>
 <table>
 <thead>
 <tr>
@@ -780,11 +807,14 @@ BGP routing table entry for ip-prefix 172.16.1.0/24, Route Distinguisher: 65000:
 <div class="footnote">
 <hr />
 <ol>
-<li id="fn:MVP">
-<p>If your first reaction was &ldquo;<em>this is just MPLS/VPN in disguise</em>,&rdquo; you&rsquo;re not too far off. It&rsquo;s just that we&rsquo;re using VXLAN segments instead of MPLS LSPs&#160;<a class="footnote-backref" href="#fnref:MVP" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<li id="fn:ING">
+<p>The <em>ingress routing to stretched VLAN</em> problem is not particular to EVPN. It <a href="https://blog.ipspace.net/2010/09/long-distance-vmotion-and-traffic/">has been known</a> (to anyone who prefers facts over vendor whitepapers) for decades, and is one of the reasons stretched VLANs are such a bad idea.&#160;<a class="footnote-backref" href="#fnref:ING" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
-<li id="fn:DT">
-<p>You guessed it. Different devices, different terminology for the same process. Isn&rsquo;t networking fun?&#160;<a class="footnote-backref" href="#fnref:DT" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<li id="fn:LDW">
+<p>S3 will choose S1 or S2 as the next hop for 172.16.0.0/24 based on the hash of the IP header of the forwarded packet.&#160;<a class="footnote-backref" href="#fnref:LDW" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:FTC">
+<p>That approach gives you a fine-grained control over which ARP/ND entries are advertised as host routes. You should use that command only on stretched VLANs; generating host routes for single-switch subnets makes no sense.&#160;<a class="footnote-backref" href="#fnref:FTC" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div></div>

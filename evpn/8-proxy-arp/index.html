@@ -119,6 +119,10 @@
 <li>
     <a href="./" class="dropdown-item active" aria-current="page">Proxy ARP in EVPN MAC-VRF Instances</a>
 </li>
+                                    
+<li>
+    <a href="../9-arp-routes/" class="dropdown-item">Intra-Subnet Routing with ARP Routes</a>
+</li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
@@ -157,7 +161,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../services/1-pvlan/" class="nav-link">
+                                <a rel="next" href="../9-arp-routes/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -276,7 +280,7 @@
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Your lab won&rsquo;t have the EVPN address family in IBGP sessions, VXLAN configuration, or MAC-VRF configuration if <em>netlab</em> can&rsquo;t configure them on your device. In that case, use the procedure you&rsquo;ve mastered in the <a href="../../vxlan/1-single/">Extend a Single VLAN Segment with VXLAN</a> lab exercise to configure them.</p>
+<p>Your lab won&rsquo;t have the EVPN address family in IBGP sessions, VXLAN configuration, or MAC-VRF configuration if <em>netlab</em> can&rsquo;t configure them on your device. In that case, use the procedure you&rsquo;ve mastered in the <a href="../1-bridging/">Build an EVPN-based MAC-VRF instance</a> lab exercise to configure them.</p>
 </div>
 <h2 id="establishing-the-baseline">Establishing the Baseline</h2>
 <p>You might want to observe the ARP traffic between H1 and H2 before starting device configuration:</p>
@@ -386,8 +390,9 @@ Address         Age (sec)  Hardware Addr   Interface
 <p class="admonition-title">Tip</p>
 <p>You will probably see unicast ARP requests (sent as unicast Ethernet packets) that H1 uses to test whether H2 is still alive. Use the <code>netlab capture h2 eth1 -e -l -vv arp or icmp</code> command to display Ethernet headers in the captured packets.</p>
 </div>
+<p>Done? Let&rsquo;s see how you can use this functionality to implement <a href="../9-arp-routes/">Intra-Subnet Routing with ARP Routes</a>.</p>
 <h2 id="cheating">Cheating</h2>
-<p>If you&rsquo;re using Arista EOS, you can use the <strong>netlab config -l s1,s2 proxy_arp</strong> to configure ARP suppression on S1 and S2.</p>
+<p>If you&rsquo;re using Arista EOS, you can use <code>netlab config -l s1,s2 proxy_arp</code> to configure ARP suppression on S1 and S2.</p>
 <h2 id="reference-information">Reference Information</h2>
 <h3 id="wiring">Lab Wiring</h3>
 <table>
