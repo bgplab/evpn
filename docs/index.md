@@ -25,7 +25,7 @@ In these labs, you'll learn how to configure VXLAN with static ingress replicati
 * [Extend a single VLAN segment with VXLAN](vxlan/1-single.md)
 * [More complex VXLAN deployment scenario](vxlan/2-complex.md)
 * [Routing between VXLAN segments](vxlan/3-irb.md)
-* [Anycast gateways on VXLAN segments](vxlan/4-anycast.md)<!-- new -->
+* [Anycast gateways on VXLAN segments](vxlan/4-anycast.md)
 * [Implement VRF-Lite with VXLAN](vxlan/5-vrf-lite.md)<!-- new -->
 * [Running VXLAN over an IPv6-only underlay network](vxlan/6-ipv6.md)<!-- new -->
 
@@ -34,8 +34,8 @@ In these labs, you'll learn how to configure VXLAN with static ingress replicati
 After mastering the basics of using VXLAN to stretch Ethernet segments across an IP network, you'll add EVPN control plane to a VXLAN setup:
 
 * [Build an EVPN-based MAC-VRF instance](evpn/1-bridging.md)
-* [More complex EVPN/VXLAN bridging scenario](evpn/2-complex.md)<!-- new -->
-* [Integrated Routing and Bridging (IRB) with EVPN MAC-VRF instances](evpn/3-irb.md)<!-- new -->
+* [More complex EVPN/VXLAN bridging scenario](evpn/2-complex.md)
+* [Integrated Routing and Bridging (IRB) with EVPN MAC-VRF instances](evpn/3-irb.md)
 * [EVPN asymmetric Integrated Routing and Bridging (IRB)](evpn/4-asym-irb.md)<!--new-->
 * [Implement VRF-Lite with EVPN/VXLAN](evpn/5-vrf-lite.md)<!--new-->
 * [VPN IP routing in EVPN Fabrics](evpn/6-ip-routing.md)<!--new-->
