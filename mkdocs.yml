@@ -4,6 +4,7 @@ site_name: VXLAN and EVPN Labs
 docs_dir: docs
 site_dir: _html
 repo_url: https://github.com/bgplab/evpn
+edit_uri: blob/main/docs
 site_url: https://evpn.bgplabs.net/
 site_description: Hands-on VXLAN and EVPN labs using virtual devices
 site_author: Ivan Pepelnjak, ipSpace.net AG
