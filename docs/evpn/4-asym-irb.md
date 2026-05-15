@@ -2,7 +2,7 @@
 
 In the [previous lab exercise](3-irb.md), we created an EVPN-based VRF that connected two stretched VLANs. We had an easy task because hosts from every VLAN were connected to every switch. Can you use the same trick if the hosts are sparsely connected (like in the lab topology we'll use in this exercise)?
 
-![Lab topology](topology-asym-irb.png)
+![Lab topology](topology-asymmetric-irb.png)
 
 Of course, you can. If you extend every VLAN to every fabric switch, you get the exact same scenario as in the previous lab exercise:
 
