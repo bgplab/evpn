@@ -263,7 +263,7 @@
 
 <h1 id="evpn-asymmetric-integrated-routing-and-bridging">EVPN Asymmetric Integrated Routing and Bridging</h1>
 <p>In the <a href="../3-irb/">previous lab exercise</a>, we created an EVPN-based VRF that connected two stretched VLANs. We had an easy task because hosts from every VLAN were connected to every switch. Can you use the same trick if the hosts are sparsely connected (like in the lab topology we&rsquo;ll use in this exercise)?</p>
-<p><img alt="Lab topology" src="../topology-asym-irb.png" /></p>
+<p><img alt="Lab topology" src="../topology-asymmetric-irb.png" /></p>
 <p>Of course, you can. If you extend every VLAN to every fabric switch, you get the exact same scenario as in the previous lab exercise:</p>
 <p><img alt="Lab topology" src="../../vxlan/packet-flow-irb.png" /></p>
 <p>Obviously, you&rsquo;d also create too many VLANs, extend the bridging domains, have more entries in the ARP/MAC tables on all switches, and increase flooding traffic, but that&rsquo;s the price you have to pay if you don&rsquo;t want to learn any new concepts ;)</p>
