@@ -26,7 +26,7 @@ In these labs, you'll learn how to configure VXLAN with static ingress replicati
 * [More complex VXLAN deployment scenario](vxlan/2-complex.md)
 * [Routing between VXLAN segments](vxlan/3-irb.md)
 * [Anycast gateways on VXLAN segments](vxlan/4-anycast.md)
-* [Implement VRF-Lite with VXLAN](vxlan/5-vrf-lite.md)<!-- new -->
+* [Implement VRF-Lite with VXLAN](vxlan/5-vrf-lite.md)
 * [Running VXLAN over an IPv6-only underlay network](vxlan/6-ipv6.md)<!-- new -->
 
 ## Configure EVPN {#evpn}
