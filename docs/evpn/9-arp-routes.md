@@ -79,9 +79,9 @@ Gateway of last resort is not set
            directly connected, Ethernet2
 ```
 
-Not surprisingly, the **traceroute** from HB to HR1 and HR2 always goes through S2:
+Not surprisingly, the **traceroute** from HB to HR1 and HR2 always goes through S1:
 
-**traceroute** from HB to HR1 and HR2 goes through S2
+**traceroute** from HB to HR1 and HR2 goes through S1
 {.code-caption}
 ```
 $ netlab connect hb
