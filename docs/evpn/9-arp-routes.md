@@ -79,26 +79,28 @@ Gateway of last resort is not set
            directly connected, Ethernet2
 ```
 
-Not surprisingly, the **traceroute** from HB to HR1 and HR2 always goes through S2:
+Not surprisingly, the **traceroute** from HB to HR1 and HR2 often takes a suboptimal path.
 
-**traceroute** from HB to HR1 and HR2 goes through S2
+**traceroute** from HB to HR1 and HR2 goes through S1 (S3 is running Arista cEOS release 4.35.2F)
 {.code-caption}
 ```
 $ netlab connect hb
 Connecting to container clab-arproutes-hb, starting bash
 hb:/# traceroute hr1
 traceroute to hr1 (172.16.0.5), 30 hops max, 46 byte packets
- 1  Ethernet2.tenant.s3 (172.16.1.3)  0.003 ms  0.001 ms  0.001 ms
- 2  Vlan100.tenant.s1 (172.16.0.1)  1.746 ms  0.851 ms  0.784 ms
- 3  hr1 (172.16.0.5)  0.938 ms  0.921 ms  0.779 ms
+ 1  Ethernet2.tenant.s3 (172.16.1.3)  0.003 ms  0.003 ms  0.004 ms
+ 2  Vlan100.tenant.s1 (172.16.0.1)  3.546 ms  0.928 ms  0.818 ms
+ 3  hr1 (172.16.0.5)  2.489 ms  1.257 ms  0.748 ms
 hb:/# traceroute hr2
 traceroute to hr2 (172.16.0.6), 30 hops max, 46 byte packets
- 1  Ethernet2.tenant.s3 (172.16.1.3)  0.002 ms  0.001 ms  0.000 ms
- 2  Vlan100.tenant.s2 (172.16.0.2)  1.284 ms  0.883 ms  0.683 ms
- 3  hr2 (172.16.0.6)  1.418 ms  0.976 ms  1.037 ms
+ 1  Ethernet2.tenant.s3 (172.16.1.3)  0.003 ms  0.002 ms  0.001 ms
+ 2  Vlan100.tenant.s1 (172.16.0.1)  1.391 ms  0.759 ms  0.724 ms
+ 3  hr2 (172.16.0.6)  6.598 ms  1.989 ms  2.037 ms
 ```
 
-If you wish, configure BGP **maximum-paths** on S3 to obtain two equal-cost paths to the *red* subnet. That will not make the design any less wrong; it will just be wrong in a different, less deterministic[^LDW] way.
+!!! tip
+    * S3 has two equal-cost EVPN paths to the *Red* VLAN. Depending on the device defaults, it may use one or both. The exact path may also depend on the load-balancing algorithm S3 uses.
+    * On Arista EOS, you can configure BGP **maximum-paths** on S3 to obtain two equal-cost paths to the *red* subnet. That will not make the design any less wrong; it will just be wrong in a different, less deterministic[^LDW] way.
 
 [^LDW]: S3 will choose S1 or S2 as the next hop for 172.16.0.0/24 based on the hash of the IP header of the forwarded packet.
 
