@@ -10,7 +10,11 @@ site_description: Hands-on VXLAN and EVPN labs using virtual devices
 site_author: Ivan Pepelnjak, ipSpace.net AG
 extra:
   toc_sidebar: False
-copyright: (C) 2025 Ivan Pepelnjak (ipSpace.net AG)
+  other:
+    'BGP': 'https://bgplabs.net/'
+    'IS-IS': 'https://isis.bgplabs.net/'
+    'SR-MPLS': 'https://github.com/ipspace/sr-workshop'
+copyright: (C) 2025–2026 Ivan Pepelnjak (ipSpace.net AG)
 plugins:
 - search
 - include_dir_to_nav
